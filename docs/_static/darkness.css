@@ -1,0 +1,334 @@
+/* -----------------------------code sections------------------------------ */
+.highlight {
+ background: #202020;
+}
+
+.highlight .s1 {
+  color: #da8c00;
+}
+
+.highlight .mi {
+  color: #9ff1c6;
+}
+
+.highlight .nb {
+  color: #f7ef84;
+}
+
+.highlight .ow {
+  color: #1f95cb;
+}
+
+.highlight .kc {
+  color: #2886e4;
+}
+
+.highlight .s2 {
+  color: #da8c00;
+}
+
+.highlight .mf {
+  color: #9ff1c6;
+}
+
+.highlight .se {
+  color: #e2c458;
+}
+
+.highlight .si {
+  color: #2886e4;
+}
+
+.highlight .sa {
+  color: #2886e4;
+}
+
+.highlight .nf {
+  color: #f7ef84;
+}
+
+.highlight .k {
+  color: #af63ab;
+}
+
+.highlight .c1 {
+  color: #4bbc3f;
+}
+
+.highlight .o {
+ color: #fefefe;
+}
+
+.highlight .sd {
+  color: #da8c00;
+}
+
+.highlight .nn {
+  color: #fff;
+}
+
+.highlight .kn {
+  color: #af63ab;
+}
+
+.highlight .bp {
+  color: #1f95cb;
+}
+
+.highlight .nd {
+  color: #f7ef84;
+}
+
+.highlight .ne {
+  color: #13d297;
+}
+
+.highlight .mh {
+  color: #9ff1c6;
+}
+
+.highlight .go {
+  color: #1afd00;
+ }
+
+/* ----------------------table sections---------------------------------------- */
+.wy-table thead,
+.rst-content table.docutils thead,
+.rst-content table.field-list thead {
+ color:#fcfcfc;
+ text-align:center;
+ background-color: #1a4228;
+}
+
+.wy-table-odd td,
+.wy-table-striped tr:nth-child(2n-1) td,
+.rst-content table.docutils:not(.field-list) tr:nth-child(2n-1) td {
+ background-color:#3d3d3d;
+}
+
+.wy-table-bordered-all td,
+.rst-content table.docutils td {
+ border-bottom:1px solid #e1e4e5;
+ border-left:1px solid #e1e4e5;
+ text-align: center;
+}
+
+/* ------------------------admonition sections------------------------------- */
+.wy-alert.wy-alert-success .wy-alert-title,
+.rst-content .wy-alert-success.note .wy-alert-title,
+.rst-content .wy-alert-success.attention .wy-alert-title,
+.rst-content .wy-alert-success.caution .wy-alert-title,
+.rst-content .wy-alert-success.danger .wy-alert-title,
+.rst-content .wy-alert-success.error .wy-alert-title,
+.rst-content .hint .wy-alert-title,
+.rst-content .important .wy-alert-title,
+.rst-content .tip .wy-alert-title,
+.rst-content .wy-alert-success.warning .wy-alert-title,
+.rst-content .wy-alert-success.seealso .wy-alert-title,
+.rst-content .wy-alert-success.admonition-todo .wy-alert-title,
+.rst-content .wy-alert-success.admonition .wy-alert-title,
+.wy-alert.wy-alert-success .rst-content .admonition-title,
+.rst-content .wy-alert.wy-alert-success .admonition-title,
+.rst-content .wy-alert-success.note .admonition-title,
+.rst-content .wy-alert-success.attention .admonition-title,
+.rst-content .wy-alert-success.caution .admonition-title,
+.rst-content .wy-alert-success.danger .admonition-title,
+.rst-content .wy-alert-success.error .admonition-title,
+.rst-content .hint .admonition-title,
+.rst-content .important .admonition-title,
+.rst-content .tip .admonition-title,
+.rst-content .wy-alert-success.warning .admonition-title,
+.rst-content .wy-alert-success.seealso .admonition-title,
+.rst-content .wy-alert-success.admonition-todo .admonition-title,
+.rst-content .wy-alert-success.admonition .admonition-title {
+ background:#05886e;
+}
+
+.wy-alert.wy-alert-success,
+.rst-content .wy-alert-success.note,
+.rst-content .wy-alert-success.attention,
+.rst-content .wy-alert-success.caution,
+.rst-content .wy-alert-success.danger,
+.rst-content .wy-alert-success.error,
+.rst-content .hint,
+.rst-content .important,
+.rst-content .tip,
+.rst-content .wy-alert-success.warning,
+.rst-content .wy-alert-success.seealso,
+.rst-content .wy-alert-success.admonition-todo,
+.rst-content .wy-alert-success.admonition {
+ background: #28443e;
+}
+
+.wy-alert.wy-alert-info .wy-alert-title, .rst-content .note .wy-alert-title, .rst-content .wy-alert-info.attention .wy-alert-title, .rst-content .wy-alert-info.caution .wy-alert-title, .rst-content .wy-alert-info.danger .wy-alert-title, .rst-content .wy-alert-info.error .wy-alert-title, .rst-content .wy-alert-info.hint .wy-alert-title, .rst-content .wy-alert-info.important .wy-alert-title, .rst-content .wy-alert-info.tip .wy-alert-title, .rst-content .wy-alert-info.warning .wy-alert-title, .rst-content .seealso .wy-alert-title, .rst-content .wy-alert-info.admonition-todo .wy-alert-title, .rst-content .wy-alert-info.admonition .wy-alert-title, .wy-alert.wy-alert-info .rst-content .admonition-title, .rst-content .wy-alert.wy-alert-info .admonition-title, .rst-content .note .admonition-title, .rst-content .wy-alert-info.attention .admonition-title, .rst-content .wy-alert-info.caution .admonition-title, .rst-content .wy-alert-info.danger .admonition-title, .rst-content .wy-alert-info.error .admonition-title, .rst-content .wy-alert-info.hint .admonition-title, .rst-content .wy-alert-info.important .admonition-title, .rst-content .wy-alert-info.tip .admonition-title, .rst-content .wy-alert-info.warning .admonition-title, .rst-content .seealso .admonition-title, .rst-content .wy-alert-info.admonition-todo .admonition-title, .rst-content .wy-alert-info.admonition .admonition-title {
+  background: #064873;
+}
+
+.wy-alert.wy-alert-info, .rst-content .note, .rst-content .wy-alert-info.attention, .rst-content .wy-alert-info.caution, .rst-content .wy-alert-info.danger, .rst-content .wy-alert-info.error, .rst-content .wy-alert-info.hint, .rst-content .wy-alert-info.important, .rst-content .wy-alert-info.tip, .rst-content .wy-alert-info.warning, .rst-content .seealso, .rst-content .wy-alert-info.admonition-todo, .rst-content .wy-alert-info.admonition {
+  background: #2d3d48;
+}
+
+.wy-alert.wy-alert-warning .wy-alert-title, .rst-content .wy-alert-warning.note .wy-alert-title, .rst-content .attention .wy-alert-title, .rst-content .caution .wy-alert-title, .rst-content .wy-alert-warning.danger .wy-alert-title, .rst-content .wy-alert-warning.error .wy-alert-title, .rst-content .wy-alert-warning.hint .wy-alert-title, .rst-content .wy-alert-warning.important .wy-alert-title, .rst-content .wy-alert-warning.tip .wy-alert-title, .rst-content .warning .wy-alert-title, .rst-content .wy-alert-warning.seealso .wy-alert-title, .rst-content .admonition-todo .wy-alert-title, .rst-content .wy-alert-warning.admonition .wy-alert-title, .wy-alert.wy-alert-warning .rst-content .admonition-title, .rst-content .wy-alert.wy-alert-warning .admonition-title, .rst-content .wy-alert-warning.note .admonition-title, .rst-content .attention .admonition-title, .rst-content .caution .admonition-title, .rst-content .wy-alert-warning.danger .admonition-title, .rst-content .wy-alert-warning.error .admonition-title, .rst-content .wy-alert-warning.hint .admonition-title, .rst-content .wy-alert-warning.important .admonition-title, .rst-content .wy-alert-warning.tip .admonition-title, .rst-content .warning .admonition-title, .rst-content .wy-alert-warning.seealso .admonition-title, .rst-content .admonition-todo .admonition-title, .rst-content .wy-alert-warning.admonition .admonition-title {
+  background: #ed2222;
+}
+
+.wy-alert.wy-alert-warning, .rst-content .wy-alert-warning.note, .rst-content .attention, .rst-content .caution, .rst-content .wy-alert-warning.danger, .rst-content .wy-alert-warning.error, .rst-content .wy-alert-warning.hint, .rst-content .wy-alert-warning.important, .rst-content .wy-alert-warning.tip, .rst-content .warning, .rst-content .wy-alert-warning.seealso, .rst-content .admonition-todo, .rst-content .wy-alert-warning.admonition {
+  background: #490707;
+}
+
+/* -------------------------------------general page styling-------------------------------------------- */
+body {
+ color:#fcfcfc;
+}
+
+.wy-nav-content-wrap, .wy-nav-content {
+ background:#242424;
+}
+
+/* -------------------------------------sidebar sections------------------------------------------------ */
+.wy-side-nav-search {
+ background-color:#006B09;
+ color:#fcfcfc;
+}
+
+.wy-side-nav-search input[type=text] {
+ background: #3e3e3e;
+ color: #fcfcfc;
+}
+
+.wy-menu-vertical li.on a,
+.wy-menu-vertical li.current>a {
+ color:#fcfcfc;
+ background:#242424;
+}
+
+.wy-nav-side {
+ background:#172353;
+}
+
+.wy-menu-vertical li.on a:hover,
+.wy-menu-vertical li.current>a:hover {
+ background:#395c62;
+}
+
+.wy-menu-vertical li.on a:hover,
+.wy-menu-vertical li.current>a:hover {
+ background:#395c62;
+}
+
+.wy-side-nav-search>div.version {
+ color:rgba(255, 255, 255, 0.69);
+}
+
+.wy-menu-vertical header,
+.wy-menu-vertical p.caption {
+ color:#43df96;
+}
+
+.wy-nav-top {
+ background:#006B09;
+}
+
+.wy-menu-vertical li.on a span.toctree-expand, .wy-menu-vertical li.current > a span.toctree-expand {
+  color: #f2f2f2;
+}
+
+.wy-menu-vertical li span.toctree-expand {
+  color: #f2f2f2;
+}
+
+.wy-menu-vertical li.current {
+  background: #034e69;
+}
+
+.wy-menu-vertical li.toctree-l2 a,
+.wy-menu-vertical li.toctree-l3 a,
+.wy-menu-vertical li.toctree-l4 a {
+ color:#f2f2f2;
+}
+
+.wy-menu-vertical li.current a:hover {
+  background:#3e3e3ecf;
+}
+
+.wy-menu-vertical li.toctree-l2.current>a {
+  background:#242424;
+}
+
+.wy-menu-vertical li.toctree-l2.current li.toctree-l3>a {
+  background:#033969;
+}
+
+.wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
+  background:#092d21;
+}
+
+/* -----------------------------------------API sections-------------------------------------- */
+.wy-table caption,
+.rst-content table.docutils caption,
+.rst-content table.field-list caption {
+ color:#fff;
+ text-align: left;
+}
+
+.rst-content table.docutils.citation tt,
+.rst-content table.docutils.citation code,
+.rst-content table.docutils.footnote tt,
+.rst-content table.docutils.footnote code {
+ color:#16ff00;
+}
+
+.wy-table-bordered-all td, .rst-content table.docutils td {
+  text-align: left;
+}
+
+.rst-content table.docutils.citation, .rst-content table.docutils.footnote {
+  color: white;
+}
+
+.rst-content dl:not(.docutils) dl dt {
+  background: #343434;
+  color: #e5df8e;
+}
+
+.rst-content tt, .rst-content tt, .rst-content code {
+  color: #f3f3f3;
+}
+
+.rst-content dl:not(.docutils) dt {
+  background: #2e363c;
+}
+
+.rst-content tt.literal, .rst-content tt.literal, .rst-content code.literal {
+  color: #16FF00;
+  border-color: #303030;
+}
+
+code, .rst-content tt, .rst-content code {
+  background: #000;
+}
+
+.rst-content tt.xref, a .rst-content tt, .rst-content tt.xref, .rst-content code.xref, a .rst-content tt, a .rst-content code {
+  color: #fff;
+}
+
+.rst-content dl:not(.docutils) dl dt {
+  background: #343434;
+  color: #e5df8e;
+}
+
+.rst-content dl:not(.docutils) dl dt .headerlink {
+  color: #29ae5b;
+}
+
+.rst-content dl:not(.docutils) dt .headerlink {
+  color: #29ae5b4d !important;
+}
+
+.rst-content dl dt .headerlink::after {
+  visibility: visible;
+}
+
+.rst-content h1:hover .headerlink::after, .rst-content h2:hover .headerlink::after, .rst-content .toctree-wrapper p.caption:hover .headerlink::after, .rst-content h3:hover .headerlink::after, .rst-content h4:hover .headerlink::after, .rst-content h5:hover .headerlink::after, .rst-content h6:hover .headerlink::after, .rst-content dl dt:hover .headerlink::after, .rst-content p.caption:hover .headerlink::after, .rst-content table > caption:hover .headerlink::after, .rst-content .code-block-caption:hover .headerlink::after {
+  color: #29ae5b !important;
+}
