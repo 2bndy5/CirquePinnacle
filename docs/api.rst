@@ -24,7 +24,7 @@ Relative Data
                uint8_t,buttons,"[0, 7] [1a]_"
                int8_t,x,"-128 |LessEq| X |LessEq| 127"
                int8_t,y,"-128 |LessEq| Y |LessEq| 127"
-               int8_t,scroll,"-128 |LessEq| Y |LessEq| 127 [2]_"
+               int8_t,scroll,"-128 |LessEq| SCROLL |LessEq| 127 [2]_"
 
    .. [1a] The returned button data is a byte in which each bit represents a button.
       The bit to button order is as follows:
