@@ -35,7 +35,9 @@ Supported Features
 .. tip:: The SPI protocol is the preferred method for interfacing with more than 1 Cirque circle
     trackpad from the same MCU (microcontroller). The Cirque Pinnacle does not allow
     changing the I2C slave device address (via software); this means only 1 Cirque circle trackpad
-    can be accessed over the I2C bus in the lifecycle of an application.
+    can be accessed over the I2C bus in the lifecycle of an application. That said, you could change
+    the I2C address from ``0x2A`` to ``0x2C`` by soldering a 470K ohm resistor at the junction
+    labeled "ADR" (see picture in `Pinout`_ section), although this is untested.
 
 Unsupported Features
 --------------------
