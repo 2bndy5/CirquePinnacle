@@ -7,7 +7,12 @@ PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
 
 void setup(){
     Serial.begin(9600);
-    tpad.begin();
+    if (tpad.begin()){
+        Serial.println("found Cirque Pinnacle!");
+    }
+    else{
+        Serial.println("Cirque Pinnacle not responding!");
+    }
     tpad.relativeModeConfig(false, true, true);
 }
 

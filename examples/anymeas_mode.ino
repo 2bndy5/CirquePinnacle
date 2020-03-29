@@ -22,7 +22,12 @@ uint8_t variousVectors_size = sizeof(vectorDetirminants) / sizeof(measureVector)
 
 void setup(){
     Serial.begin(9600);
-    tpad.begin();
+    if (tpad.begin()){
+        Serial.println("found Cirque Pinnacle!");
+    }
+    else{
+        Serial.println("Cirque Pinnacle not responding!");
+    }
     tpad.setDataMode(PINNACLE_ANYMEAS);
 }
 
