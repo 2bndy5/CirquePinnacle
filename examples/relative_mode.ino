@@ -8,12 +8,12 @@ PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
 void setup(){
     Serial.begin(9600);
     tpad.begin();
-    tpad.relativeModeConfig(allTaps=true);
+    tpad.relativeModeConfig(false, false, true, true);
 }
 
 void loop(){
     if (tpad.available()){
-        relativeReport report = tpad.relativeReport();
+        relativeReport report = tpad.reportRelative();
         Serial.print("Left: ");
         Serial.print(report.buttons & 1);
         Serial.print("Right: ");

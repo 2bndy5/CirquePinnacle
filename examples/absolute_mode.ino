@@ -14,7 +14,7 @@ void setup(){
 
 void loop(){
     if (tpad.available()){
-        absoluteReport report = tpad.relativeReport();
+        absoluteReport report = tpad.reportAbsolute();
         Serial.print("button1: ");
         Serial.print(report.buttons & 1);
         Serial.print("button2: ");

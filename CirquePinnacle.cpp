@@ -121,14 +121,14 @@ void PinnacleTouch::relativeModeConfig(bool rotate90, bool glideExtend, bool sec
     }
 }
 
-RelativeReport PinnacleTouch::reportRelative(bool onlyNew){
+relativeReport PinnacleTouch::reportRelative(bool onlyNew){
     if (dataMode == PINNACLE_RELATIVE){
         bool isDataReady = false;
         if (onlyNew){
             isDataReady = available();
         }
         if ((onlyNew & isDataReady) || !onlyNew){
-            RelativeReport report;
+            relativeReport report;
             uint8_t* temp = rapReadBytes(PINNACLE_PACKET_BYTE_0, 4);
             report.buttons = temp[0] & 7;
             report.x = (int8_t)temp[1];
@@ -138,10 +138,10 @@ RelativeReport PinnacleTouch::reportRelative(bool onlyNew){
             return report;
         }
     }
-    return NULL;
+    return {NULL, NULL, NULL, NULL};
 }
 
-AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
+absoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
     if (dataMode == PINNACLE_ABSOLUTE){
         bool isDataReady = false;
         if (onlyNew){
@@ -149,7 +149,7 @@ AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
         }
         if ((onlyNew & isDataReady) || !onlyNew){
             uint8_t* temp = rapReadBytes(PINNACLE_PACKET_BYTE_0, 6);
-            AbsoluteReport report;
+            absoluteReport report;
             report.buttons = temp[0] & 0x3F;
             report.x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
             report.y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
@@ -161,7 +161,7 @@ AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
             return report;
         }
     }
-    return NULL;
+    return {NULL, NULL, NULL, NULL};
 }
 
 void PinnacleTouch::clearFlags(){
@@ -459,7 +459,7 @@ PinnacleTouchI2C::PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress) :
     _slaveAddress = (uint8_t)(slaveAddress << 1);
 }
 
-bool PinnacleTouchSPI::begin(){
+bool PinnacleTouchI2C::begin(){
     Wire.begin();
     Wire.setClock(100000);
     return PinnacleTouch::begin();
@@ -491,7 +491,7 @@ uint8_t* PinnacleTouchI2C::rapReadBytes(uint8_t registerAddress, uint8_t registe
     Wire.beginTransmission(_slaveAddress);
     Wire.write(0xA0 | registerAddress);
     Wire.endTransmission(true);
-    Wire.requestFrom(_slaveAddress | 1, registerCount, true);
+    Wire.requestFrom((uint8_t)(_slaveAddress | 1), (uint8_t)registerCount, (uint8_t)true);
     while(Wire.available()){
         data[i++] = Wire.read();
     }
