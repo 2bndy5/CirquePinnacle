@@ -274,7 +274,7 @@ isHardConfigured()
 relativeModeConfig()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: void relativeModeConfig(bool rotate90, bool glideExtend, bool secondaryTap, bool allTaps, bool intellimouse)
+   .. cpp:function:: void relativeModeConfig(bool rotate90, bool allTaps, bool secondaryTap, bool glideExtend, bool intellimouse)
 
       Configure settings specific to Relative mode (AKA Mouse mode) data reporting. This function
       only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set to
@@ -282,18 +282,17 @@ relativeModeConfig()
 
       :param bool rotate90: Specifies if the axis data is altered for 90 degree rotation before
          reporting it (essentially swaps the axis data). Default is ``false``.
-      :param bool glideExtend: A patended feature that allows the user to glide their finger off
-         the edge of the sensor and continue gesture with the touch event. Default is ``true``.
-         This feature is only available if :cpp:func:`isHardConfigured()` is ``false``.
+      :param bool allTaps: Specifies if all taps should be reported (``true``) or not
+         (``false``). Default is ``true``. This affects ``secondaryTap`` option as well.
       :param bool secondaryTap: Specifies if tapping in the top-left corner (depending on
          orientation) triggers the secondary button data. Defaults to ``true``. This feature is
-         only available if :cpp:func:`isHardConfigured()` is ``false``.
-      :param bool allTaps: Specifies if all taps should be reported (``true``) or not
-         (``false``). Default is ``true``. This affects ``secondaryTap`` option as well. The
-         primary button (left mouse button) is emulated with a tap.
+         always disabled if :cpp:func:`isHardConfigured()` is ``true``.
+      :param bool glideExtend: A patended feature that allows the user to glide their finger off
+         the edge of the sensor and continue gesture with the touch event. Default is ``true``.
+         This feature is always disabled if :cpp:func:`isHardConfigured()` is ``true``.
       :param bool intellimouse: Specifies if the data reported includes a byte about scroll data.
-         Default is ``false``. Because this flag is specific to scroll data, this feature is only
-         available if :cpp:func:`isHardConfigured()` is ``false``.
+         Default is ``false``. This feature is always disabled if :cpp:func:`isHardConfigured()`
+         is ``true``.
 
 absoluteModeConfig()
 ^^^^^^^^^^^^^^^^^^^^^^^

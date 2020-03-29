@@ -114,7 +114,7 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
     }
 }
 
-void PinnacleTouch::relativeModeConfig(bool rotate90, bool glideExtend, bool secondaryTap, bool allTaps, bool intellimouse){
+void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool secondaryTap, bool glideExtend, bool intellimouse){
     if (dataMode == PINNACLE_RELATIVE){
         uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!allTaps << 1) | intellimouse;
         rapWrite(PINNACLE_FEED_CONFIG_2, config2);

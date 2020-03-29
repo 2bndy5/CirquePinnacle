@@ -8,7 +8,7 @@ PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
 void setup(){
     Serial.begin(9600);
     tpad.begin();
-    tpad.relativeModeConfig(false, false, true, true);
+    tpad.relativeModeConfig(false, true, true);
 }
 
 void loop(){

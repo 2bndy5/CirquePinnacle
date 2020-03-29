@@ -91,9 +91,9 @@ public:
                             bool invertX=false,
                             bool invertY=false);
     void relativeModeConfig(bool rotate90=false,
-                            bool glideExtend=false,
+                            bool allTaps=true,
                             bool secondaryTap=true,
-                            bool allTaps=false,
+                            bool glideExtend=false,
                             bool intellimouse=false);
     relativeReport reportRelative(bool onlyNew=true);
     absoluteReport reportAbsolute(bool onlyNew=true);
