@@ -84,7 +84,7 @@ void PinnacleTouch::setDataMode(uint8_t mode){
                 rapWrite(PINNACLE_FEED_CONFIG_1, 1 | mode);
             }
         }
-        else{  // for AnyMeas mode
+        else if (mode == PINNACLE_ANYMEAS){
             // disable tracking computations for AnyMeas mode
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
             delay(10);  // wait 10 ms for tracking measurements to expire
@@ -188,7 +188,7 @@ void PinnacleTouch::setSampleRate(uint16_t value){
        if (value  == 200 || value == 300){
             // disable palm & noise compensations
             rapWrite(PINNACLE_FEED_CONFIG_3, 10);
-            uint8_t reloadTimer = value == 300 ? 6 : 0x09;
+            uint8_t reloadTimer = value == 300 ? 6 : 9;
             eraWriteBytes(0x019E, reloadTimer, 2);
             value = 0;
         }
@@ -245,7 +245,7 @@ void PinnacleTouch::setCalibrationMatrix(int16_t* matrix){
     for (uint8_t i = 0; i < 46; i++){  // truncate malformed matrices
         if (i < matrix_size){
             eraWrite(0x01DF + i * 2, (uint8_t)(matrix[i] >> 8));
-            eraWrite(0x01DF + i * 2 + 1, (uint8_t)(matrix[i] & 0xFF));
+            eraWrite(0x01E0 + i * 2, (uint8_t)(matrix[i] & 0xFF));
         }
         else{ // pad out malformed matrices
             eraWriteBytes(0x01DF + i * 2, 0, 2);
@@ -282,7 +282,7 @@ void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
     if (dataMode == PINNACLE_ANYMEAS){
         uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
         anymeas_config[0] = gain | frequency;
-        anymeas_config[1] = (max(1, min(sampleLength / 128, 3)));
+        anymeas_config[1] = max(1, min(sampleLength / 128, 3));
         anymeas_config[2] = muxControl;
         anymeas_config[4] = max(2, min(appertureWidth / 125, 15));
         anymeas_config[9] = controlPowerCount;

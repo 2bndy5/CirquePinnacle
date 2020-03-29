@@ -219,19 +219,21 @@ DataMode
 Setter
    .. cpp:function:: void setDataMode(uint8_t mode)
 
-      Valid input values are :cpp:var:`PINNACLE_RELATIVE` for
-      relative/mouse mode, :cpp:var:`PINNACLE_ABSOLUTE` for
-      absolute positioning mode, or :cpp:var:`PINNACLE_ANYMEAS`
-      (referred to as "AnyMeas" in specification sheet) mode for reading ADC values.
+      This attribute controls which mode the data report is configured for.
+
+      :param uint8_t mode: Valid input values are :cpp:var:`PINNACLE_RELATIVE` for relative/mouse mode,
+         :cpp:var:`PINNACLE_ABSOLUTE` for absolute positioning mode, or :cpp:var:`PINNACLE_ANYMEAS`
+         (referred to as "AnyMeas" in specification sheet) mode for reading ADC values. Invalid input
+         values have no affect.
 
 Getter
    .. cpp:function:: uint8_t getDataMode()
 
       :Returns:
 
-         - ``0`` for Relative mode (AKA mouse mode)
-         - ``1`` for AnyMeas mode (raw ADC measurements)
-         - ``2`` for Absolute mode (X & Y axis positions)
+         - ``0`` (AKA :cpp:var:`PINNACLE_RELATIVE`) for Relative mode (AKA mouse mode)
+         - ``1`` (AKA :cpp:var:`PINNACLE_ANYMEAS`) for AnyMeas mode (raw ADC measurements)
+         - ``2`` (AKA :cpp:var:`PINNACLE_ABSOLUTE`) for Absolute mode (X & Y axis positions)
 
       .. important:: When switching from :cpp:var:`PINNACLE_ANYMEAS` to
          :cpp:var:`PINNACLE_RELATIVE` or
@@ -247,34 +249,39 @@ feedEnabled
 Setter
    .. cpp:function:: void feedEnabled(bool isEnabled)
 
-      This function only applies to :cpp:var:`PINNACLE_RELATIVE`
-      or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
+      This attribute controls if the touch/button event data is reported or not. This function
+      only applies to :cpp:var:`PINNACLE_RELATIVE` or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if
+      `DataMode`_ is set to :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
+
+      :param bool isEnabled: ``true`` enables data reporting, ``false`` disables data reporting.
 
 Getter
    .. cpp:function:: bool isFeedEnabled()
 
-      :Returns: The setting configured by :cpp:func:`feedEnabled()`
+      :Returns:
+         The setting configured by :cpp:func:`feedEnabled()` or ``false`` if `DataMode`_ is set
+         to :cpp:var:`PINNACLE_ANYMEAS`.
 
 isHardConfigured()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: bool isHardConfigured()
 
-      See note about product labeling in `Model Labeling Scheme <index.html#cc>`_. (read only)
+      This function can be used to inform applications about the factory customized hardware
+      configuration. See note about product labeling in `Model Labeling Scheme <index.html#cc>`_.
 
       :Returns:
-         ``true`` if a 470K ohm resistor is populated at the junction labeled "R4"
+         ``true`` if a 470K ohm resistor is populated at the junction labeled "R4"; ``false`` if
+         no resistor is populated at the "R4" junction.
 
 relativeModeConfig()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: void relativeModeConfig(bool rotate90, bool glideExtend, bool secondaryTap, bool allTaps, bool intellimouse)
 
-      This function only applies to :cpp:var:`PINNACLE_RELATIVE`
-      mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS` or
-      :cpp:var:`PINNACLE_ABSOLUTE`, then this function does nothing.
+      Configure settings specific to Relative mode (AKA Mouse mode) data reporting. This function
+      only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set to
+      :cpp:var:`PINNACLE_ANYMEAS` or :cpp:var:`PINNACLE_ABSOLUTE`, then this function does nothing.
 
       :param bool rotate90: Specifies if the axis data is altered for 90 degree rotation before
          reporting it (essentially swaps the axis data). Default is ``false``.
@@ -296,10 +303,9 @@ absoluteModeConfig()
 
    .. cpp:function:: void absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool invertY)
 
-      This function only applies to :cpp:var:`PINNACLE_ABSOLUTE`
-      mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS` or
-      :cpp:var:`PINNACLE_RELATIVE`, then this function does nothing.
+      Configure settings specific to Absolute mode (reports axis positions). This function only
+      applies to :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
+      :cpp:var:`PINNACLE_ANYMEAS` or :cpp:var:`PINNACLE_RELATIVE`, then this function does nothing.
 
       :param int zIdleCount: Specifies the number of empty packets (x-axis, y-axis, and z-axis
          are ``0``) reported (every 10 milliseconds) when there is no touch detected. Defaults
@@ -328,30 +334,49 @@ reportAbsolute()
 
    .. cpp:function:: AbsoluteReport reportAbsolute(bool onlyNew)
 
-      This function only applies to :cpp:var:`PINNACLE_RELATIVE`
-      or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
+      This function will return touch event data from the Pinnacle ASIC (including empty
+      packets on ending of a touch event). This function only applies to
+      :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
       :cpp:var:`PINNACLE_ANYMEAS`, then this function returns ``NULL`` and does nothing.
 
-      :param bool onlyNew: This parameter can be used to ensure the data reported is only new
-         data. Otherwise the data returned can be either old data or new data. The specified
-         ``dataReadyPin`` parameter (specified upon instantiation) is used as the input pin to
-         detect if the data is new.
+      :param bool onlyNew: As ``true``, this parameter can be used to ensure the data reported
+         is only new data. Otherwise (as ``false``) the data returned can be either old data or
+         new data. The specified ``dataReadyPin`` parameter (specified upon instantiation) is
+         used as the input pin to detect if the data is new.
 
       :Returns:
          * ``NULL`` if  the ``only_new`` parameter is set ``true`` and there is no new data to
-           report.
-         * :cpp:type:`absoluteReport` that describes the (touch or
-           button) event
+           report or if the `DataMode`_ is not set to :cpp:var`PINNACLE_ABSOLUTE`.
+         * :cpp:type:`absoluteReport` that describes the (touch or button) event
+
+reportRelative()
+^^^^^^^^^^^^^^^^^^^^^^^
+
+   .. cpp:function:: AbsoluteReport reportRelative(bool onlyNew)
+
+      This function will return touch event data from the Pinnacle ASIC. This function only
+      applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set to
+      :cpp:var:`PINNACLE_ANYMEAS`, then this function returns ``NULL`` and does nothing.
+
+      :param bool onlyNew: As ``true``, this parameter can be used to ensure the data reported
+         is only new data. Otherwise (as ``false``) the data returned can be either old data or
+         new data. The specified ``dataReadyPin`` parameter (specified upon instantiation) is
+         used as the input pin to detect if the data is new.
+
+      :Returns:
+         * ``NULL`` if  the ``only_new`` parameter is set ``true`` and there is no new data to
+           report or if the `DataMode`_ is not set to :cpp:var`PINNACLE_RELATIVE`.
+         * :cpp:type:`relativeReport` that describes the (touch or button) event
 
 clearFlags()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: void clearFlags()
 
-      Use this function to clear the interrupt signal on the "data ready" pin (marked
-      "DR" in the `pinout <index.html#pinout>`_ section). This function is mainly used internally when
-      applicable, but it is left exposed if the application wants to neglect data reports
-      if desired.
+      Use this function to clear the interrupt signal (digital input; active when HIGH) on the
+      "data ready" pin (marked "DR" in the `pinout <index.html#pinout>`_ section). This function
+      is mainly used internally when applicable, but it is left exposed if the application wants
+      to neglect a data report when desirable.
 
 AllowSleep
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -359,11 +384,17 @@ AllowSleep
 Setter
    .. cpp:function:: void setAllowSleep(bool isEnabled)
 
-      Set this attribute to ``true`` if you want the Pinnacle ASIC to enter sleep (low power)
-      mode after about 5 seconds of inactivity (does not apply to AnyMeas mode). While the touch
-      controller is in sleep mode, if a touch event or button press is detected, the Pinnacle
-      ASIC will take about 300 milliseconds to wake up (does not include handling the touch event
-      or button press data).
+      This will specify if the Pinnacle ASIC is allowed to sleep after about 5 seconds
+      of idle activity (no input event).
+
+      :param bool isEnabled: ``true`` if you want the Pinnacle ASIC to enter sleep (low power)
+         mode after about 5 seconds of inactivity (does not apply to AnyMeas mode). ``false`` if
+         you don't want the Pinnacle ASIC to enter sleep mode.
+
+      .. note:: While the touch controller is in sleep mode, if a touch event or button press is
+         detected, the Pinnacle ASIC will take about 300 milliseconds to wake up (does not include
+         handling the touch event or button press data). Remember that releasing a held button is
+         also considered an input event.
 
 Getter
    .. cpp:function:: bool getAllowSleep()
@@ -376,8 +407,10 @@ shutdown
 Setter
    .. cpp:function:: void shutdown(bool isOff)
 
-      ``true`` means powered down (AKA standby mode), and ``false`` means not powered down
-      (Active, Idle, or Sleep mode).
+      This function controls power state of the Pinnacle ASIC that drives the touchpad.
+
+      :param bool isOff: ``true`` means power down (AKA standby mode), and ``false`` means
+         power up (Active, Idle, or Sleep mode).
 
       .. note:: The ASIC will take about 300 milliseconds to complete the transition
          from powered down mode to active mode. No touch events or button presses will be
@@ -394,26 +427,31 @@ SampleRate
 Setter
    .. cpp:function:: void setSampleRate(uint16_t value)
 
-      Valid values are ``100``, ``80``, ``60``, ``40``, ``20``, ``10``. Any other input values
-      automatically set the sample rate to 100 sps (samples per second). Optionally, ``200`` and
-      ``300`` sps can be specified, but using these values automatically disables palm (referred
-      to as "NERD" in the specification sheet) and noise compensations. These higher values are
-      meant for using a stylus with a 2mm diameter tip, while the values less than 200 are meant
-      for a finger or stylus with a 5.25mm diameter tip.
+      This function controls how many samples (of data) per second are taken. This function
+      only applies to :cpp:var:`PINNACLE_RELATIVE` or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise
+      if `DataMode`_ is set to :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
 
-      This function only applies to :cpp:var:`PINNACLE_RELATIVE`
-      or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
+      :param uint16_t value: Valid input values are ``100``, ``80``, ``60``, ``40``, ``20``,
+         ``10``. Any other input values automatically set the sample rate to 100 sps (samples
+         per second). Optionally, ``200`` and ``300`` sps can be specified, but using these
+         optional values automatically disables palm (referred to as "NERD" in the specification
+         sheet) and noise compensations. These higher values are meant for using a stylus with a
+         2mm diameter tip, while the values less than 200 are meant for a finger or stylus with
+         a 5.25mm diameter tip.
 
 Getter
    .. cpp:function:: bool getSampleRate()
 
-      :Returns: The setting configured by :cpp:func:`setSampleRate()`
+      :Returns:
+         The setting configured by :cpp:func:`setSampleRate()` or ``0`` if `DataMode`_ is
+         set to :cpp:var:`PINNACLE_ANYMEAS`.
 
 detectFingerStylus()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: void detectFingerStylus(bool enableFinger, bool enableStylus, uint16_t sampleRate)
+
+      This function will configure the Pinnacle ASIC to detect either finger, stylus, or both.
 
       :param bool enableFinger: ``true`` enables the Pinnacle ASIC's measurements to
          detect if the touch event was caused by a finger or 5.25mm stylus. ``false`` disables
@@ -421,8 +459,8 @@ detectFingerStylus()
       :param bool enableStylus: ``true`` enables the Pinnacle ASIC's measurements to
          detect if the touch event was caused by a 2mm stylus. ``false`` disables this
          feature. Default is ``true``.
-      :param int sampleRate: See the :cpp:func:`setSampleRate()` attribute as this parameter manipulates that
-         attribute.
+      :param int sampleRate: See the `SampleRate`_ attribute as this parameter directly calls that
+         attribute's setter function.
 
       .. tip:: Consider adjusting the ADC matrix's gain to enhance performance/results using
          :cpp:func:`setAdcGain()`
@@ -432,9 +470,9 @@ calibrate()
 
    .. cpp:function:: void calibrate(bool run, bool tap, bool trackError, bool nerd, bool background)
 
-      This function only applies to :cpp:var:`PINNACLE_RELATIVE`
-      or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
+      Set calibration parameters when the Pinnacle ASIC calibrates itself. This function only applies
+      to :cpp:var:`PINNACLE_RELATIVE` or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_
+      is set to :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
 
       :param bool run: If ``true``, this function forces a calibration of the sensor. If ``false``,
          this function just writes the following parameters to the Pinnacle ASIC's "CalConfig1"
@@ -456,41 +494,55 @@ CalibrationMatrix
 Setter
    .. cpp:function:: void setCalibrationMatrix(int16_t* matrix)
 
-      This matrix is not applicable in AnyMeas mode. Use this attribute to compare a prior
-      compensation matrix with a new matrix that was either loaded manually by setting this
-      attribute to an ``array`` of 46 signed 16-bit (short) integers or created internally by calling
-      :cpp:func:`calibrate()` with the ``run`` parameter as ``true``.
+      Manually sets the compensation matrix (array) of the 46 signed short integer values
+      stored in the Pinnacle ASIC's memory that is used for taking measurements. This matrix
+      may not applicable in AnyMeas mode (specification sheet is lacking adequate
+      information).
 
-      .. note:: A paraphrased note from Cirque's Application Note on Comparing compensation
-         matrices:
-
-         If any 16-bit values are above 20K (absolute), it generally indicates a problem with
-         the sensor. If no values exceed 20K, proceed with the data comparison. Compare each
-         16-bit value in one matrix to the corresponding 16-bit value in the other matrix. If
-         the difference between the two values is greater than 500 (absolute), it indicates a
-         change in the environment. Either an object was on the sensor during calibration, or
-         the surrounding conditions (temperature, humidity, or noise level) have changed. One
-         strategy is to force another calibration and compare again, if the values continue to
-         differ by 500, determine whether to use the new data or a previous set of stored data.
-         Another strategy is to average any two values that differ by more than 500 and write
-         this new matrix, with the average values, back into Pinnacle ASIC.
+      :param int16_t* matrix: The array of 46 signed short integers (AKA int16_t) that will
+         be used for compensation calculations when measuring of input events. See note below
+         from the Pinnacle ASIC's application note about deciding what values to use.
 
 Getter
    .. cpp:function:: void getCalibrationMatrix()
 
+      Use this function to compare a prior compensation matrix with a new matrix that was
+      either loaded manually via :cpp:func:`setCalibrationMatrix()` or created internally by
+      calling :cpp:func:`calibrate()` with the ``run`` parameter as ``true``.
+
       :returns:
-         The setting configured by :cpp:func:`setCalibrationMatrix()` or created internally by :cpp:func:`calibrate()` (or after a "power-on-reset" condition).
+         The matrix (array) of 46 signed short integers configured by
+         :cpp:func:`setCalibrationMatrix()` or created internally by :cpp:func:`calibrate()`
+         (or after a "power-on-reset" condition).
+
+.. note:: A paraphrased note from Cirque's Application Note on Comparing compensation
+   matrices:
+
+   If any 16-bit values are above 20K (absolute), it generally indicates a problem with
+   the sensor. If no values exceed 20K, proceed with the data comparison. Compare each
+   16-bit value in one matrix to the corresponding 16-bit value in the other matrix. If
+   the difference between the two values is greater than 500 (absolute), it indicates a
+   change in the environment. Either an object was on the sensor during calibration, or
+   the surrounding conditions (temperature, humidity, or noise level) have changed. One
+   strategy is to force another calibration and compare again, if the values continue to
+   differ by 500, determine whether to use the new data or a previous set of stored data.
+   Another strategy is to average any two values that differ by more than 500 and write
+   this new matrix, with the average values, back into Pinnacle ASIC.
 
 setAdcGain()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: void setAdcGain(uint8_t sensitivity)
 
-      (does not apply to AnyMeas mode).
+      Sets the ADC (Analog to Digital Converter) attenuation (gain ratio) to enhance
+      performance based on the overlay type. This does not apply to AnyMeas mode. However, the
+      input value specified can be written while `DataMode`_ is set to
+      :cpp:var:`PINNACLE_ANYMEAS`, but there is no garauntee that it will "stick" as it may be
+      overidden by the Pinnacle ASIC (specification sheet does not imply either way).
 
-      :param int sensitivity: This int specifies how sensitive the ADC (Analog to Digital
-         Converter) component is. ``0`` means most sensitive, and ``3`` means least sensitive.
-         A value outside this range will default to ``0``.
+      :param uint8_t sensitivity: This byte specifies how sensitive the ADC component is. It
+         must be in range [0, 3]. Where ``0`` means most sensitive, and ``3`` means least
+         sensitive. A value outside this range will default to ``0``.
 
       .. tip:: The official example code from Cirque for a curved overlay uses a value of ``1``.
 
@@ -499,9 +551,12 @@ tuneEdgeSensitivity()
 
    .. cpp:function:: void tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWideZMin)
 
-      This function was ported from Cirque's example code and doesn't seem to have corresponding
-      documentation. I'm having trouble finding a memory map of the Pinnacle ASIC as this
-      function directly alters values in the Pinnacle ASIC's memory. USE AT YOUR OWN RISK!
+      According to the comments in the official example code from Cirque, "Changes thresholds to
+      improve detection of fingers." This function was ported from Cirque's example code and
+      doesn't have corresponding documentation. Thus, the defaults for this function's parameters
+      use the same values found in the official example. I'm unaware of any documented memory map
+      for the Pinnacle ASIC as this function directly alters values in the Pinnacle ASIC's memory.
+      USE THIS AT YOUR OWN RISK!
 
 AnyMeas mode
 *************
@@ -511,8 +566,8 @@ anyMeasModeConfig()
 
    .. cpp:function:: void anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint8_t appertureWidth, uint8_t controlPowerCount)
 
-      Be sure to set the `DataMode`_ attribute to
-      :cpp:var:`PINNACLE_ANYMEAS` before calling this function
+      This function configures the Pinnacle ASIC for taking raw ADC measurements. Be sure to set
+      the `DataMode`_ attribute to :cpp:var:`PINNACLE_ANYMEAS` before calling this function
       otherwise it will do nothing.
 
       :param int gain: Sets the sensitivity of the ADC matrix. Valid values are the constants
@@ -547,17 +602,19 @@ anyMeasModeConfig()
                measuements.
 
          .. tip:: Be aware that allowing the Pinnacle to enter sleep mode after taking
-               measurements will slow consecutive calls to :cpp:func:`measureADC()` as the Pinnacle
-               requires about 100 milliseconds to wake up.
+               measurements will cause a latency in consecutive calls to
+               :cpp:func:`measureADC()` as the Pinnacle requires about 300 milliseconds to wake
+               up.
 
 measure_adc()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
    .. cpp:function:: int16_t measureADC(unsigned int bitsToToggle, unsigned int togglePolarity)
 
-      Be sure to set the `DataMode`_ attribute to
-      :cpp:var:`PINNACLE_ANYMEAS` before calling this function
-      otherwise it will do nothing and return ``0``.
+      This function instigates and returns the measurement (a signed short integer) from the
+      Pinnacle ASIC's ADC (Analog to Digital Converter) matrix (only applies to AnyMeas mode).
+      Be sure to set the `DataMode`_ attribute to :cpp:var:`PINNACLE_ANYMEAS` before calling
+      this function otherwise it will do nothing and return ``0``.
 
       :param int bitsToToggle: This 4-byte integer specifies which bits the Pinnacle touch
          controller should toggle. A bit of ``1`` flags that bit for toggling, and a bit of
@@ -567,9 +624,8 @@ measure_adc()
          positve, and a bit of ``0`` toggles that bit negative.
 
       :Returns:
-         A signed short integer. If `DataMode`_ is not set
-         to :cpp:var:`PINNACLE_ANYMEAS`, then this function returns
-         ``NULL`` and does nothing.
+         A signed short integer. If `DataMode`_ is not set to :cpp:var:`PINNACLE_ANYMEAS`,
+         then this function returns ``0`` and does nothing.
 
       :4-byte Integer Format:
          .. csv-table:: byte 3 (MSByte)
@@ -601,23 +657,25 @@ measure_adc()
          use these 4-byte integer polynomials.
 
          .. note:: Bits 29 and 28 represent the optional implementation of reference capacitors
-               built into the Pinnacle ASIC. To use these capacitors, the
-               corresponding constants
-               (:cpp:var:`PINNACLE_MUX_REF0` and/or
-               :cpp:var:`PINNACLE_MUX_REF1`) must be passed to
+               built into the Pinnacle ASIC. To use these capacitors, the corresponding constants
+               (:cpp:var:`PINNACLE_MUX_REF0` and/or :cpp:var:`PINNACLE_MUX_REF1`) must be passed to
                :cpp:func:`anyMeasModeConfig()` in the ``muxControl`` parameter, and their representative
-               bits must be flagged in both ``bitsToToggle`` & ``togglePolarity`` parameters.
+               bits must be flagged in both the ``bitsToToggle`` & ``togglePolarity`` parameters.
 
 SPI & I2C Interfaces
 ********************
 
    .. cpp:class:: PinnacleTouchSPI : public PinnacleTouch
 
+      Parent class for interfacing with the Pinnacle ASIC via the SPI protocol.
+
       :param int slaveSelectPin: The "slave select" pin output to the Pinnacle ASIC.
 
       See the base class, :cpp:class:`PinnacleTouch` for other instantiating parameters.
 
    .. cpp:class:: PinnacleTouchI2C : public PinnacleTouch
+
+      Parent class for interfacing with the Pinnacle ASIC via the I2C protocol.
 
       :param int slaveAddress: The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
 
