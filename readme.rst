@@ -5,8 +5,7 @@ this is a work in progress... This library has not been tested yet as it is bein
 Introduction
 ============
 
-A CircuitPython driver library that implements the Adafruit_BusDevice library
-for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Circle Trackpads.
+A CircuitPython driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
 
 Supported Features
 ------------------
@@ -33,7 +32,7 @@ Supported Features
 Unsupported Features
 --------------------
 
-* The legacy PS\\2 interface is pretty limited and not accessible by some CircuitPython MCUs.
+* The legacy PS\\2 interface is pretty limited.
   Therefore, it has been neglected in this library.
 * Cirque's circle trackpads ship with the newer non-AG (Advanced Gestures) variant of the
   Pinnacle touch controller ASIC. Thus, this library focuses on the the non-AG variant's
@@ -50,7 +49,7 @@ The above picture is a example of the Cirque GlidePoint circle trackpad. This pi
 is chosen as the test pads (larger copper circular pads) are clearly labeled. The test pads
 are extended to the `12-pin FFC/FPC cable <https://www.mouser.com/Connectors/FFC-FPC/
 FFC-FPC-Jumper-Cables/_/N-axro3?P=1yc8ojpZ1z0wxjx>`_ connector (the white block near the
-bottom). The following table shows how the pins are connected in the `examples <examples.html>`_ (tested on an `ItsyBitys M4 <https://www.adafruit.com/product/3800>`_)
+bottom). The following table shows how the pins are connected in the `examples <examples.html>`_
 
 .. csv-table:: pinout (ordered the same as the FFC/FPC cable connector)
     :header: Label,"MCU pin",Description
@@ -92,3 +91,26 @@ Model Labeling Scheme
     scroll wheels were first introduced), and 180 degree orientation (your application can invert
     the axis data anyway).
   .. [o] stands for the overlay type (0 = none, 1 = adhesive, 2 = flat, 3 = curved)
+
+Sphinx documentation
+-----------------------
+
+Sphinx is used to build the documentation based on rST files. First,
+install dependencies (Python 3 & Python's pip is required):
+
+.. code-block:: shell
+
+    python3 -m venv .env
+    source .env/bin/activate
+    pip install Sphinx sphinx-rtd-theme
+
+Now, once you have the virtual environment activated:
+
+.. code-block:: shell
+
+    cd docs
+    sphinx-build -E -W -b html . _build/html
+
+This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
+view them. It will also (due to -W) error out on any warning. This is a good way to
+locally verify it will pass.

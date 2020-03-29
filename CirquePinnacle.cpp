@@ -30,7 +30,7 @@ bool PinnacleTouch::begin(){
         clearFlags();
         detectFingerStylus(); // detects both finger & stylus; sets sample rate to 100
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
-        setADCGain(0); // most senitive attenuation
+        setAdcGain(0); // most senitive attenuation
         tuneEdgeSensitivity();  // because "why not?"
         uint8_t configs[3] = {0, 1, 2};
         // configs[0] => clears AnyMeas flags
@@ -136,6 +136,7 @@ RelativeReport PinnacleTouch::reportRelative(bool onlyNew){
             return report;
         }
     }
+    return NULL;
 }
 
 AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
@@ -158,6 +159,7 @@ AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
             return report;
         }
     }
+    return NULL;
 }
 
 void PinnacleTouch::clearFlags(){
@@ -264,7 +266,7 @@ int16_t* PinnacleTouch::getCalibrationMatrix(){
     return matrix;
 }
 
-void PinnacleTouch::setADCGain(uint8_t sensitivity){
+void PinnacleTouch::setAdcGain(uint8_t sensitivity){
     if (sensitivity < 0 && sensitivity >= 4){
         sensitivity = 0;  // faulty input defaults to highest sensitivity
     }

@@ -1,6 +1,8 @@
 Relative Mode
 -------------
 
+.. highlight:: cpp
+
 Example to output dta reports in Relative Mode (using SPI protocol).
 
 .. literalinclude:: ../examples/relative_mode.ino

@@ -17,23 +17,7 @@
 */
 #ifndef CirquePinnacle_H
 #define CirquePinnacle_H
-
-// define datatypes
-#ifndef uint8_t
-#define uint8_t unsigned char
-#endif
-#ifndef int8_t
-#define int8_t signed char
-#endif
-#ifndef uint16_t
-#define uint16_t unsigned short
-#endif
-#ifndef int16_t
-#define int16_t signed short
-#endif
-#ifndef uint32_t
-#define uint32_t unsigned int
-#endif
+#include <stdint.h>
 
 // defined Constants for bitwise configuration
 #define PINNACLE_RELATIVE          0x00
@@ -79,20 +63,20 @@
 #define PINNACLE_HCO_ID            0x1F
 
 // data structure for data reports in relative mode
-struct RelativeReport{
+typedef struct _RelativeReport{
     uint8_t buttons;
     int8_t x;
     int8_t y;
     int8_t scroll;
-};
+} relativeReport;
 
 // data structure for data reports in absolute mode
-struct AbsoluteReport{
+typedef struct _AbsoluteReport{
     uint8_t buttons;
     uint16_t x;
     uint16_t y;
     uint8_t z;
-};
+} absoluteReport;
 
 class PinnacleTouch{
 public:
@@ -111,8 +95,8 @@ public:
                             bool secondaryTap=true,
                             bool allTaps=false,
                             bool intellimouse=false);
-    RelativeReport reportRelative(bool onlyNew=true);
-    AbsoluteReport reportAbsolute(bool onlyNew=true);
+    relativeReport reportRelative(bool onlyNew=true);
+    absoluteReport reportAbsolute(bool onlyNew=true);
     void clearFlags();
     void setAllowSleep(bool);
     bool getAllowSleep();
@@ -130,7 +114,7 @@ public:
                     bool background=true);
     void setCalibrationMatrix(int16_t*);
     int16_t* getCalibrationMatrix();
-    void setADCGain(uint8_t);
+    void setAdcGain(uint8_t);
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin=4, uint8_t yAxisWideZMin=3);
     void anyMeasModeConfig( uint8_t gain=PINNACLE_GAIN_200,
                             uint8_t frequency=PINNACLE_FREQ_0,

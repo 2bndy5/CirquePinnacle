@@ -3,23 +3,23 @@
 #define ss_pin 5
 #define dr_pin 6
 
-PinnacleTouchSPI tpad(ss_pin, dr_pin);
+PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
 
-void setup{
+void setup(){
     Serial.begin(9600);
     tpad.begin();
-    tpad.dataMode(PINNACLE_ABSOLUTE);
-    tpad.absoluteModeConfig(zIdleCount=1);
+    tpad.setDataMode(PINNACLE_ABSOLUTE);
+    tpad.absoluteModeConfig(1); // only 1 z-idle packet sent (default is 30)
 }
 
-void loop{
+void loop(){
     if (tpad.available()){
-        RelativeReport report = tpad.relativeReport();
-        Serial.print("Left: ");
+        absoluteReport report = tpad.relativeReport();
+        Serial.print("button1: ");
         Serial.print(report.buttons & 1);
-        Serial.print("Right: ");
+        Serial.print("button2: ");
         Serial.print(report.buttons & 2);
-        Serial.print("Middle: ");
+        Serial.print("button3: ");
         Serial.print(report.buttons & 4);
         Serial.print("X-axis: ");
         Serial.print(report.x);
