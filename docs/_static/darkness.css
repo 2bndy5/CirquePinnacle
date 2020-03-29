@@ -89,7 +89,15 @@
 
 .highlight .go {
   color: #1afd00;
- }
+}
+
+.highlight .s {
+  color: #DD7A10;
+}
+
+.highlight .kt {
+  color: #3161F0;
+}
 
 /* ----------------------table sections---------------------------------------- */
 .wy-table thead,
