@@ -1,17 +1,24 @@
-A library to interface with Cirque Glidepoint circle trackpads on the Arduino Platform.
 
-this is a work in progress... This library has not been tested yet as it is being ported from `CircuitPython_Cirque_Pinnacle <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_. Be aware that this documentation is UNDER CONSTRUCTION!
+.. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
+  :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
+  :alt: Documentation Status
+
 
 Introduction
 ============
 
-A CircuitPython driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
+A driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
+
+.. warning:: this is a work in progress... This library has not been tested yet as it is
+  being ported from `CircuitPython_Cirque_Pinnacle
+  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
+
 
 Supported Features
 ------------------
 
-* Use SPI or I2C bus protocols to interface with the Pinnacle touch controller ASIC (Application
-  Specific Integrated Circuit).
+* Use SPI or I2C bus protocols to interface with the Pinnacle ASIC (Application
+  Specific Integrated Circuit) touch controller.
 * Relative mode data reporting (AKA Mouse mode) with optional tap detection.
 * Absolute mode data reporting (x, y, & z axis positions).
 * AnyMeas mode data reporting. This mode exposes the ADC (Analog to Digital Converter) values and is
