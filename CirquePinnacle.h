@@ -98,8 +98,8 @@ public:
     relativeReport reportRelative(bool onlyNew=true);
     absoluteReport reportAbsolute(bool onlyNew=true);
     void clearFlags();
-    void setAllowSleep(bool);
-    bool getAllowSleep();
+    void allowSleep(bool);
+    bool isAllowSleep();
     void shutdown(bool);
     bool isShutdown();
     void setSampleRate(uint16_t);

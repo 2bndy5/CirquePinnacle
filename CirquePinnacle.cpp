@@ -98,7 +98,9 @@ uint8_t PinnacleTouch::getDataMode(){
 }
 
 bool PinnacleTouch::isHardConfigured(){
-    return (bool)rapRead(PINNACLE_HCO_ID);
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        return (bool)rapRead(PINNACLE_HCO_ID);
+    }
 }
 
 bool PinnacleTouch::available(){
@@ -163,24 +165,35 @@ AbsoluteReport PinnacleTouch::reportAbsolute(bool onlyNew){
 }
 
 void PinnacleTouch::clearFlags(){
-    rapWrite(PINNACLE_SYS_CONFIG, 0);
-    delayMicroseconds(50);
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        rapWrite(PINNACLE_SYS_CONFIG, 0);
+        delayMicroseconds(50);
+    }
 }
 
-void PinnacleTouch::setAllowSleep(bool isEnabled){
-    rapWrite(PINNACLE_SYS_CONFIG, (rapRead(PINNACLE_SYS_CONFIG) & 0xFB) | (isEnabled << 2));
+void PinnacleTouch::allowSleep(bool isEnabled){
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        rapWrite(PINNACLE_SYS_CONFIG, (rapRead(PINNACLE_SYS_CONFIG) & 0xFB) | (isEnabled << 2));
+    }
 }
 
-bool PinnacleTouch::getAllowSleep(){
-    return (bool)(rapRead(PINNACLE_SYS_CONFIG) & 4);
+bool PinnacleTouch::isAllowSleep(){
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        return (bool)(rapRead(PINNACLE_SYS_CONFIG) & 4);
+    }
 }
 
 void PinnacleTouch::shutdown(bool isOff){
-    rapWrite(PINNACLE_SYS_CONFIG, (rapRead(PINNACLE_SYS_CONFIG) & 0xFD) | (isOff << 1));
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        rapWrite(PINNACLE_SYS_CONFIG, (rapRead(PINNACLE_SYS_CONFIG) & 0xFD) | (isOff << 1));
+    }
 }
 
 bool PinnacleTouch::isShutdown(){
-    return (bool)(rapRead(PINNACLE_SYS_CONFIG) & 2);
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        return (bool)(rapRead(PINNACLE_SYS_CONFIG) & 2);
+    }
+    return false;
 }
 
 void PinnacleTouch::setSampleRate(uint16_t value){
@@ -237,45 +250,53 @@ void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
 }
 
 void PinnacleTouch::setCalibrationMatrix(int16_t* matrix){
-    bool prevFeedState = isFeedEnabled();
-    if (prevFeedState){
-        feedEnabled(false);  // this will save time on subsequent eraWrite calls
-    }
-    uint8_t matrix_size = sizeof(matrix) / sizeof(int16_t);
-    for (uint8_t i = 0; i < 46; i++){  // truncate malformed matrices
-        if (i < matrix_size){
-            eraWrite(0x01DF + i * 2, (uint8_t)(matrix[i] >> 8));
-            eraWrite(0x01E0 + i * 2, (uint8_t)(matrix[i] & 0xFF));
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        bool prevFeedState = isFeedEnabled();
+        if (prevFeedState){
+            feedEnabled(false);  // this will save time on subsequent eraWrite calls
         }
-        else{ // pad out malformed matrices
-            eraWriteBytes(0x01DF + i * 2, 0, 2);
+        uint8_t matrix_size = sizeof(matrix) / sizeof(int16_t);
+        for (uint8_t i = 0; i < 46; i++){  // truncate malformed matrices
+            if (i < matrix_size){
+                eraWrite(0x01DF + i * 2, (uint8_t)(matrix[i] >> 8));
+                eraWrite(0x01E0 + i * 2, (uint8_t)(matrix[i] & 0xFF));
+            }
+            else{ // pad out malformed matrices
+                eraWriteBytes(0x01DF + i * 2, 0, 2);
+            }
         }
-    }
-    if (prevFeedState){
-        feedEnabled(prevFeedState);  // resume previous feed state
+        if (prevFeedState){
+            feedEnabled(prevFeedState);  // resume previous feed state
+        }
     }
 }
 
 int16_t* PinnacleTouch::getCalibrationMatrix(){
-    int16_t matrix[46] = {};
-    uint8_t* data = eraReadBytes(0x01DF, 92);
-    for(uint8_t i = 0; i < 92; i += 2){
-        matrix[i / 2] = (int16_t)data[i] << 8;
-        matrix[i / 2] |= (int16_t)(data[i + 1]);
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        int16_t matrix[46] = {};
+        uint8_t* data = eraReadBytes(0x01DF, 92);
+        for(uint8_t i = 0; i < 92; i += 2){
+            matrix[i / 2] = (int16_t)data[i] << 8;
+            matrix[i / 2] |= (int16_t)(data[i + 1]);
+        }
+        return matrix;
     }
-    return matrix;
 }
 
 void PinnacleTouch::setAdcGain(uint8_t sensitivity){
-    if (sensitivity < 0 && sensitivity >= 4){
-        sensitivity = 0;  // faulty input defaults to highest sensitivity
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        if (sensitivity < 0 && sensitivity >= 4){
+            sensitivity = 0;  // faulty input defaults to highest sensitivity
+        }
+        eraWrite(0x0187, (eraRead(0x0187) & 0x3F) | (sensitivity << 6));
     }
-    eraWrite(0x0187, (eraRead(0x0187) & 0x3F) | (sensitivity << 6));
 }
 
 void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWideZMin){
-    eraWrite(0x0149, xAxisWideZMin);
-    eraWrite(0x0168, yAxisWideZMin);
+    if (dataMode <= PINNACLE_ABSOLUTE){
+        eraWrite(0x0149, xAxisWideZMin);
+        eraWrite(0x0168, yAxisWideZMin);
+    }
 }
 
 void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint8_t appertureWidth, uint8_t controlPowerCount){

@@ -29,15 +29,15 @@ Relative Data
    .. [1a] The returned button data is a byte in which each bit represents a button.
       The bit to button order is as follows:
 
-      0. [LSB] Button 1 (thought of as Left mouse button). If ``allTaps`` parameter is passed as
-         ``true`` when calling :cpp:func:`relativeModeConfig()`, a single tap will be reflected here.
-      1. Button 2 (thought of as Right mouse button). If ``allTaps`` and ``secondaryTap`` parameters
-         are passed as ``true`` when calling :cpp:func:`relativeModeConfig()`, a single tap in the
-         perspective top-left-most corner will be reflected here (secondary taps are constantly
-         disabled if :cpp:func:`isHardConfigured()` returns ``true``). Note that the top-left-most
-         corner can be perspectively moved if ``rotate90`` parameter is passed as ``true`` when
-         calling :cpp:func:`relativeModeConfig()`.
-      2. Button 3 (thought of as Middle mouse or scroll wheel button)
+         0. [LSB] Button 1 (thought of as Left mouse button). If ``allTaps`` parameter is passed as
+            ``true`` when calling :cpp:func:`relativeModeConfig()`, a single tap will be reflected here.
+         1. Button 2 (thought of as Right mouse button). If ``allTaps`` and ``secondaryTap`` parameters
+            are passed as ``true`` when calling :cpp:func:`relativeModeConfig()`, a single tap in the
+            perspective top-left-most corner will be reflected here (secondary taps are constantly
+            disabled if :cpp:func:`isHardConfigured()` returns ``true``). Note that the top-left-most
+            corner can be perspectively moved if ``rotate90`` parameter is passed as ``true`` when
+            calling :cpp:func:`relativeModeConfig()`.
+         2. Button 3 (thought of as Middle mouse or scroll wheel button)
 
    .. [2] In Relative/Mouse mode the scroll wheel data is only reported if the
       ``intellimouse`` parameter is passed as ``true`` to :cpp:func:`relativeModeConfig()`.
@@ -57,16 +57,15 @@ Absolute Data
                :header: datatype,name,range
 
                uint8_t,buttons,"[0, 7] [1b]_"
-               uint16_t,x,"-128 |LessEq| X |LessEq| 127"
-               uint16_t,y,"-128 |LessEq| Y |LessEq| 127"
+               uint16_t,x,"128 |LessEq| X |LessEq| 1920"
+               uint16_t,y,"64 |LessEq| Y |LessEq| 1472"
                uint8_t,z,"depends on sensitivity"
-
    .. [1b] The returned button data is a byte in which each bit represents a button.
       The bit to button order is as follows:
 
-      0. [LSB] Button 1
-      1. Button 2
-      2. Button 3
+         0. [LSB] Button 1
+         1. Button 2
+         2. Button 3
 
 Accepted Constants
 ------------------
@@ -203,15 +202,15 @@ Constructor & begin()
       The abstract base class for driving the Pinnacle ASIC.
 
       :param uint8_t dataReadyPin: The input pin connected to the Pinnacle ASIC's "Data
-         Ready" pin. If this parameter is not specified, then the SW_DR (software data ready) flag
-         of the STATUS register is used to detirmine if the data being reported is new.
+         Ready" pin.
 
    .. cpp:function:: bool begin()
 
       :Returns:
-
-         * ``true`` if the Pinnacle ASIC was setup and configured properly (with data feed enabled using Relative mode).
-         * ``false`` if the Pinnacle ASIC was unresponsive for some reason (all further operations will be nullified by setting `DataMode`_ to ``0xFF``).
+         * ``true`` if the Pinnacle ASIC was setup and configured properly (with data
+           feed enabled using Relative mode).
+         * ``false`` if the Pinnacle ASIC was unresponsive for some reason (all further
+           operations will be nullified by setting `DataMode`_ to ``0xFF``).
 
 DataMode
 *************************
@@ -219,7 +218,7 @@ DataMode
 Setter
    .. cpp:function:: void setDataMode(uint8_t mode)
 
-      This attribute controls which mode the data report is configured for.
+      This function controls which mode the data report is configured for.
 
       :param uint8_t mode: Valid input values are :cpp:var:`PINNACLE_RELATIVE` for relative/mouse mode,
          :cpp:var:`PINNACLE_ABSOLUTE` for absolute positioning mode, or :cpp:var:`PINNACLE_ANYMEAS`
@@ -230,15 +229,13 @@ Getter
    .. cpp:function:: uint8_t getDataMode()
 
       :Returns:
-
          - ``0`` (AKA :cpp:var:`PINNACLE_RELATIVE`) for Relative mode (AKA mouse mode)
          - ``1`` (AKA :cpp:var:`PINNACLE_ANYMEAS`) for AnyMeas mode (raw ADC measurements)
          - ``2`` (AKA :cpp:var:`PINNACLE_ABSOLUTE`) for Absolute mode (X & Y axis positions)
 
-      .. important:: When switching from :cpp:var:`PINNACLE_ANYMEAS` to
-         :cpp:var:`PINNACLE_RELATIVE` or
-         :cpp:var:`PINNACLE_ABSOLUTE` all configurations are reset, and
-         must be re-configured by using  :cpp:func:`absoluteModeConfig()` or :cpp:func:`relativeModeConfig()`.
+      .. important:: When switching from :cpp:var:`PINNACLE_ANYMEAS` to :cpp:var:`PINNACLE_RELATIVE`
+         or :cpp:var:`PINNACLE_ABSOLUTE` all configurations are reset, and must be re-configured by
+         using  :cpp:func:`absoluteModeConfig()` or :cpp:func:`relativeModeConfig()`.
 
 Relative or Absolute mode
 *************************
@@ -253,7 +250,7 @@ Setter
       only applies to :cpp:var:`PINNACLE_RELATIVE` or :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if
       `DataMode`_ is set to :cpp:var:`PINNACLE_ANYMEAS`, then this function will do nothing.
 
-      :param bool isEnabled: ``true`` enables data reporting, ``false`` disables data reporting.
+      :param bool isEnabled: ``true`` enables data reporting; ``false`` disables data reporting.
 
 Getter
    .. cpp:function:: bool isFeedEnabled()
@@ -326,8 +323,7 @@ available()
       is set to.
 
       :Returns:
-         * ``true`` if there is new data to report.
-         * ``false`` if there is no new data to report.
+         ``true`` if there is new data to report; ``false`` if there is no new data to report.
 
 reportAbsolute()
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -382,7 +378,7 @@ AllowSleep
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 Setter
-   .. cpp:function:: void setAllowSleep(bool isEnabled)
+   .. cpp:function:: void allowSleep(bool isEnabled)
 
       This will specify if the Pinnacle ASIC is allowed to sleep after about 5 seconds
       of idle activity (no input event).
@@ -397,9 +393,9 @@ Setter
          also considered an input event.
 
 Getter
-   .. cpp:function:: bool getAllowSleep()
+   .. cpp:function:: bool isAllowSleep()
 
-      :Returns: The setting configured by :cpp:func:`setAllowSleep()`
+      :Returns: The setting configured by :cpp:func:`allowSleep()`
 
 shutdown
 ^^^^^^^^^^^^^^^^^^^^^^^
