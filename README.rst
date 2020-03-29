@@ -19,15 +19,16 @@ Supported Features
   Pinnacle (1CA027), thus this is a rather experimental mode.
 * Hardware input buttons' states included in data reports. There are 3 button input lines on
   the Cirque circle trackpads -- see `Pinout`_ section.
-* Ability to identify finger & stylus or only stylus or only finger touch events. The Cirque circle
-  trackpads are natively capable of measuring only 1 touch point per event.
+* Configure measurements for finger or stylus (or automatically detirmine either) touch
+  events. The Cirque circle trackpads are natively capable of measuring only 1 touch
+  point per event.
 * Download/upload the underlying compensation matrix for ADC measurements.
 * Adjust the ADC matrix gain (sensitivity).
 
 .. tip:: The SPI protocol is the preferred method for interfacing with more than 1 Cirque circle
     trackpad from the same MCU (microcontroller). The Cirque Pinnacle does not allow
     changing the I2C slave device address (via software); this means only 1 Cirque circle trackpad
-    can be accessed over the I2C bus at a time.
+    can be accessed over the I2C bus in the lifecycle of an application.
 
 Unsupported Features
 --------------------
