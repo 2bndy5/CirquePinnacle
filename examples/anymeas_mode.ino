@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "CirquePinnacle.h"
 
 #define ss_pin 5

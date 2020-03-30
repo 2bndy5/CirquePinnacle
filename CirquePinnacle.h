@@ -80,7 +80,7 @@ typedef struct _AbsoluteReport{
 
 class PinnacleTouch{
 public:
-    PinnacleTouch(uint8_t dataReadyPin);
+    PinnacleTouch(uint8_t);
     void feedEnabled(bool);
     bool isFeedEnabled();
     void setDataMode(uint8_t);
@@ -95,8 +95,8 @@ public:
                             bool secondaryTap=true,
                             bool glideExtend=false,
                             bool intellimouse=false);
-    relativeReport reportRelative(bool onlyNew=true);
-    absoluteReport reportAbsolute(bool onlyNew=true);
+    void reportRelative(relativeReport* report);
+    void reportAbsolute(absoluteReport* report);
     void clearFlags();
     void allowSleep(bool);
     bool isAllowSleep();
@@ -113,52 +113,52 @@ public:
                     bool nerd=true,
                     bool background=true);
     void setCalibrationMatrix(int16_t*);
-    int16_t* getCalibrationMatrix();
+    void getCalibrationMatrix(int16_t*);
     void setAdcGain(uint8_t);
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin=4, uint8_t yAxisWideZMin=3);
     void anyMeasModeConfig( uint8_t gain=PINNACLE_GAIN_200,
                             uint8_t frequency=PINNACLE_FREQ_0,
                             uint32_t sampleLength=512,
                             uint8_t muxControl=PINNACLE_MUX_PNP,
-                            uint8_t appertureWidth=500,
+                            uint32_t appertureWidth=500,
                             uint8_t controlPowerCount=1);
     int16_t measureADC(unsigned int, unsigned int);
 private:
     void eraWrite(uint16_t, uint8_t);
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);
-    uint8_t eraRead(uint16_t);
-    uint8_t* eraReadBytes(uint16_t, uint8_t);
+    void eraRead(uint16_t, uint8_t*);
+    void eraReadBytes(uint16_t, uint8_t*, uint8_t);
+    uint8_t _dataMode;
+    uint8_t _dataReady;
+    virtual void rapWrite(uint8_t, uint8_t) = 0;
+    virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;
+    virtual void rapRead(uint8_t, uint8_t*) = 0;
+    virtual void rapReadBytes(uint8_t, uint8_t*, uint8_t) = 0;
 protected:
     bool begin();
-    virtual void rapWrite(uint8_t, uint8_t);
-    virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
-    virtual uint8_t rapRead(uint8_t);
-    virtual uint8_t* rapReadBytes(uint8_t, uint8_t);
-    uint8_t dataReady;
-    uint8_t dataMode;
 };
 
 class PinnacleTouchSPI: public PinnacleTouch{
 public:
-    PinnacleTouchSPI(uint8_t dataReadyPin, uint8_t slaveSelectPin);
+    PinnacleTouchSPI(uint8_t, uint8_t);
     bool begin();
 private:
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
-    uint8_t rapRead(uint8_t);
-    uint8_t* rapReadBytes(uint8_t, uint8_t);
+    void rapRead(uint8_t, uint8_t*);
+    void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     uint8_t _slaveSelect;
 };
 
 class PinnacleTouchI2C: public PinnacleTouch{
 public:
-    PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress=0x2A);
+    PinnacleTouchI2C(uint8_t, uint8_t slaveAddress=0x2A);
     bool begin();
 private:
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
-    uint8_t rapRead(uint8_t);
-    uint8_t* rapReadBytes(uint8_t, uint8_t);
+    void rapRead(uint8_t, uint8_t*);
+    void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     uint8_t _slaveAddress;
 };
 #endif
