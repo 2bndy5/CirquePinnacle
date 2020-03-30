@@ -232,6 +232,7 @@ Getter
          - ``0`` (AKA :cpp:var:`PINNACLE_RELATIVE`) for Relative mode (AKA mouse mode)
          - ``1`` (AKA :cpp:var:`PINNACLE_ANYMEAS`) for AnyMeas mode (raw ADC measurements)
          - ``2`` (AKA :cpp:var:`PINNACLE_ABSOLUTE`) for Absolute mode (X & Y axis positions)
+         - ``255`` if :cpp:func:`begin()` returns ``false`` (failed to initialize the trackpad)
 
       .. important:: When switching from :cpp:var:`PINNACLE_ANYMEAS` to :cpp:var:`PINNACLE_RELATIVE`
          or :cpp:var:`PINNACLE_ABSOLUTE` all configurations are reset, and must be re-configured by
@@ -327,41 +328,29 @@ available()
 reportAbsolute()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: AbsoluteReport reportAbsolute(bool onlyNew)
+   .. cpp:function:: AbsoluteReport reportAbsolute(absoluteReport* report)
 
-      This function will return touch event data from the Pinnacle ASIC (including empty
-      packets on ending of a touch event). This function only applies to
+      This function will fetch touch (and button) event data from the Pinnacle ASIC (including
+      empty packets on ending of a touch/button event). This function only applies to
       :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS`, then this function returns ``NULL`` and does nothing.
+      :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param bool onlyNew: As ``true``, this parameter can be used to ensure the data reported
-         is only new data. Otherwise (as ``false``) the data returned can be either old data or
-         new data. The specified ``dataReadyPin`` parameter (specified upon instantiation) is
-         used as the input pin to detect if the data is new.
-
-      :Returns:
-         * ``NULL`` if  the ``only_new`` parameter is set ``true`` and there is no new data to
-           report or if the `DataMode`_ is not set to :cpp:var`PINNACLE_ABSOLUTE`.
-         * :cpp:type:`absoluteReport` that describes the (touch or button) event
+      :param absoluteReport* report: A reference pointer (declared variable of datatype
+         :cpp:type:`absoluteReport`) for storing the data that describes the touch (and button)
+         event.
 
 reportRelative()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: AbsoluteReport reportRelative(bool onlyNew)
+   .. cpp:function:: AbsoluteReport reportRelative(relativeReport* report)
 
-      This function will return touch event data from the Pinnacle ASIC. This function only
-      applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set to
-      :cpp:var:`PINNACLE_ANYMEAS`, then this function returns ``NULL`` and does nothing.
+      This function will fetch touch (and button) event data from the Pinnacle ASIC. This
+      function only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set
+      to :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param bool onlyNew: As ``true``, this parameter can be used to ensure the data reported
-         is only new data. Otherwise (as ``false``) the data returned can be either old data or
-         new data. The specified ``dataReadyPin`` parameter (specified upon instantiation) is
-         used as the input pin to detect if the data is new.
-
-      :Returns:
-         * ``NULL`` if  the ``only_new`` parameter is set ``true`` and there is no new data to
-           report or if the `DataMode`_ is not set to :cpp:var`PINNACLE_RELATIVE`.
-         * :cpp:type:`relativeReport` that describes the (touch or button) event
+      :param relativeReport* report: A reference pointer (declared variable of datatype
+         :cpp:type:`relativeReport`) for storing the data that describes the touch (and button)
+         event.
 
 clearFlags()
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -499,16 +488,15 @@ Setter
          from the Pinnacle ASIC's application note about deciding what values to use.
 
 Getter
-   .. cpp:function:: void getCalibrationMatrix()
+   .. cpp:function:: void getCalibrationMatrix(int16_t* matrix)
 
       Use this function to compare a prior compensation matrix with a new matrix that was
       either loaded manually via :cpp:func:`setCalibrationMatrix()` or created internally by
       calling :cpp:func:`calibrate()` with the ``run`` parameter as ``true``.
 
-      :returns:
-         The matrix (array) of 46 signed short integers configured by
-         :cpp:func:`setCalibrationMatrix()` or created internally by :cpp:func:`calibrate()`
-         (or after a "power-on-reset" condition).
+      :param int16_t* matrix: A reference pointer (declared array of 46 signed short integers)
+         for storing the compensation matrix configured by :cpp:func:`setCalibrationMatrix()`
+         or created internally by :cpp:func:`calibrate()` (or after a "power-on-reset" condition).
 
 .. note:: A paraphrased note from Cirque's Application Note on Comparing compensation
    matrices:
