@@ -2,8 +2,6 @@
 PinnacleTouch API
 ==================
 
-   .. cpp:namespace:: PinnacleTouch
-
 .. |LessEq| unicode:: U+2264
 
 Datatypes for data reports
@@ -92,11 +90,6 @@ Datatypes inherent
    .. cpp:type:: uint32_t
 
       An alias to ``unsigned int``
-
-   .. cpp:type:: bool
-
-      A datatype for 1-byte varibles whose value can only be ``true`` or ``false``
-
 
 Accepted Constants
 ------------------
@@ -228,12 +221,16 @@ PinnacleTouch
 Constructor & begin()
 *************************
 
+   .. cpp:namespace:: PinnacleTouch
+
    .. cpp:class:: PinnacleTouch
 
       The abstract base class for driving the Pinnacle ASIC.
 
-      :param uint8_t dataReadyPin: The input pin connected to the Pinnacle ASIC's "Data
-         Ready" pin.
+      .. cpp:function:: PinnacleTouch(uint8_t dataReadyPin)
+
+         :param uint8_t dataReadyPin: The input pin connected to the Pinnacle ASIC's "Data
+            Ready" pin.
 
    .. cpp:function:: bool begin()
 
@@ -366,7 +363,7 @@ reportAbsolute()
       :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
       :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param absoluteReport *report: A reference pointer (declared variable of datatype
+      :param absoluteReport* report: A reference pointer (declared variable of datatype
          :cpp:type:`absoluteReport`) for storing the data that describes the touch (and button)
          event.
 
@@ -379,7 +376,7 @@ reportRelative()
       function only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set
       to :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param relativeReport *report: A reference pointer (declared variable of datatype
+      :param relativeReport* report: A reference pointer (declared variable of datatype
          :cpp:type:`relativeReport`) for storing the data that describes the touch (and button)
          event.
 
@@ -509,12 +506,12 @@ CalibrationMatrix
 Setter
    .. cpp:function:: void setCalibrationMatrix(int16_t* matrix)
 
-      Manually sets the compensation matrix (array) of the 46 signed short integer values
+      Manually sets the compensation matrix (array) of the 46 :cpp:type:`int16_t` integer values
       stored in the Pinnacle ASIC's memory that is used for taking measurements. This matrix
       may not applicable in AnyMeas mode (specification sheet is lacking adequate
       information).
 
-      :param int16_t *matrix: The array of 46 signed short integers (AKA int16_t) that will
+      :param int16_t* matrix: The array of 46 :cpp:type:`int16_t` integers that will
          be used for compensation calculations when measuring of input events. See note below
          from the Pinnacle ASIC's application note about deciding what values to use.
 
@@ -525,7 +522,7 @@ Getter
       either loaded manually via :cpp:func:`setCalibrationMatrix()` or created internally by
       calling :cpp:func:`calibrate()` with the ``run`` parameter as ``true``.
 
-      :param int16_t *matrix: A reference pointer (declared array of 46 signed short integers)
+      :param int16_t* matrix: A reference pointer (declared array of 46 :cpp:type:`int16_t` integers)
          for storing the compensation matrix configured by :cpp:func:`setCalibrationMatrix()`
          or created internally by :cpp:func:`calibrate()` (or after a "power-on-reset" condition).
 
@@ -679,18 +676,26 @@ measure_adc()
 SPI & I2C Interfaces
 ********************
 
+   .. cpp:namespace:: PinnacleTouchSPI
+
    .. cpp:class:: PinnacleTouchSPI : public PinnacleTouch
 
-      Parent class for interfacing with the Pinnacle ASIC via the SPI protocol.
+      Derived class for interfacing with the Pinnacle ASIC via the SPI protocol.
 
-      :param int slaveSelectPin: The "slave select" pin output to the Pinnacle ASIC.
+      .. cpp:function:: PinnacleTouchSPI(uint8_t dataReadyPin, uint8_t slaveSelectPin)
 
-      See the base class, :cpp:class:`PinnacleTouch` for other instantiating parameters.
+         :param uint8_t slaveSelectPin: The "slave select" pin output to the Pinnacle ASIC.
+
+         See the abstract base class, :cpp:class:`~PinnacleTouch::PinnacleTouch` for other instantiating parameters.
+
+   .. cpp:namespace:: PinnacleTouchI2C
 
    .. cpp:class:: PinnacleTouchI2C : public PinnacleTouch
 
-      Parent class for interfacing with the Pinnacle ASIC via the I2C protocol.
+      Derived class for interfacing with the Pinnacle ASIC via the I2C protocol.
 
-      :param int slaveAddress: The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
+      .. cpp:function:: PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress)
 
-      See the base class, :cpp:class:`PinnacleTouch` for other instantiating parameters.
+         :param uint8_t slaveAddress: The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
+
+         See the abstract base class, :cpp:class:`~PinnacleTouch::PinnacleTouch` for other instantiating parameters.
