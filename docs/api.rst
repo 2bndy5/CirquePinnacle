@@ -67,6 +67,37 @@ Absolute Data
          1. Button 2
          2. Button 3
 
+Datatypes inherent
+--------------------------
+
+   These datatypes are commonly used for cross-platform development in c++. This library
+   does not define them as they are included in the build process with "stdlib.h".
+
+   .. cpp:type:: int8_t
+
+      An alias to ``signed char``
+
+   .. cpp:type:: int16_t
+
+      An alias to ``short``
+
+   .. cpp:type:: uint8_t
+
+      An alias to ``unsigned char``
+
+   .. cpp:type:: uint16_t
+
+      An alias to ``unsigned short``
+
+   .. cpp:type:: uint32_t
+
+      An alias to ``unsigned int``
+
+   .. cpp:type:: bool
+
+      A datatype for 1-byte varibles whose value can only be ``true`` or ``false``
+
+
 Accepted Constants
 ------------------
 
@@ -335,7 +366,7 @@ reportAbsolute()
       :cpp:var:`PINNACLE_ABSOLUTE` mode, otherwise if `DataMode`_ is set to
       :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param absoluteReport* report: A reference pointer (declared variable of datatype
+      :param absoluteReport *report: A reference pointer (declared variable of datatype
          :cpp:type:`absoluteReport`) for storing the data that describes the touch (and button)
          event.
 
@@ -348,7 +379,7 @@ reportRelative()
       function only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set
       to :cpp:var:`PINNACLE_ANYMEAS`, then this function does nothing.
 
-      :param relativeReport* report: A reference pointer (declared variable of datatype
+      :param relativeReport *report: A reference pointer (declared variable of datatype
          :cpp:type:`relativeReport`) for storing the data that describes the touch (and button)
          event.
 
@@ -483,7 +514,7 @@ Setter
       may not applicable in AnyMeas mode (specification sheet is lacking adequate
       information).
 
-      :param int16_t* matrix: The array of 46 signed short integers (AKA int16_t) that will
+      :param int16_t *matrix: The array of 46 signed short integers (AKA int16_t) that will
          be used for compensation calculations when measuring of input events. See note below
          from the Pinnacle ASIC's application note about deciding what values to use.
 
@@ -494,7 +525,7 @@ Getter
       either loaded manually via :cpp:func:`setCalibrationMatrix()` or created internally by
       calling :cpp:func:`calibrate()` with the ``run`` parameter as ``true``.
 
-      :param int16_t* matrix: A reference pointer (declared array of 46 signed short integers)
+      :param int16_t *matrix: A reference pointer (declared array of 46 signed short integers)
          for storing the compensation matrix configured by :cpp:func:`setCalibrationMatrix()`
          or created internally by :cpp:func:`calibrate()` (or after a "power-on-reset" condition).
 
