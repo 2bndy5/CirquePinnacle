@@ -3,7 +3,7 @@ Relative Mode
 
 .. highlight:: cpp
 
-Example to output dta reports in Relative Mode (using SPI protocol).
+Example to output data reports in Relative Mode (using SPI protocol).
 
 .. literalinclude:: ../examples/relative_mode.ino
     :caption: examples/relative_mode.ino
@@ -12,7 +12,7 @@ Example to output dta reports in Relative Mode (using SPI protocol).
 Absolute Mode
 -------------
 
-Example to output dta reports in Absolute Mode (using SPI protocol).
+Example to output data reports in Absolute Mode (using SPI protocol).
 
 .. literalinclude:: ../examples/absolute_mode.ino
     :caption: examples/absolute_mode.ino
@@ -21,7 +21,7 @@ Example to output dta reports in Absolute Mode (using SPI protocol).
 AnyMeas Mode
 ------------
 
-Example to output dta reports in AnyMeas Mode (using SPI protocol).
+Example to output data reports in AnyMeas Mode (using SPI protocol).
 
 
 .. literalinclude:: ../examples/anymeas_mode.ino
