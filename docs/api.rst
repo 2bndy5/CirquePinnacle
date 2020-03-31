@@ -298,7 +298,8 @@ isHardConfigured()
 
       :Returns:
          ``true`` if a 470K ohm resistor is populated at the junction labeled "R4"; ``false`` if
-         no resistor is populated at the "R4" junction.
+         no resistor is populated at the "R4" junction. This function will also return ``false``
+         if :cpp:func:`begin()` failed to initialize the trackpad.
 
 relativeModeConfig()
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -411,7 +412,9 @@ Setter
 Getter
    .. cpp:function:: bool isAllowSleep()
 
-      :Returns: The setting configured by :cpp:func:`allowSleep()`
+      :Returns:
+         The setting configured by :cpp:func:`allowSleep()` or ``false`` if :cpp:func:`begin()`
+         failed to initialize the trackpad.
 
 shutdown
 ^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,3 +1,10 @@
+#######################################
+# Syntax Coloring Map For Mouse
+#######################################
+
+#######################################
+# Constants (LITERAL1)
+#######################################
 PINNACLE_FIRMWARE_ID        LITERAL1
 PINNACLE_STATUS             LITERAL1
 PINNACLE_SYS_CONFIG         LITERAL1
@@ -37,10 +44,18 @@ PINNACLE_MUX_PNP            LITERAL1
 PINNACLE_MUX_NPN            LITERAL1
 PINNACLE_CRTL_REPEAT        LITERAL1
 PINNACLE_CRTL_PWR_IDLE      LITERAL1
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
 absoluteReport              KEYWORD1
 relativeReport              KEYWORD1
 PinnacleTouchSPI            KEYWORD1
 PinnacleTouchI2C            KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
 begin                       KEYWORD2
 feedEnabled                 KEYWORD2
 isFeedEnabled               KEYWORD2
@@ -51,8 +66,8 @@ available                   KEYWORD2
 absoluteModeConfig          KEYWORD2
 relativeModeConfig          KEYWORD2
 clearFlags                  KEYWORD2
-allowSleep               KEYWORD2
-isAllowSleep               KEYWORD2
+allowSleep                  KEYWORD2
+isAllowSleep                KEYWORD2
 shutdown                    KEYWORD2
 isShutdown                  KEYWORD2
 setSampleRate               KEYWORD2

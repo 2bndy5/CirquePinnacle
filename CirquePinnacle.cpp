@@ -112,6 +112,7 @@ bool PinnacleTouch::isHardConfigured(){
         rapRead(PINNACLE_HCO_ID, &temp);
         return temp > 0;
     }
+    return false;
 }
 
 bool PinnacleTouch::available(){
@@ -182,6 +183,7 @@ bool PinnacleTouch::isAllowSleep(){
         rapRead(PINNACLE_SYS_CONFIG, &temp);
         return (bool)(temp & 4);
     }
+    return false;
 }
 
 void PinnacleTouch::shutdown(bool isOff){
