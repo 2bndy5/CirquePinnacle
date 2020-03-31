@@ -24,7 +24,7 @@ Relative Data
                int8_t,y,"-128 |LessEq| Y |LessEq| 127"
                int8_t,scroll,"-128 |LessEq| SCROLL |LessEq| 127 [2]_"
 
-   .. [1a] The returned button data is a byte in which each bit represents a button.
+   .. [1a] The button data is a byte in which each bit represents a button.
       The bit to button order is as follows:
 
          0. [LSB] Button 1 (thought of as Left mouse button). If ``allTaps`` parameter is passed as
@@ -39,8 +39,8 @@ Relative Data
 
    .. [2] In Relative/Mouse mode the scroll wheel data is only reported if the
       ``intellimouse`` parameter is passed as ``true`` to :cpp:func:`relativeModeConfig()`.
-      Otherwise this is an empty byte as the
-      returned ``struct`` follows the buffer structure of a mouse HID report.
+      Otherwise this is an empty byte as the :cpp:type:: `relativeReport` follows the buffer
+      structure of a mouse HID report.
 
 Absolute Data
 **************
