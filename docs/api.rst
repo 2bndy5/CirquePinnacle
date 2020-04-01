@@ -693,7 +693,7 @@ getMeasureAdc()
 
    .. cpp:function:: int16_t getMeasureAdc()
 
-      A non-blocking function (meant ot be used in conjunction with
+      A non-blocking function (meant to be used in conjunction with
       :cpp:func:`startMeasureAdc()`) to retreive the result of ADC measurements based on parameters
       passed to :cpp:func:`startMeasureAdc()`. Be sure that the `DataMode`_ attribute is set to
       :cpp:var:`PINNACLE_ANYMEAS` and :cpp:func:`available()` returns ``true`` before
