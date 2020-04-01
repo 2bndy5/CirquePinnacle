@@ -122,7 +122,9 @@ public:
                             uint8_t muxControl=PINNACLE_MUX_PNP,
                             uint32_t appertureWidth=500,
                             uint8_t controlPowerCount=1);
-    int16_t measureADC(unsigned int, unsigned int);
+    int16_t measureAdc(unsigned int, unsigned int);
+    void startMeasureAdc(unsigned int, unsigned int);
+    int16_t getMeasureAdc();
 private:
     void eraWrite(uint16_t, uint8_t);
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);

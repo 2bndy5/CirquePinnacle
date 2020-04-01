@@ -328,28 +328,39 @@ void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
     }
 }
 
-int16_t PinnacleTouch::measureADC(unsigned int bitsToToggle, unsigned int togglePolarity){
-    if (_dataMode != PINNACLE_ANYMEAS){
-        return 0;
-    }
-    uint8_t togPol[8] = {};  // array buffer for registers
-    for (uint8_t i = 3; i >= 0; i--){
-        togPol[3 - i] = (uint8_t)(bitsToToggle >> (i * 8));
-    }
-    for (uint8_t i = 3; i >= 0; i--){
-        togPol[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
-    }
-    rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
-    // initiate measurements
-    uint8_t temp = 0;
-    rapRead(PINNACLE_SYS_CONFIG, &temp);
-    rapWrite(PINNACLE_SYS_CONFIG, temp | 0x18);
-    while (!digitalRead(_dataReady)){}  // wait till measurements are complete
-    uint8_t result[2] = {};
-    rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, result, 2);
-    clearFlags();
-    return (int16_t)((result[0] << 8) | result[1]);
+int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity){
+    startMeasureAdc(bitsToToggle, togglePolarity);
+    while (!available()){}  // wait till measurements are complete
+    return getMeasureAdc();
 }
+
+void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity){
+    if (_dataMode == PINNACLE_ANYMEAS){
+        uint8_t togPol[8] = {};  // array buffer for registers
+        for (uint8_t i = 3; i >= 0; i--){
+            togPol[3 - i] = (uint8_t)(bitsToToggle >> (i * 8));
+        }
+        for (uint8_t i = 3; i >= 0; i--){
+            togPol[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
+        }
+        rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
+        // initiate measurements
+        uint8_t temp = 0;
+        rapRead(PINNACLE_SYS_CONFIG, &temp);
+        rapWrite(PINNACLE_SYS_CONFIG, temp | 0x18);
+    }
+}
+
+int16_t PinnacleTouch::getMeasureAdc(){
+    if (_dataMode == PINNACLE_ANYMEAS && available()){
+        uint8_t result[2] = {};
+        rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, result, 2);
+        clearFlags();
+        return (int16_t)(((uint16_t)result[0] << 8) | result[1]);
+    }
+    return 0;
+}
+
 
 void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue){
     bool prevFeedState = isFeedEnabled();

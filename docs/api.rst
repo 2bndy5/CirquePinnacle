@@ -620,15 +620,18 @@ anyMeasModeConfig()
                :cpp:func:`measureADC()` as the Pinnacle requires about 300 milliseconds to wake
                up.
 
-measure_adc()
+measureAdc()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: int16_t measureADC(unsigned int bitsToToggle, unsigned int togglePolarity)
+   .. cpp:function:: int16_t measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
 
       This function instigates and returns the measurement (a signed short integer) from the
       Pinnacle ASIC's ADC (Analog to Digital Converter) matrix (only applies to AnyMeas mode).
-      Be sure to set the `DataMode`_ attribute to :cpp:var:`PINNACLE_ANYMEAS` before calling
-      this function otherwise it will do nothing and return ``0``.
+      Internally, this function uses the non-blocking helper functions
+      :cpp:func:`startMeasureAdc()` and :cpp:func:`getMeasureAdc()`, but blocks until ADC
+      measurements are completed. Be sure to set the `DataMode`_ attribute to
+      :cpp:var:`PINNACLE_ANYMEAS` before calling this function otherwise it will do nothing and
+      return ``0``.
 
       :param int bitsToToggle: This 4-byte integer specifies which bits the Pinnacle touch
          controller should toggle. A bit of ``1`` flags that bit for toggling, and a bit of
@@ -675,6 +678,32 @@ measure_adc()
                (:cpp:var:`PINNACLE_MUX_REF0` and/or :cpp:var:`PINNACLE_MUX_REF1`) must be passed to
                :cpp:func:`anyMeasModeConfig()` in the ``muxControl`` parameter, and their representative
                bits must be flagged in both the ``bitsToToggle`` & ``togglePolarity`` parameters.
+
+startMeasureAdc()
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+   .. cpp:function:: void startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
+
+      A non-blocking function to instigate ADC measurements when the  `PINNACLE_ANYMEAS`
+      mode. See parameters and table in :cpp:func:`measureAdc()` as this helper function's
+      parameters are used exactly the same.
+
+getMeasureAdc()
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+   .. cpp:function:: int16_t getMeasureAdc()
+
+      A non-blocking function (meant ot be used in conjunction with
+      :cpp:func:`startMeasureAdc()`) to retreive the result of ADC measurements based on parameters
+      passed to :cpp:func:`startMeasureAdc()`. Be sure that the `DataMode`_ attribute is set to
+      :cpp:var:`PINNACLE_ANYMEAS` and :cpp:func:`available()` returns ``true`` before
+      calling this function otherwise it will return ``0``.
+
+      :Returns:
+         * A :cpp:type:`int16_t` if :cpp:func:`available()` returns ``true`` and if `DataMode`_ is
+           set to :cpp:var:`PINNACLE_ANYMEAS`.
+         * ``0`` if `DataMode`_ is not set to :cpp:var:`PINNACLE_ANYMEAS` or if
+           :cpp:func:`available()` returns ``false``.
 
 SPI & I2C Interfaces
 ********************
