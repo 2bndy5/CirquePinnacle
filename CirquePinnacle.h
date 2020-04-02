@@ -125,6 +125,7 @@ public:
     int16_t measureAdc(unsigned int, unsigned int);
     void startMeasureAdc(unsigned int, unsigned int);
     int16_t getMeasureAdc();
+    // void readRegisters(uint8_t reg, uint8_t* data, uint8_t len);
 private:
     void eraWrite(uint16_t, uint8_t);
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);

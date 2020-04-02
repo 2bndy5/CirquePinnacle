@@ -19,7 +19,11 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "CirquePinnacle.h"
-
+/*
+void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len){
+    rapReadBytes(reg, data, len);
+}
+ */
 PinnacleTouch::PinnacleTouch(uint8_t dataReadyPin){
     _dataReady = dataReadyPin;
     pinMode(_dataReady, INPUT);
@@ -121,7 +125,7 @@ bool PinnacleTouch::available(){
 
 void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool invertY){
     if (_dataMode == PINNACLE_ABSOLUTE){
-        rapWrite(PINNACLE_Z_IDLE, max(0, min(zIdleCount, 255)));
+        rapWrite(PINNACLE_Z_IDLE, zIdleCount > 255 ? 255 : zIdleCount);
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
         rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0x3F) | (invertY << 7) | (invertX << 6));
@@ -157,8 +161,8 @@ void PinnacleTouch::reportAbsolute(absoluteReport* report){
         report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
         report->z = (uint8_t)(temp[5] & 0x3F);
         // clamp data per advice from spec sheet
-        report->x = max(128, min(1920, report->x));
-        report->y = max(64, min(1472, report->y));
+        report->x = report->x < 128 ? 128 : (report->x > 1920 ? 1920 : report->x);
+        report->y = report->y < 64 ? 64 : (report->y > 1472 ? 1472 : report->y);
     }
 }
 
@@ -317,9 +321,11 @@ void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
     if (_dataMode == PINNACLE_ANYMEAS){
         uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
         anymeas_config[0] = gain | frequency;
-        anymeas_config[1] = (uint8_t)(max(1, min(sampleLength / 128, 3)));
+        sampleLength /= 128;
+        anymeas_config[1] = (uint8_t)(sampleLength < 1 ? 1 : (sampleLength > 3 ? 3 : sampleLength));
         anymeas_config[2] = muxControl;
-        anymeas_config[4] = (uint8_t)(max(2, min(appertureWidth / 125, 15)));
+        appertureWidth /= 125;
+        anymeas_config[4] = (uint8_t)(appertureWidth < 2 ? 2 : (appertureWidth > 15 ? 15 : appertureWidth));
         anymeas_config[9] = controlPowerCount;
         rapWriteBytes(5, anymeas_config, 10);
         uint8_t togPol[8] = {};
