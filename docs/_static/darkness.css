@@ -89,15 +89,7 @@
 
 .highlight .go {
   color: #1afd00;
-}
-
-.highlight .s {
-  color: #DD7A10;
-}
-
-.highlight .kt {
-  color: #3161F0;
-}
+ }
 
 /* ----------------------table sections---------------------------------------- */
 .wy-table thead,
@@ -262,29 +254,11 @@ body {
 .wy-menu-vertical li.toctree-l2.current>a {
   background:#242424;
 }
-
 .wy-menu-vertical li.toctree-l2.current li.toctree-l3>a {
   background:#033969;
 }
 
-.wy-menu-vertical li.toctree-l3.current li.toctree-l4>a {
-  background:#092d21;
-}
-
 /* -----------------------------------------API sections-------------------------------------- */
-.wy-table caption,
-.rst-content table.docutils caption,
-.rst-content table.field-list caption {
- color:#fff;
- text-align: left;
-}
-
-.rst-content table.docutils.citation tt,
-.rst-content table.docutils.citation code,
-.rst-content table.docutils.footnote tt,
-.rst-content table.docutils.footnote code {
- color:#16ff00;
-}
 
 .wy-table-bordered-all td, .rst-content table.docutils td {
   text-align: left;
@@ -339,4 +313,14 @@ code, .rst-content tt, .rst-content code {
 
 .rst-content h1:hover .headerlink::after, .rst-content h2:hover .headerlink::after, .rst-content .toctree-wrapper p.caption:hover .headerlink::after, .rst-content h3:hover .headerlink::after, .rst-content h4:hover .headerlink::after, .rst-content h5:hover .headerlink::after, .rst-content h6:hover .headerlink::after, .rst-content dl dt:hover .headerlink::after, .rst-content p.caption:hover .headerlink::after, .rst-content table > caption:hover .headerlink::after, .rst-content .code-block-caption:hover .headerlink::after {
   color: #29ae5b !important;
+}
+
+html.writer-html4 .rst-content dl:not(.docutils)>dt,
+html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple)>dt {
+ background: #2e363c;
+}
+
+html.writer-html4 .rst-content dl:not(.docutils) dl:not(.field-list) > dt, html.writer-html5 .rst-content dl[class]:not(.option-list):not(.field-list):not(.footnote):not(.glossary):not(.simple) dl:not(.field-list) > dt {
+  background: #2e363c;
+  color: #d9c948;
 }

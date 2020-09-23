@@ -19,26 +19,30 @@
 #include <SPI.h>
 #include <Wire.h>
 #include "CirquePinnacle.h"
+
 /*
 void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len){
     rapReadBytes(reg, data, len);
 }
  */
-PinnacleTouch::PinnacleTouch(uint8_t dataReadyPin){
+PinnacleTouch::PinnacleTouch(uint8_t dataReadyPin)
+{
     _dataReady = dataReadyPin;
     pinMode(_dataReady, INPUT);
 }
 
-bool PinnacleTouch::begin(){
+bool PinnacleTouch::begin()
+{
     uint8_t firmware[2] = {};
     rapReadBytes(PINNACLE_FIRMWARE_ID, firmware, 2);
-    if (firmware[0] == 7 || firmware[1] == 0x3A){ // hardware check passed?
+    if (firmware[0] == 7 || firmware[1] == 0x3A)
+    {
         _dataMode = 0;
         clearFlags();
-        detectFingerStylus(); // detects both finger & stylus; sets sample rate to 100
+        detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
-        setAdcGain(0); // most senitive attenuation
-        tuneEdgeSensitivity();  // because "why not?"
+        setAdcGain(0);                 // most senitive attenuation
+        tuneEdgeSensitivity();         // because "why not?"
         uint8_t configs[3] = {0, 1, 0};
         // configs[0] => clears AnyMeas flags
         // configs[1] => set relative mode & enable feed
@@ -46,25 +50,31 @@ bool PinnacleTouch::begin(){
         rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
         calibrate(true); // enables all compensations, runs calibration, & clearFlags()
         return true;
-    }
-    else{
-        _dataMode = 0xFF;  // prevent operations if hardware check failed
+    } // hardware check passed
+    else
+    {
+        _dataMode = 0xFF; // prevent operations if hardware check failed
         return false;
     }
 }
 
-void PinnacleTouch::feedEnabled(bool isEnabled){
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
+void PinnacleTouch::feedEnabled(bool isEnabled)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
-        if ((bool)(temp & 1) != isEnabled){
+        if ((bool)(temp & 1) != isEnabled)
+        {
             rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0xfe) | isEnabled);
         }
     }
 }
 
-bool PinnacleTouch::isFeedEnabled(){
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
+bool PinnacleTouch::isFeedEnabled()
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
         return (bool)(temp & 1);
@@ -74,13 +84,17 @@ bool PinnacleTouch::isFeedEnabled(){
     return false;
 }
 
-void PinnacleTouch::setDataMode(uint8_t mode){
-    if (mode >= 0 && mode <= 2){
+void PinnacleTouch::setDataMode(uint8_t mode)
+{
+    if (mode >= 0 && mode <= 2)
+    {
         uint8_t sysConfig = 0;
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
         sysConfig &= 0xE7;
-        if (mode == PINNACLE_RELATIVE || mode == PINNACLE_ABSOLUTE){
-            if (_dataMode == PINNACLE_ANYMEAS){  // if leaving AnyMeas mode
+        if (mode == PINNACLE_RELATIVE || mode == PINNACLE_ABSOLUTE)
+        {
+            if (_dataMode == PINNACLE_ANYMEAS)
+            { // if leaving AnyMeas mode
                 _dataMode = mode;
                 mode |= 1;
                 uint8_t configs[3] = {sysConfig, mode, 0};
@@ -89,29 +103,34 @@ void PinnacleTouch::setDataMode(uint8_t mode){
                 // configs[2] => enables taps in Relative mode
                 rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
                 setSampleRate(100);
-                rapWrite(PINNACLE_CAL_CONFIG, 0x1E);  // enables all compensations
-                rapWrite(PINNACLE_Z_IDLE, 30);  // 30 z-idle packets
+                rapWrite(PINNACLE_CAL_CONFIG, 0x1E); // enables all compensations
+                rapWrite(PINNACLE_Z_IDLE, 30);       // 30 z-idle packets
             }
-            else{  // ok to just write appropriate mode
+            else
+            { // ok to just write appropriate mode
                 _dataMode = mode;
                 rapWrite(PINNACLE_FEED_CONFIG_1, 1 | mode);
             }
         }
-        else if (mode == PINNACLE_ANYMEAS){
+        else if (mode == PINNACLE_ANYMEAS)
+        {
             // disable tracking computations for AnyMeas mode
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
-            delay(10);  // wait 10 ms for tracking measurements to expire
-            anyMeasModeConfig();  // configure registers for the AnyMeas mode
+            delay(10);           // wait 10 ms for tracking measurements to expire
+            anyMeasModeConfig(); // configure registers for the AnyMeas mode
         }
     }
 }
 
-uint8_t PinnacleTouch::getDataMode(){
+uint8_t PinnacleTouch::getDataMode()
+{
     return _dataMode;
 }
 
-bool PinnacleTouch::isHardConfigured(){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+bool PinnacleTouch::isHardConfigured()
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_HCO_ID, &temp);
         return temp > 0;
@@ -119,12 +138,15 @@ bool PinnacleTouch::isHardConfigured(){
     return false;
 }
 
-bool PinnacleTouch::available(){
+bool PinnacleTouch::available()
+{
     return digitalRead(_dataReady);
 }
 
-void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool invertY){
-    if (_dataMode == PINNACLE_ABSOLUTE){
+void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool invertY)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE)
+    {
         rapWrite(PINNACLE_Z_IDLE, zIdleCount > 255 ? 255 : zIdleCount);
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
@@ -132,15 +154,19 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
     }
 }
 
-void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool secondaryTap, bool glideExtend, bool intellimouse){
-    if (_dataMode == PINNACLE_RELATIVE){
+void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool secondaryTap, bool glideExtend, bool intellimouse)
+{
+    if (_dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!allTaps << 1) | intellimouse;
         rapWrite(PINNACLE_FEED_CONFIG_2, config2);
     }
 }
 
-void PinnacleTouch::reportRelative(relativeReport* report){
-    if (_dataMode == PINNACLE_RELATIVE){
+void PinnacleTouch::reportRelative(relativeReport *report)
+{
+    if (_dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t temp[4] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 4);
         clearFlags();
@@ -151,8 +177,10 @@ void PinnacleTouch::reportRelative(relativeReport* report){
     }
 }
 
-void PinnacleTouch::reportAbsolute(absoluteReport* report){
-    if (_dataMode == PINNACLE_ABSOLUTE){
+void PinnacleTouch::reportAbsolute(absoluteReport *report)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE)
+    {
         uint8_t temp[6] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 6);
         clearFlags();
@@ -166,23 +194,29 @@ void PinnacleTouch::reportAbsolute(absoluteReport* report){
     }
 }
 
-void PinnacleTouch::clearFlags(){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::clearFlags()
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         rapWrite(PINNACLE_STATUS, 0);
         delayMicroseconds(50);
     }
 }
 
-void PinnacleTouch::allowSleep(bool isEnabled){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::allowSleep(bool isEnabled)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_SYS_CONFIG, &temp);
         rapWrite(PINNACLE_SYS_CONFIG, (temp & 0xFB) | (isEnabled << 2));
     }
 }
 
-bool PinnacleTouch::isAllowSleep(){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+bool PinnacleTouch::isAllowSleep()
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_SYS_CONFIG, &temp);
         return (bool)(temp & 4);
@@ -190,8 +224,10 @@ bool PinnacleTouch::isAllowSleep(){
     return false;
 }
 
-void PinnacleTouch::shutdown(bool isOff){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::shutdown(bool isOff)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_SYS_CONFIG, &temp);
         temp &= 0xFD;
@@ -199,8 +235,10 @@ void PinnacleTouch::shutdown(bool isOff){
     }
 }
 
-bool PinnacleTouch::isShutdown(){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+bool PinnacleTouch::isShutdown()
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_SYS_CONFIG, &temp);
         return (bool)(temp & 2);
@@ -208,16 +246,20 @@ bool PinnacleTouch::isShutdown(){
     return false;
 }
 
-void PinnacleTouch::setSampleRate(uint16_t value){
-     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
-       if (value  == 200 || value == 300){
+void PinnacleTouch::setSampleRate(uint16_t value)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
+        if (value == 200 || value == 300)
+        {
             // disable palm & noise compensations
             rapWrite(PINNACLE_FEED_CONFIG_3, 10);
             uint8_t reloadTimer = value == 300 ? 6 : 9;
             eraWriteBytes(0x019E, reloadTimer, 2);
             value = 0;
         }
-        else{
+        else
+        {
             // enable palm & noise compensations
             rapWrite(PINNACLE_FEED_CONFIG_3, 0);
             eraWriteBytes(0x019E, 0x13, 2);
@@ -227,23 +269,29 @@ void PinnacleTouch::setSampleRate(uint16_t value){
     }
 }
 
-uint16_t PinnacleTouch::getSampleRate(){
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
+uint16_t PinnacleTouch::getSampleRate()
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t temp = 0;
         rapRead(PINNACLE_SAMPLE_RATE, &temp);
-        if (temp == 0){
+        if (temp == 0)
+        {
             eraRead(0x019E, &temp);
             return temp == 6 ? 300 : 200;
         }
-        else{
+        else
+        {
             return temp;
         }
     }
-    return 0;  // "sample rate" = frequent calling of measureADC()
+    return 0; // "sample rate" = frequent calling of measureADC()
 }
 
-void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uint16_t sampleRate){
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
+void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uint16_t sampleRate)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
         setSampleRate(sampleRate);
         uint8_t fingerStylus = 0;
         eraRead(0x00EB, &fingerStylus);
@@ -252,57 +300,74 @@ void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uin
     }
 }
 
-void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bool background){
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE){
+void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bool background)
+{
+    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)
+    {
         uint8_t cal_config = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
         rapWrite(PINNACLE_CAL_CONFIG, cal_config | run);
-        if (run){
+        if (run)
+        {
             uint8_t temp = 1;
-            while (temp & 1){
-                rapRead(PINNACLE_CAL_CONFIG, &temp);  // calibration is running
+            while (temp & 1)
+            {
+                rapRead(PINNACLE_CAL_CONFIG, &temp); // calibration is running
             }
             clearFlags(); // now that calibration is done
         }
     }
 }
 
-void PinnacleTouch::setCalibrationMatrix(int16_t* matrix){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::setCalibrationMatrix(int16_t *matrix)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         bool prevFeedState = isFeedEnabled();
-        if (prevFeedState){
-            feedEnabled(false);  // this will save time on subsequent eraWrite calls
+        if (prevFeedState)
+        {
+            feedEnabled(false); // this will save time on subsequent eraWrite calls
         }
         uint8_t matrix_size = sizeof(matrix) / sizeof(int16_t);
-        for (uint8_t i = 0; i < 46; i++){  // truncate malformed matrices
-            if (i < matrix_size){
+        for (uint8_t i = 0; i < 46; i++)
+        { // truncate malformed matrices
+            if (i < matrix_size)
+            {
                 eraWrite(0x01DF + i * 2, (uint8_t)(matrix[i] >> 8));
                 eraWrite(0x01E0 + i * 2, (uint8_t)(matrix[i] & 0xFF));
             }
-            else{ // pad out malformed matrices
+            else
+            { // pad out malformed matrices
                 eraWriteBytes(0x01DF + i * 2, 0, 2);
             }
         }
-        if (prevFeedState){
-            feedEnabled(prevFeedState);  // resume previous feed state
+        if (prevFeedState)
+        {
+            feedEnabled(prevFeedState); // resume previous feed state
         }
     }
 }
 
-void PinnacleTouch::getCalibrationMatrix(int16_t* matrix){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::getCalibrationMatrix(int16_t *matrix)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         uint8_t data[92] = {};
         eraReadBytes(0x01DF, data, 92);
-        for(uint8_t i = 0; i < 92; i += 2){
+        for (uint8_t i = 0; i < 92; i += 2)
+        {
             matrix[i / 2] = (int16_t)data[i] << 8;
             matrix[i / 2] |= (int16_t)(data[i + 1]);
         }
     }
 }
 
-void PinnacleTouch::setAdcGain(uint8_t sensitivity){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
-        if (sensitivity < 0 && sensitivity >= 4){
-            sensitivity = 0;  // faulty input defaults to highest sensitivity
+void PinnacleTouch::setAdcGain(uint8_t sensitivity)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
+        if (sensitivity < 0 && sensitivity >= 4)
+        {
+            sensitivity = 0; // faulty input defaults to highest sensitivity
         }
         uint8_t temp = 0;
         eraRead(0x0187, &temp);
@@ -310,15 +375,19 @@ void PinnacleTouch::setAdcGain(uint8_t sensitivity){
     }
 }
 
-void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWideZMin){
-    if (_dataMode <= PINNACLE_ABSOLUTE){
+void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWideZMin)
+{
+    if (_dataMode <= PINNACLE_ABSOLUTE)
+    {
         eraWrite(0x0149, xAxisWideZMin);
         eraWrite(0x0168, yAxisWideZMin);
     }
 }
 
-void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint32_t appertureWidth, uint8_t controlPowerCount){
-    if (_dataMode == PINNACLE_ANYMEAS){
+void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint32_t appertureWidth, uint8_t controlPowerCount)
+{
+    if (_dataMode == PINNACLE_ANYMEAS)
+    {
         uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
         anymeas_config[0] = gain | frequency;
         sampleLength /= 128;
@@ -334,19 +403,26 @@ void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
     }
 }
 
-int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity){
+int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
+{
     startMeasureAdc(bitsToToggle, togglePolarity);
-    while (!available()){}  // wait till measurements are complete
+    while (!available())
+    {
+    } // wait till measurements are complete
     return getMeasureAdc();
 }
 
-void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity){
-    if (_dataMode == PINNACLE_ANYMEAS){
-        uint8_t togPol[8] = {};  // array buffer for registers
-        for (uint8_t i = 3; i >= 0; i--){
+void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
+{
+    if (_dataMode == PINNACLE_ANYMEAS)
+    {
+        uint8_t togPol[8] = {}; // array buffer for registers
+        for (uint8_t i = 3; i >= 0; i--)
+        {
             togPol[3 - i] = (uint8_t)(bitsToToggle >> (i * 8));
         }
-        for (uint8_t i = 3; i >= 0; i--){
+        for (uint8_t i = 3; i >= 0; i--)
+        {
             togPol[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
         }
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
@@ -357,8 +433,10 @@ void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togg
     }
 }
 
-int16_t PinnacleTouch::getMeasureAdc(){
-    if (_dataMode == PINNACLE_ANYMEAS && available()){
+int16_t PinnacleTouch::getMeasureAdc()
+{
+    if (_dataMode == PINNACLE_ANYMEAS && available())
+    {
         uint8_t result[2] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, result, 2);
         clearFlags();
@@ -367,100 +445,120 @@ int16_t PinnacleTouch::getMeasureAdc(){
     return 0;
 }
 
-
-void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue){
+void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
+{
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState){
-        feedEnabled(false);  // accessing raw memory, so do this
+    if (prevFeedState)
+    {
+        feedEnabled(false); // accessing raw memory, so do this
     }
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    rapWrite(PINNACLE_ERA_CONTROL, 2);  // indicate writing only 1 byte
+    rapWrite(PINNACLE_ERA_CONTROL, 2); // indicate writing only 1 byte
     uint8_t temp = 1;
-    while (temp){
-        rapRead(PINNACLE_ERA_CONTROL, &temp);  // read until registerValue == 0
+    while (temp)
+    {
+        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
     }
-    clearFlags();  // clear Command Complete flag in Status register
-    if (prevFeedState){
-        feedEnabled(prevFeedState);  // resume previous feed state
+    clearFlags(); // clear Command Complete flag in Status register
+    if (prevFeedState)
+    {
+        feedEnabled(prevFeedState); // resume previous feed state
     }
 }
 
-void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValue, uint8_t repeat){
+void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValue, uint8_t repeat)
+{
     // NOTE this is rarely used as it only writes 1 value to multiple registers
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState){
-        feedEnabled(false);  // accessing raw memory, so do this
+    if (prevFeedState)
+    {
+        feedEnabled(false); // accessing raw memory, so do this
     }
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    rapWrite(PINNACLE_ERA_CONTROL, 0x0A) ; // indicate writing sequential bytes
+    rapWrite(PINNACLE_ERA_CONTROL, 0x0A); // indicate writing sequential bytes
     uint8_t temp = 1;
-    for (uint8_t i = 0; i < repeat; i++){
-        while (temp){
-            rapRead(PINNACLE_ERA_CONTROL, &temp);  // read until registerValue == 0
+    for (uint8_t i = 0; i < repeat; i++)
+    {
+        while (temp)
+        {
+            rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
         }
-        clearFlags();  // clear Command Complete flag in Status register
+        clearFlags(); // clear Command Complete flag in Status register
     }
-    if (prevFeedState){
-        feedEnabled(prevFeedState);  // resume previous feed state
+    if (prevFeedState)
+    {
+        feedEnabled(prevFeedState); // resume previous feed state
     }
 }
 
-void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data){
+void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t *data)
+{
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState){
-        feedEnabled(false);  // accessing raw memory, so do this
+    if (prevFeedState)
+    {
+        feedEnabled(false); // accessing raw memory, so do this
     }
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    rapWrite(PINNACLE_ERA_CONTROL, 1);  // indicate reading only 1 byte
+    rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
     uint8_t temp = 1;
-    while (temp){
-        rapRead(PINNACLE_ERA_CONTROL, &temp);  // read until registerAddress == 0
+    while (temp)
+    {
+        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
     }
     rapRead(PINNACLE_ERA_VALUE, data); // get data
-    clearFlags();  // clear Command Complete flag in Status register
-    if (prevFeedState){
-        feedEnabled(prevFeedState);  // resume previous feed state
+    clearFlags();                      // clear Command Complete flag in Status register
+    if (prevFeedState)
+    {
+        feedEnabled(prevFeedState); // resume previous feed state
     }
 }
 
-void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_t registerCount){
+void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t *data, uint8_t registerCount)
+{
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState){
-        feedEnabled(false);  // accessing raw memory, so do this
+    if (prevFeedState)
+    {
+        feedEnabled(false); // accessing raw memory, so do this
     }
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    rapWrite(PINNACLE_ERA_CONTROL, 1);  // indicate reading only 1 byte
+    rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
     uint8_t temp = 1;
-    for (uint8_t i = 0; i < registerCount; i++){
-        while (temp){
+    for (uint8_t i = 0; i < registerCount; i++)
+    {
+        while (temp)
+        {
             rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
         }
-        rapRead(PINNACLE_ERA_VALUE, &data[i]);  // get value
-        clearFlags();  // clear Command Complete flag in Status register
+        rapRead(PINNACLE_ERA_VALUE, &data[i]); // get value
+        clearFlags();                          // clear Command Complete flag in Status register
     }
-    if (prevFeedState){
-        feedEnabled(prevFeedState);  // resume previous feed state
+    if (prevFeedState)
+    {
+        feedEnabled(prevFeedState); // resume previous feed state
     }
 }
 
-PinnacleTouchSPI::PinnacleTouchSPI(uint8_t dataReadyPin, uint8_t slaveSelectPin) : PinnacleTouch(dataReadyPin){
+PinnacleTouchSPI::PinnacleTouchSPI(uint8_t dataReadyPin, uint8_t slaveSelectPin) : PinnacleTouch(dataReadyPin)
+{
     _slaveSelect = slaveSelectPin;
 }
 
-bool PinnacleTouchSPI::begin(){
+bool PinnacleTouchSPI::begin()
+{
     pinMode(_slaveSelect, OUTPUT);
     digitalWrite(_slaveSelect, HIGH);
     SPI.begin();
     return PinnacleTouch::begin();
 }
 
-void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue){
+void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue)
+{
     SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE1));
     digitalWrite(_slaveSelect, LOW);
     SPI.transfer((uint8_t)(0x80 | registerAddress));
@@ -469,66 +567,79 @@ void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue){
     SPI.endTransaction();
 }
 
-void PinnacleTouchSPI::rapWriteBytes(uint8_t registerAddress, uint8_t* registerValues, uint8_t registerCount){
-    for (uint8_t i = 0; i < registerCount; i++){
+void PinnacleTouchSPI::rapWriteBytes(uint8_t registerAddress, uint8_t *registerValues, uint8_t registerCount)
+{
+    for (uint8_t i = 0; i < registerCount; i++)
+    {
         rapWrite(registerAddress + i, registerValues[i]);
     }
 }
 
-void PinnacleTouchSPI::rapRead(uint8_t registerAddress, uint8_t* data){
+void PinnacleTouchSPI::rapRead(uint8_t registerAddress, uint8_t *data)
+{
     rapReadBytes(registerAddress, data, 1);
 }
 
-void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint8_t registerCount){
+void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t *data, uint8_t registerCount)
+{
     SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE1));
     digitalWrite(_slaveSelect, LOW);
     SPI.transfer(0xA0 | registerAddress);
     SPI.transfer(0xFC);
     SPI.transfer(0xFC);
-    for(byte i = 0; i < registerCount; i++){
+    for (byte i = 0; i < registerCount; i++)
+    {
         data[i] = SPI.transfer(0xFC);
     }
     digitalWrite(_slaveSelect, HIGH);
     SPI.endTransaction();
 }
 
-PinnacleTouchI2C::PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin){
+PinnacleTouchI2C::PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin)
+{
     _slaveAddress = (uint8_t)(slaveAddress << 1);
 }
 
-bool PinnacleTouchI2C::begin(){
+bool PinnacleTouchI2C::begin()
+{
     Wire.begin();
     Wire.setClock(100000);
     return PinnacleTouch::begin();
 }
 
-void PinnacleTouchI2C::rapWrite(uint8_t registerAddress, uint8_t registerValue){
+void PinnacleTouchI2C::rapWrite(uint8_t registerAddress, uint8_t registerValue)
+{
     Wire.beginTransmission(_slaveAddress);
     Wire.write(0x80 | registerAddress);
     Wire.write(registerValue);
     Wire.endTransmission(true);
 }
 
-void PinnacleTouchI2C::rapWriteBytes(uint8_t registerAddress, uint8_t* registerValues, uint8_t registerCount){
+void PinnacleTouchI2C::rapWriteBytes(uint8_t registerAddress, uint8_t *registerValues, uint8_t registerCount)
+{
     Wire.beginTransmission(_slaveAddress);
-    for (uint8_t i = 0; i < registerCount; i++){
+    for (uint8_t i = 0; i < registerCount; i++)
+    {
         Wire.write(0x80 | registerAddress);
         Wire.write(registerValues[i]);
     }
     Wire.endTransmission(true);
 }
 
-void PinnacleTouchI2C::rapRead(uint8_t registerAddress, uint8_t* data){
+void PinnacleTouchI2C::rapRead(uint8_t registerAddress, uint8_t *data)
+{
     rapReadBytes(registerAddress, data, 1);
 }
 
-void PinnacleTouchI2C::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint8_t registerCount){
+void PinnacleTouchI2C::rapReadBytes(uint8_t registerAddress, uint8_t *data, uint8_t registerCount)
+{
     uint8_t i = 0;
     Wire.beginTransmission(_slaveAddress);
     Wire.write(0xA0 | registerAddress);
     Wire.endTransmission(true);
-    Wire.requestFrom((uint8_t)(_slaveAddress | 1), (uint8_t)registerCount, (uint8_t)true);
-    while(Wire.available()){
+    Wire.requestFrom((uint8_t)(_slaveAddress | 1), (uint8_t)registerCount, (uint8_t) true);
+    while (Wire.available())
+    {
         data[i++] = Wire.read();
     }
 }

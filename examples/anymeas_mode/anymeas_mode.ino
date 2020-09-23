@@ -1,3 +1,7 @@
+/**
+ * AnyMeas mode basic example of PinnacleTouch API
+ */
+
 #include <Arduino.h>
 #include "CirquePinnacle.h"
 

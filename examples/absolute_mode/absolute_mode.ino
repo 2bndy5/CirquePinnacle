@@ -4,8 +4,8 @@
 #define ss_pin 5
 #define dr_pin 6
 
-PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
-relativeReport report;
+PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
+AbsoluteReport report;
 
 void setup(){
     while (!Serial) { delay(1); } // some boards need this to access USB Serial
@@ -16,22 +16,24 @@ void setup(){
     else{
         Serial.println("Cirque Pinnacle not responding!");
     }
+    tpad.setDataMode(PINNACLE_ABSOLUTE);
+    tpad.absoluteModeConfig(1);  // set count of z-idle packets to 1
 }
 
 void loop(){
     if (tpad.available()){
-        tpad.reportRelative(&report);
+        tpad.reportAbsolute(&report);
         Serial.print("Left: ");
         Serial.print(report.buttons & 1);
         Serial.print(" Right: ");
         Serial.print(report.buttons & 2);
         Serial.print(" Middle: ");
         Serial.print(report.buttons & 4);
-        Serial.print("\tdelta X: ");
+        Serial.print("\tX: ");
         Serial.print(report.x);
-        Serial.print("\tdelta Y: ");
+        Serial.print("\tY: ");
         Serial.print(report.y);
-        Serial.print("\tdelta Scroll: ");
-        Serial.println(report.scroll);
+        Serial.print("\tZ: ");
+        Serial.println(report.z);
     }
 }

@@ -36,3 +36,5 @@
 
 # docs build folder
 _build/
+docs/doxygen_build/*
+!docs/doxygen_buld/.gitkeep

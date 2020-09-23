@@ -5,8 +5,8 @@
 #define BACKWARD_BUTTON_MASK 0x10
 #define FORWARD_BUTTON_MASK 0x40
 
-// to send special mouse (backward/forward) buttons' states,
-// uncomment the following defines, and make sure their number values
+// to send special mouse buttons' states (backward/forward buttons),
+// uncomment the following defines, & make sure their number values
 // match the digital input pins they're connected to.
 // #define BACKWARD_BUTTON_PIN 3
 // #define FORWARD_BUTTON_PIN 4
@@ -28,7 +28,7 @@ class MouseHID{
 MouseHID* mouse = new MouseHID;
 
 PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
-relativeReport report;
+RelativeReport report;
 bool hasNewReport = false;
 
 void setup(){
