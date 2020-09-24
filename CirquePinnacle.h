@@ -330,7 +330,8 @@ public:
      * - `2` (AKA @ref PINNACLE_ABSOLUTE) for Absolute mode (X & Y axis
      *   positions)
      * - `255` if begin() returns `false` (failed to initialize the trackpad)
-     * @important When switching from @ref PINNACLE_ANYMEAS to @ref PINNACLE_RELATIVE
+     * @important
+     * When switching from @ref PINNACLE_ANYMEAS to @ref PINNACLE_RELATIVE
      * or @ref PINNACLE_ABSOLUTE all configurations are reset, and must be
      * re-configured by using  absoluteModeConfig() or relativeModeConfig().
      */
@@ -493,7 +494,8 @@ public:
      * this feature. Default is `true`.
      * @param sampleRate See the setSampleRate() as this parameter directly
      * calls that function.
-     * @tip Consider adjusting the ADC matrix's gain to enhance
+     * @tip
+     * Consider adjusting the ADC matrix's gain to enhance
      * performance/results using setAdcGain().
      */
     void detectFingerStylus(bool enableFinger=true,
@@ -571,7 +573,8 @@ public:
      * @param sensitivity This byte specifies how sensitive the ADC component
      * is. It must be in range [0, 3]. Where `0` means most sensitive, and `3`
      * means least sensitive. A value outside this range will default to `0`.
-     * @tip The official example code from Cirque for a curved overlay uses a
+     * @tip
+     * The official example code from Cirque for a curved overlay uses a
      * value of `1`.
      */
     void setAdcGain(uint8_t);
@@ -620,7 +623,8 @@ public:
     * @warning There is no bounds checking on the number of measurements
     * specified here. Specifying more than 63 will trigger sleep mode after
     * performing measuements.
-    * @hint Be aware that allowing the Pinnacle to enter sleep mode after
+    * @hint
+    * Be aware that allowing the Pinnacle to enter sleep mode after
     * taking measurements will cause a latency in consecutive calls to
     * measureADC() as the Pinnacle requires about 300 milliseconds to wake up.
     */
