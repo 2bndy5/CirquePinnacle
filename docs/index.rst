@@ -31,7 +31,7 @@ Table of Contents
 .. toctree::
     :caption: Other Links
 
-    Download <https://github.com/2bndy5/CircuitPython_Cirque_Pinnacle/releases>
+    Download <https://github.com/2bndy5/CirquePinnacle/releases>
 
 
 Indices and tables
