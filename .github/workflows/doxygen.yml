@@ -11,8 +11,8 @@ jobs:
     - name: build doxy
       uses: mattnotmitt/doxygen-action@v1
       with:
-          working-directory: './docs'
-          doxyfile-path: './docs'
+          working-directory: 'docs'
+          doxyfile-path: 'docs'
     - name: upload to github pages
       uses: peaceiris/actions-gh-pages@v3
       with:
