@@ -1,6 +1,6 @@
 version: 2
 
 python:
-  version: 3.x
+  version: 3.7
   install:
     - requirements: docs/requirements.txt
