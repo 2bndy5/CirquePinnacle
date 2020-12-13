@@ -52,17 +52,17 @@
  * @sa PinnacleTouch::getDataMode(), PinnacleTouch::setDataMode()
  */
 ///@{
-/** 
+/**
  * @def PINNACLE_RELATIVE
  * @brief Alias symbol for specifying Relative mode (AKA Mouse mode).
  */
 #define PINNACLE_RELATIVE          0x00
-/** 
+/**
  * @def PINNACLE_ANYMEAS
  * @brief Alias symbol for specifying "AnyMeas" mode (raw ADC measurement)
  */
 #define PINNACLE_ANYMEAS           0x01
-/** 
+/**
  * @def PINNACLE_ABSOLUTE
  * @brief Alias symbol for specifying Absolute mode (axis positions)
  */
@@ -76,22 +76,22 @@
  * @sa PinnacleTouch::anyMeasModeConfig()
  */
 ///@{
-/** 
+/**
  * @def PINNACLE_GAIN_100
  * @brief around 100% gain
  */
 #define PINNACLE_GAIN_100          0xC0
-/** 
+/**
  * @def PINNACLE_GAIN_133
  * @brief around 133% gain
  */
 #define PINNACLE_GAIN_133          0x80
-/** 
+/**
  * @def PINNACLE_GAIN_166
  * @brief around 166% gain
  */
 #define PINNACLE_GAIN_166          0x40
-/** 
+/**
  * @def PINNACLE_GAIN_200
  * @brief around 200% gain
  */
@@ -109,42 +109,42 @@
  * @sa PinnacleTouch::anyMeasModeConfig()
  */
 ///@{
-/** 
+/**
  * @def PINNACLE_FREQ_0
  * @brief frequency around 500,000Hz
  */
 #define PINNACLE_FREQ_0            0x02
-/** 
+/**
  * @def PINNACLE_FREQ_1
  * @brief frequency around 444,444Hz
  */
 #define PINNACLE_FREQ_1            0x03
-/** 
+/**
  * @def PINNACLE_FREQ_2
  * @brief frequency around 400,000Hz
  */
 #define PINNACLE_FREQ_2            0x04
-/** 
+/**
  * @def PINNACLE_FREQ_3
  * @brief frequency around 363,636Hz
  */
 #define PINNACLE_FREQ_3            0x05
-/** 
+/**
  * @def PINNACLE_FREQ_4
  * @brief frequency around 333,333Hz
  */
 #define PINNACLE_FREQ_4            0x06
-/** 
+/**
  * @def PINNACLE_FREQ_5
  * @brief frequency around 307,692Hz
  */
 #define PINNACLE_FREQ_5            0x07
-/** 
+/**
  * @def PINNACLE_FREQ_6
  * @brief frequency around 267,000Hz
  */
 #define PINNACLE_FREQ_6            0x09
-/** 
+/**
  * @def PINNACLE_FREQ_7
  * @brief frequency around 235,000Hz
  */
@@ -162,24 +162,24 @@
  * @sa PinnacleTouch::anyMeasModeConfig(), PinnacleTouch::measureAdc()
  */
 ///@{
-/** 
+/**
  * @def PINNACLE_MUX_REF1
  * @brief enables a builtin capacitor (~0.5pF).
  * @sa PinnacleTouch::measureAdc()
  */
 #define PINNACLE_MUX_REF1          0x10
-/** 
+/**
  * @def PINNACLE_MUX_REF0
  * @brief enables a builtin capacitor (~0.25pF).
  * @sa PinnacleTouch::measureAdc()
  */
 #define PINNACLE_MUX_REF0          0x08
-/** 
+/**
  * @def PINNACLE_MUX_PNP
  * @brief enable PNP sense line
  */
 #define PINNACLE_MUX_PNP           0x04
-/** 
+/**
  * @def PINNACLE_MUX_NPN
  * @brief enable NPN sense line
  */
@@ -194,28 +194,28 @@
  * @sa PinnacleTouch::anyMeasModeConfig()
  */
 ///@{
-/** 
+/**
  * @def PINNACLE_CRTL_REPEAT
  * @brief only required for more than 1 measurement
  */
 #define PINNACLE_CRTL_REPEAT       0x80
-/** 
+/**
  * @def PINNACLE_CRTL_PWR_IDLE
  * @brief triggers low power mode (sleep) after completing measurements
  */
 #define PINNACLE_CRTL_PWR_IDLE     0x40
 ///@}
 
-/** 
+/**
  * This data structure used for returning data reports in relative mode
  * (using PinnacleTouch::reportRelative() -- see also `Relative Mode in examples
  * <examples.html#relative-mode>`_).
  */
 typedef struct RelativeReport
 {
-    /** 
+    /**
      * @brief This will always be in range [0, 7].
-     * 
+     *
      * The returned button data is a byte in which each bit
      * represents if a button is pressed. The bit to button order is as
      * follows:
@@ -244,7 +244,7 @@ typedef struct RelativeReport
     int8_t y;
     /**
      * @brief This will always be in range -128 <= `scroll` <= 127
-     * 
+     *
      * @remark In Relative/Mouse mode the scroll wheel data is only reported
      * if the `intellimouse` parameter is passed as `true` to
      * PinnacleTouch::relativeModeConfig(). Otherwise this is an empty byte as
@@ -261,14 +261,16 @@ typedef struct RelativeReport
  */
 struct AbsoluteReport
 {
-    /** 
+    /**
      * @brief This will always be in range [0, 7].
-     * 
+     *
      * @remarks The returned button data is a byte in which each bit
      * represents a button. The bit to button order is as follows:
-     * - 0. [LSB] Button 1
-     * - 1. Button 2
-     * - 2. Button 3
+     * |bit position | button number |
+     * |:-----------:|:-------------:|
+     * | 0 | [LSB] Button 1 |
+     * | 1 | Button 2 |
+     * | 2 | Button 3 |
      */
     uint8_t buttons;
     /**
@@ -286,12 +288,12 @@ struct AbsoluteReport
     uint8_t z;
 };
 
-/** 
+/**
  * The abstract base class for driving the Pinnacle ASIC.
  */
 class PinnacleTouch{
 public:
-    /** 
+    /**
      * @brief Create an instance to use as an interface with the Pinnacle ASIC
      * touch controller.
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
@@ -305,7 +307,7 @@ public:
      * function will do nothing.
      * @param isEnabled `true` enables data reporting; `false` disables data
      * reporting.
-     */    
+     */
     void feedEnabled(bool);
     /**
      * This function describes if the touch/button event data is to be
@@ -314,7 +316,7 @@ public:
      * is set to @ref PINNACLE_ANYMEAS.
      */
     bool isFeedEnabled();
-    /** 
+    /**
      * This function controls which mode the data report is configured for.
      * @param mode Valid input values are @ref PINNACLE_RELATIVE for
      * relative/mouse mode, @ref PINNACLE_ABSOLUTE for absolute positioning mode,
@@ -336,7 +338,7 @@ public:
      * re-configured by using  absoluteModeConfig() or relativeModeConfig().
      */
     uint8_t getDataMode();
-    /** 
+    /**
      * This function can be used to inform applications about the factory
      * customized hardware configuration. See note about product labeling in
      * `Model Labeling Scheme <index.html#cc>`_.
@@ -346,7 +348,7 @@ public:
      * the trackpad.
      */
     bool isHardConfigured();
-    /**     
+    /**
      * Use this function to detirmine if there is new data to report.
      * Internally, this function checks if the interrupt signal on the "data
      * ready" pin (labeled "DR" in the `pinout <index.html#pinout>`_ section)
@@ -357,7 +359,7 @@ public:
      * new data to report.
      */
     bool available();
-    /** 
+    /**
      * Configure settings specific to Absolute mode (reports axis positions). This function only
      * applies to @ref PINNACLE_ABSOLUTE mode, otherwise if @ref DataMode is set to
      * @ref PINNACLE_ANYMEAS or @ref PINNACLE_RELATIVE, then this function does nothing.
@@ -368,11 +370,11 @@ public:
      * Default is `false`.
      * @param invertY Specifies if the y-axis data is to be inverted before reporting it.
      * Default is `false`.
-     */    
+     */
     void absoluteModeConfig(uint8_t zIdleCount=30,
                             bool invertX=false,
                             bool invertY=false);
-    /**    
+    /**
      * Configure settings specific to Relative mode (AKA Mouse mode) data reporting. This function
      * only applies to @ref PINNACLE_RELATIVE mode, otherwise if @ref DataMode is set to
      * @ref PINNACLE_ANYMEAS or @ref PINNACLE_ABSOLUTE, then this function does nothing.
@@ -395,7 +397,7 @@ public:
                             bool secondaryTap=true,
                             bool glideExtend=false,
                             bool intellimouse=false);
-    /** 
+    /**
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC. This function only applies to @ref PINNACLE_RELATIVE mode,
      * otherwise if @ref DataMode is set to @ref PINNACLE_ANYMEAS, then this
@@ -405,7 +407,7 @@ public:
      * button) event.
      */
     void reportRelative(relativeReport* report);
-    /** 
+    /**
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC (including empty packets on ending of a touch/button
      * event). This function only applies to PINNACLE_ABSOLUTE mode, otherwise
@@ -424,7 +426,7 @@ public:
      * wants to neglect a data report when desirable.
      */
     void clearFlags();
-    /**     
+    /**
      * This will specify if the Pinnacle ASIC is allowed to sleep after about
      * 5 seconds of idle activity (no input event).
      * @param isEnabled `true` if you want the Pinnacle ASIC to enter sleep
@@ -436,7 +438,7 @@ public:
      * milliseconds to wake up (does not include handling the touch event or
      * button press data). Remember that releasing a held button is also
      * considered an input event.
-     */    
+     */
     void allowSleep(bool);
     /**
      * This function describes if the Pinnacle ASIC is configured to enter
@@ -445,7 +447,7 @@ public:
      * failed to initialize the trackpad.
      */
     bool isAllowSleep();
-    /**     
+    /**
      * This function controls power state of the Pinnacle ASIC that drives the
      * touchpad.
      * @param isOff `true` means power down (AKA standby mode), and `false`
@@ -476,7 +478,7 @@ public:
      * or stylus with a 5.25mm diameter tip.
      */
     void setSampleRate(uint16_t);
-    /** 
+    /**
      * This function describes the sample rate that the Pinnacle ASIC uses for
      * reporting data.
      * @returns The setting configured by setSampleRate() or 0 if @ref DataMode is
@@ -566,7 +568,7 @@ public:
     /**
      * Sets the ADC (Analog to Digital Converter) attenuation (gain ratio) to
      * enhance performance based on the overlay type. This does not apply to
-     * AnyMeas mode. However, the input value specified can be written while 
+     * AnyMeas mode. However, the input value specified can be written while
      * @ref DataMode is set to @ref PINNACLE_ANYMEAS, but there is no garauntee that
      * it will "stick" as it may be overidden by the Pinnacle ASIC
      * (specification sheet does not imply either way).
@@ -588,7 +590,7 @@ public:
      * alters values in the Pinnacle ASIC's memory.USE THIS AT YOUR OWN RISK!
      */
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin=4, uint8_t yAxisWideZMin=3);
-    /** 
+    /**
     * This function configures the Pinnacle ASIC for taking raw ADC
     * measurements. Be sure to set the @ref DataMode attribute to
     * @ref PINNACLE_ANYMEAS before calling this function otherwise it will do
@@ -652,24 +654,24 @@ public:
      * negative.
      * @returns A signed short integer. If @ref DataMode is not set to
      * @ref PINNACLE_ANYMEAS, then this function returns `0` and does nothing.
-     * 
+     *
      * 4-byte Integer Format
-     * 
+     *
      * | byte 3 (MSByte) |||||||||
      * |:-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
      * | bit position | 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 |
      * | representation | N/A | N/A | Ref1 | Ref0 | Y11 | Y10 | Y9 | Y8 |
-     * 
+     *
      * | byte 2 |||||||||
      * |:-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
      * | bit position | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 |
      * | representation | Y7 | Y6 | Y5 | Y4 | Y3 | Y2 | Y1 | Y0 |
-     * 
+     *
      * | byte 1 |||||||||
      * |:-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
      * | bit position | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 |
      * | representation | X15 | X14 | X13 | X12 | X11 | X10 | X9 | X8 |
-     * 
+     *
      * | byte 0 (LSByte) |||||||||
      * |:-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
      * | bit position | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
@@ -682,7 +684,7 @@ public:
      * `PINNACLE_MUX_REF1`) must be passed to anyMeasModeConfig() in the
      * `muxControl` parameter, and their representative bits must be flagged
      * in both the `bitsToToggle` & `togglePolarity` parameters.
-     */    
+     */
     int16_t measureAdc(unsigned int, unsigned int);
     /**
      * A non-blocking function to instigate ADC measurements when the
@@ -802,15 +804,15 @@ private:
  * Arduino's MouseHID API to turn the Cirque GlidePoint circle trackpad
  * into a usb mouse for your computer.
  */
-/** 
+/**
  * @mainpage
  * PinnacleTouch is an Arduino-based API library to interface with Cirque's
  * ASIC touch controller, called Pinnacle (1CA027), that is used on Cirque
  * GlidePoint circle trackpads.
- * 
+ *
  * Please refer to the
  * [README](https://github.com/2bndy5/CirquePinnacle/blob/master/README.rst)
  * for information on connecting the trackpad, this library's features, and
  * more.
- * 
+ *
  */
