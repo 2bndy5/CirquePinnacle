@@ -207,9 +207,8 @@
 ///@}
 
 /**
- * This data structure used for returning data reports in relative mode
- * (using PinnacleTouch::reportRelative() -- see also `Relative Mode in examples
- * <examples.html#relative-mode>`_).
+ * This data structure used for returning data reports in relative mode using
+ * PinnacleTouch::reportRelative().
  */
 typedef struct RelativeReport
 {
@@ -254,10 +253,8 @@ typedef struct RelativeReport
 };
 
 /**
- * @sa PinnacleTouch::reportAbsolute()
- * This data structure used for returning data reports in absolute mode (using
- * PinnacleTouch::reportAbsolute() -- see also `Absolute Mode in examples
- * <examples.html#absolute-mode>`_).
+ * This data structure used for returning data reports in absolute mode using
+ * PinnacleTouch::reportAbsolute()
  */
 struct AbsoluteReport
 {
@@ -676,8 +673,8 @@ public:
      * |:-------------|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
      * | bit position | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
      * | representation | X7 | X6 | X5 | X4 | X3 | X2 | X1 | X0 |
-     * See `AnyMeas mode example <examples.html#anymeas-mode>`_ to understand
-     * how to use these 4-byte integer polynomials.
+     * See anymeas_mode.ino example to understand how to use these
+     * 4-byte integer polynomials.
      * @note Bits 29 and 28 represent the optional implementation of reference
      * capacitors built into the Pinnacle ASIC. To use these capacitors, the
      * corresponding constants (`PINNACLE_MUX_REF0` and/or

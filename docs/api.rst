@@ -8,11 +8,15 @@ Datatypes for data reports
 Relative Data
 **************
 
+See also `Relative Mode example <examples.html#relative-mode>`_
+
 .. doxygenstruct:: RelativeReport
     :members:
 
 Absolute Data
 **************
+
+See also `Absolute Mode example <examples.html#absolute-mode>`_.
 
 .. doxygenstruct:: AbsoluteReport
     :members:
