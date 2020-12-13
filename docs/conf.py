@@ -63,7 +63,7 @@ primary_domain = 'cpp'
 highlight_language = 'cpp'
 
 # -- breathe configuration ---------------------------------------------
-breathe_projects = { "Cirque Pinnacle": "./doxygen_build/xml" }
+breathe_projects = { "Cirque Pinnacle": "./doxygen/xml" }
 breathe_default_project = "Cirque Pinnacle"
 
 # -- read the docs configuration ---------------------------------------------
