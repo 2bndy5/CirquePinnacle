@@ -2,7 +2,9 @@
 .. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
   :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
-
+.. image:: https://github.com/2bndy5/CirquePinnacle/workflows/Arduino%20CLI%20build/badge.svg
+  :target: https://github.com/2bndy5/CirquePinnacle/actions?query=workflow%3A%22Arduino+CLI+build%22
+  :alt: Arduino CLI build
 
 Introduction
 ============

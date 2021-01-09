@@ -11,13 +11,13 @@
 // #define BACKWARD_BUTTON_PIN 3
 // #define FORWARD_BUTTON_PIN 4
 
-class MouseHID{
-    MouseHID(void){
-        static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
-        HID().AppendDescriptor(&node);
+class MouseHID {
+    MouseHID(void) {
+      static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
+      HID().AppendDescriptor(&node);
     }
-    void sendReport(relativeReport* r){
-	    HID().SendReport(1, r, 4);
+    void sendReport(relativeReport* r) {
+      HID().SendReport(1, r, 4);
     }
 };
 
@@ -31,40 +31,40 @@ PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
 RelativeReport report;
 bool hasNewReport = false;
 
-void setup(){
-    if (tpad.begin()){
-        Serial.println("found Cirque Pinnacle!");
-    }
-    else{
-        Serial.println("Cirque Pinnacle not responding!");
-    }
+void setup() {
+  if (tpad.begin()) {
+    Serial.println("found Cirque Pinnacle!");
+  }
+  else {
+    Serial.println("Cirque Pinnacle not responding!");
+  }
 #ifdef FORWARD_BUTTON_PIN
-    pinMode(FORWARD_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(FORWARD_BUTTON_PIN, INPUT_PULLUP);
 #endif
 #ifdef BACKWARD_BUTTON_PIN
-    pinMode(BACKWARD_BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BACKWARD_BUTTON_PIN, INPUT_PULLUP);
 #endif
 }
 
-void loop(){
-    relativeReport prevReportState = report;
-    if (tpad.available()){  // is there new data?
-        tpad.reportRelative(&report); // get new data
-        hasNewReport = true;
-    }
-    else{
-        // clear previous forward/backward buttons' states
-        report.buttons &= 7;
-    }
+void loop() {
+  relativeReport prevReportState = report;
+  if (tpad.available()) { // is there new data?
+    tpad.reportRelative(&report); // get new data
+    hasNewReport = true;
+  }
+  else {
+    // clear previous forward/backward buttons' states
+    report.buttons &= 7;
+  }
 #ifdef FORWARD_BUTTON_PIN
-    report.buttons |= digitalRead(FORWARD_BUTTON_PIN) * FORWARD_BUTTON_MASK;
+  report.buttons |= digitalRead(FORWARD_BUTTON_PIN) * FORWARD_BUTTON_MASK;
 #endif
 #ifdef BACKWARD_BUTTON_PIN
-    report.buttons |= digitalRead(BACKWARD_BUTTON_PIN) * BACKWARD_BUTTON_MASK;
+  report.buttons |= digitalRead(BACKWARD_BUTTON_PIN) * BACKWARD_BUTTON_MASK;
 #endif
-    if (prevReportState.buttons != report.buttons || hasNewReport){
-        prevReportState = report;
-        mouse->sendReport(&report);
-        hasNewReport = false;
-    }
+  if (prevReportState.buttons != report.buttons || hasNewReport) {
+    prevReportState = report;
+    mouse->sendReport(&report);
+    hasNewReport = false;
+  }
 }
