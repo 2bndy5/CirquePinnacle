@@ -13,7 +13,7 @@ Relative Data
    .. cpp:type:: relativeReport
 
       This data structure used for returning data reports in relative mode (using
-      :cpp:func:`reportRelative()` -- see also `Relative Mode in examples
+      :cpp:func:`read()` -- see also `Relative Mode in examples
       <examples.html#relative-mode>`_). The datatype, name, and range for each member are as follows:
 
             .. csv-table::
@@ -48,7 +48,7 @@ Absolute Data
    .. cpp:type:: absoluteReport
 
       This data structure used for returning data reports in absolute mode (using
-      :cpp:func:`reportAbsolute()`-- see also `Absolute Mode in examples
+      :cpp:func:`read()`-- see also `Absolute Mode in examples
       <examples.html#absolute-mode>`_). The datatype, name, and range for each member are as follows:
 
             .. csv-table::
@@ -348,16 +348,16 @@ available()
       Use this function to detirmine if there is new data to report. Internally, this function
       checks if the interrupt signal on the "data ready" pin (labeled "DR" in the `pinout
       <index.html#pinout>`_ section) is active. Data (new or antiquated) can be retreived using
-      :cpp:func:`reportRelative()` or :cpp:func:`reportAbsolute()` depending on what `DataMode`_
+      :cpp:func:`read()` or :cpp:func:`read()` depending on what `DataMode`_
       is set to.
 
       :Returns:
          ``true`` if there is new data to report; ``false`` if there is no new data to report.
 
-reportAbsolute()
+read()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: AbsoluteReport reportAbsolute(absoluteReport* report)
+   .. cpp:function:: AbsoluteReport read(absoluteReport* report)
 
       This function will fetch touch (and button) event data from the Pinnacle ASIC (including
       empty packets on ending of a touch/button event). This function only applies to
@@ -368,10 +368,10 @@ reportAbsolute()
          :cpp:type:`absoluteReport`) for storing the data that describes the touch (and button)
          event.
 
-reportRelative()
+read()
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. cpp:function:: AbsoluteReport reportRelative(relativeReport* report)
+   .. cpp:function:: AbsoluteReport read(relativeReport* report)
 
       This function will fetch touch (and button) event data from the Pinnacle ASIC. This
       function only applies to :cpp:var:`PINNACLE_RELATIVE` mode, otherwise if `DataMode`_ is set

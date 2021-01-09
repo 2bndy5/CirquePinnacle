@@ -24,7 +24,7 @@ void setup() {
 
 void loop() {
   if (tpad.available()) {
-    tpad.reportAbsolute(&report);
+    tpad.read(&report);
     Serial.print("Left: ");
     Serial.print(report.buttons & 1);
     Serial.print(" Right: ");

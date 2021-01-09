@@ -1,20 +1,20 @@
-/*
-    CirquePinnacle.h
-        A library to interface (via I2C or SPI protocol) with Cirque's Glidepoint circle
-        touchpads that employ Cirque's Pinnacle ASIC touch controller (1CA027).
-
-        Store links (where to buy):
-        Individual trackpads ==> https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=118816186
-        developer kits ==> https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=183712866
-
-    Written by Brendan Doherty to include all functionality demonstrated by
-    the official Cirque github repository based on the teensy3.2 and the
-    Cirque Glidepoint circle trackpad developer kit.
-        Cirque example repository ==> https://github.com/cirque-corp/Cirque_Pinnacle_1CA027
-
-    License and copyright information is located at this repository's root
-    directory under LICENSE.txt
-*/
+/**
+ *  @file CirquePinnacle.cpp
+ *  A library to interface (via I2C or SPI protocol) with Cirque's Glidepoint circle
+ *  touchpads that employ Cirque's Pinnacle ASIC touch controller (1CA027).
+ *
+ *  Store links (where to buy):
+ *  - [Individual trackpads](https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=118816186)
+ *  - [developer kits](https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=183712866)
+ *
+ *  Written by Brendan Doherty to include all functionality demonstrated by
+ *  the official Cirque github repository based on the teensy3.2 and the
+ *  Cirque Glidepoint circle trackpad developer kit.
+ *  - [Cirque example repository](https://github.com/cirque-corp/Cirque_Pinnacle_1CA027)
+ *
+ *  License and copyright information is located at this repository's root
+ *  directory under LICENSE
+ */
 #include <Arduino.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -163,7 +163,7 @@ void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool seconda
     }
 }
 
-void PinnacleTouch::reportRelative(RelativeReport *report)
+void PinnacleTouch::read(RelativeReport *report)
 {
     if (_dataMode == PINNACLE_RELATIVE)
     {
@@ -177,7 +177,7 @@ void PinnacleTouch::reportRelative(RelativeReport *report)
     }
 }
 
-void PinnacleTouch::reportAbsolute(AbsoluteReport *report)
+void PinnacleTouch::read(AbsoluteReport *report)
 {
     if (_dataMode == PINNACLE_ABSOLUTE)
     {

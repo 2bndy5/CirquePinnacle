@@ -48,8 +48,9 @@ PINNACLE_CRTL_PWR_IDLE      LITERAL1
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
-absoluteReport              KEYWORD1
-relativeReport              KEYWORD1
+AbsoluteReport              KEYWORD1
+RelativeReport              KEYWORD1
+PinnacleTouch               KEYWORD1
 PinnacleTouchSPI            KEYWORD1
 PinnacleTouchI2C            KEYWORD1
 
@@ -63,9 +64,10 @@ setDataMode                 KEYWORD2
 getDataMode                 KEYWORD2
 isHardConfigured            KEYWORD2
 available                   KEYWORD2
+read                        KEYWORD2
 absoluteModeConfig          KEYWORD2
 relativeModeConfig          KEYWORD2
-clearFlags                  KEYWORD2
+clearStatusFlags            KEYWORD2
 allowSleep                  KEYWORD2
 isAllowSleep                KEYWORD2
 shutdown                    KEYWORD2

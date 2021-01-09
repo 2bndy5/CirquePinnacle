@@ -1,4 +1,4 @@
-name: ghpages
+name: Build Docs
 
 on: [pull_request, push]
 
@@ -23,9 +23,3 @@ jobs:
       run: |
         cd docs
         sphinx-build -E -W . _build
-    - name: upload to github pages
-      # if: ${{ github.event_name == 'release'}}
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/_build

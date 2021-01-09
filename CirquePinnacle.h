@@ -13,7 +13,7 @@
  *  - [Cirque example repository](https://github.com/cirque-corp/Cirque_Pinnacle_1CA027)
  *
  *  License and copyright information is located at this repository's root
- *  directory under LICENSE.txt
+ *  directory under LICENSE
  */
 #ifndef CirquePinnacle_H
 #define CirquePinnacle_H
@@ -174,8 +174,10 @@ enum PinnacleAnyMeasCtrl
 };
 
 /**
+ * @rst
  * This data structure used for returning data reports in relative mode using
- * PinnacleTouch::reportRelative().
+ * `read() for Relative Mode`_.
+ * @endrst
  */
 struct RelativeReport
 {
@@ -222,8 +224,10 @@ struct RelativeReport
 };
 
 /**
+ * @rst
  * This data structure used for returning data reports in absolute mode using
- * PinnacleTouch::reportAbsolute()
+ * `read() for Absolute Mode`_.
+ * @endrst
  */
 struct AbsoluteReport
 {
@@ -340,7 +344,7 @@ public:
      * Internally, this function checks if the interrupt signal on the "data
      * ready" pin (labeled "DR" in the `pinout &lt;index.html#pinout&gt;`_ section)
      * is active. Data (new or antiquated) can be retreived using
-     * `reportRelative()` or `reportAbsolute()` depending on what `Data Mode`_ is set
+     * `read()` or `read()` depending on what `Data Mode`_ is set
      * to.
      * @endrst
      * @returns `true` if there is new data to report; `false` if there is no
@@ -393,27 +397,27 @@ public:
      * @rst
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC. This function only applies to `PINNACLE_RELATIVE` mode,
-     * otherwise if `Data Mode`_ is set to `PINNACLE_ANYMEAS`, then this
-     * function does nothing.
+     * otherwise if `Data Mode`_ is set to `PINNACLE_ANYMEAS` or
+     * `PINNACLE_ABSOLUTE`, then this function does nothing.
      * @endrst
      * @param[out] report A reference pointer (declared variable of datatype
      * RelativeReport) for storing the data that describes the touch (and
      * button) event.
      */
-    void reportRelative(RelativeReport* report);
+    void read(RelativeReport* report);
     /**
      * @rst
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC (including empty packets on ending of a touch/button
      * event). This function only applies to `PINNACLE_ABSOLUTE` mode, otherwise
-     * if `Data Mode`_ is set to `PINNACLE_ANYMEAS`, then this function does
-     * nothing.
+     * if `Data Mode`_ is set to `PINNACLE_ANYMEAS` or `PINNACLE_RELATIVE`,
+     * then this function does nothing.
      * @endrst
      * @param[out] report A reference pointer (declared variable of datatype
      * AbsoluteReport) for storing the data that describes the touch (and
      * button) event.
      */
-    void reportAbsolute(AbsoluteReport* report);
+    void read(AbsoluteReport* report);
     /**
      * @rst
      * Use this function to clear the interrupt signal (digital input; active
