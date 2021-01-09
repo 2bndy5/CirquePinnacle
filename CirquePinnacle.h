@@ -400,7 +400,7 @@ public:
      * RelativeReport) for storing the data that describes the touch (and
      * button) event.
      */
-    void reportRelative(relativeReport* report);
+    void reportRelative(RelativeReport* report);
     /**
      * @rst
      * This function will fetch touch (and button) event data from the
@@ -413,7 +413,7 @@ public:
      * AbsoluteReport) for storing the data that describes the touch (and
      * button) event.
      */
-    void reportAbsolute(absoluteReport* report);
+    void reportAbsolute(AbsoluteReport* report);
     /**
      * @rst
      * Use this function to clear the interrupt signal (digital input; active

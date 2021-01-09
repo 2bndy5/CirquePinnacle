@@ -38,7 +38,7 @@ bool PinnacleTouch::begin()
     if (firmware[0] == 7 || firmware[1] == 0x3A)
     {
         _dataMode = 0;
-        clearFlags();
+        clearStatusFlags();
         detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
         setAdcGain(0);                 // most senitive attenuation
@@ -48,7 +48,7 @@ bool PinnacleTouch::begin()
         // configs[1] => set relative mode & enable feed
         // configs[2] => enables all taps in Relative mode
         rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
-        calibrate(true); // enables all compensations, runs calibration, & clearFlags()
+        calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
         return true;
     } // hardware check passed
     else
@@ -163,13 +163,13 @@ void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool seconda
     }
 }
 
-void PinnacleTouch::reportRelative(relativeReport *report)
+void PinnacleTouch::reportRelative(RelativeReport *report)
 {
     if (_dataMode == PINNACLE_RELATIVE)
     {
         uint8_t temp[4] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 4);
-        clearFlags();
+        clearStatusFlags();
         report->buttons = temp[0] & 7;
         report->x = (int8_t)temp[1];
         report->y = (int8_t)temp[2];
@@ -177,13 +177,13 @@ void PinnacleTouch::reportRelative(relativeReport *report)
     }
 }
 
-void PinnacleTouch::reportAbsolute(absoluteReport *report)
+void PinnacleTouch::reportAbsolute(AbsoluteReport *report)
 {
     if (_dataMode == PINNACLE_ABSOLUTE)
     {
         uint8_t temp[6] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 6);
-        clearFlags();
+        clearStatusFlags();
         report->buttons = temp[0] & 0x3F;
         report->x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
         report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
@@ -194,7 +194,7 @@ void PinnacleTouch::reportAbsolute(absoluteReport *report)
     }
 }
 
-void PinnacleTouch::clearFlags()
+void PinnacleTouch::clearStatusFlags()
 {
     if (_dataMode <= PINNACLE_ABSOLUTE)
     {
@@ -313,7 +313,7 @@ void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
             {
                 rapRead(PINNACLE_CAL_CONFIG, &temp); // calibration is running
             }
-            clearFlags(); // now that calibration is done
+            clearStatusFlags(); // now that calibration is done
         }
     }
 }
@@ -399,7 +399,7 @@ void PinnacleTouch::anyMeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
         rapWriteBytes(5, anymeas_config, 10);
         uint8_t togPol[8] = {};
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
-        clearFlags();
+        clearStatusFlags();
     }
 }
 
@@ -439,7 +439,7 @@ int16_t PinnacleTouch::getMeasureAdc()
     {
         uint8_t result[2] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, result, 2);
-        clearFlags();
+        clearStatusFlags();
         return (int16_t)(((uint16_t)result[0] << 8) | result[1]);
     }
     return 0;
@@ -461,7 +461,7 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
     {
         rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
     }
-    clearFlags(); // clear Command Complete flag in Status register
+    clearStatusFlags(); // clear Command Complete flag in Status register
     if (prevFeedState)
     {
         feedEnabled(prevFeedState); // resume previous feed state
@@ -487,7 +487,7 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
         {
             rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
         }
-        clearFlags(); // clear Command Complete flag in Status register
+        clearStatusFlags(); // clear Command Complete flag in Status register
     }
     if (prevFeedState)
     {
@@ -511,7 +511,7 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t *data)
         rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
     }
     rapRead(PINNACLE_ERA_VALUE, data); // get data
-    clearFlags();                      // clear Command Complete flag in Status register
+    clearStatusFlags();                      // clear Command Complete flag in Status register
     if (prevFeedState)
     {
         feedEnabled(prevFeedState); // resume previous feed state
@@ -536,7 +536,7 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t *data, uint8_
             rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
         }
         rapRead(PINNACLE_ERA_VALUE, &data[i]); // get value
-        clearFlags();                          // clear Command Complete flag in Status register
+        clearStatusFlags();                          // clear Command Complete flag in Status register
     }
     if (prevFeedState)
     {
