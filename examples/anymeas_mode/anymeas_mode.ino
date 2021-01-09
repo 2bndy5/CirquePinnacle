@@ -38,7 +38,7 @@ void setup() {
 
 void loop() {
   for (uint8_t i = 0; i < variousVectors_size; i++) {
-    int16_t measurement = tpad.measureADC(
+    int16_t measurement = tpad.measureAdc(
                             vectorDetirminants[i].toggle,
                             vectorDetirminants[i].polarity);
     Serial.print("meas");

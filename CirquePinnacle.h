@@ -177,7 +177,7 @@ enum PinnacleAnyMeasCtrl
  * This data structure used for returning data reports in relative mode using
  * PinnacleTouch::reportRelative().
  */
-typedef struct RelativeReport
+struct RelativeReport
 {
     /**
      * @brief This will always be in range [0, 7].

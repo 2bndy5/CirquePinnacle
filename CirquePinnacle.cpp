@@ -86,7 +86,7 @@ bool PinnacleTouch::isFeedEnabled()
 
 void PinnacleTouch::setDataMode(uint8_t mode)
 {
-    if (mode >= 0 && mode <= 2)
+    if (mode <= 2)
     {
         uint8_t sysConfig = 0;
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
@@ -147,7 +147,7 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
 {
     if (_dataMode == PINNACLE_ABSOLUTE)
     {
-        rapWrite(PINNACLE_Z_IDLE, zIdleCount > 255 ? 255 : zIdleCount);
+        rapWrite(PINNACLE_Z_IDLE, zIdleCount);
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
         rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0x3F) | (invertY << 7) | (invertX << 6));
@@ -365,7 +365,7 @@ void PinnacleTouch::setAdcGain(uint8_t sensitivity)
 {
     if (_dataMode <= PINNACLE_ABSOLUTE)
     {
-        if (sensitivity < 0 && sensitivity >= 4)
+        if (sensitivity >= 4)
         {
             sensitivity = 0; // faulty input defaults to highest sensitivity
         }
@@ -417,13 +417,13 @@ void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togg
     if (_dataMode == PINNACLE_ANYMEAS)
     {
         uint8_t togPol[8] = {}; // array buffer for registers
-        for (uint8_t i = 3; i >= 0; i--)
+        for (int8_t i = 3; i >= 0; --i)
         {
-            togPol[3 - i] = (uint8_t)(bitsToToggle >> (i * 8));
+            togPol[3 - i] = (uint8_t)(bitsToToggle >> ((uint8_t)i * 8));
         }
-        for (uint8_t i = 3; i >= 0; i--)
+        for (int8_t i = 3; i >= 0; --i)
         {
-            togPol[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
+            togPol[3 - i + 4] = (uint8_t)(togglePolarity >> ((uint8_t)i * 8));
         }
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
         // initiate measurements
