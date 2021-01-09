@@ -13,8 +13,19 @@ jobs:
       with:
           working-directory: './docs/'
           doxyfile-path: './Doxyfile'
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: install Sphinx extensions
+      run: pip install -r docs/requirements.txt
+    - name: run Sphinx
+      run: |
+        cd docs
+        sphinx-build -E -W . _build
     - name: upload to github pages
+      # if: ${{ github.event_name == 'release'}}
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/doxygen/html
+        publish_dir: ./docs/_build

@@ -1,1 +1,4 @@
 breathe
+sphinx-material
+sphinx-copybutton
+sphinx-sitemap
