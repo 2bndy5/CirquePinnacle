@@ -16,7 +16,7 @@ class MouseHID {
       static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
       HID().AppendDescriptor(&node);
     }
-    void sendReport(relativeReport* r) {
+    void sendReport(RelativeReport* r) {
       HID().SendReport(1, r, 4);
     }
 };
