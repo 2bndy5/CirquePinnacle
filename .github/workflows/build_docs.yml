@@ -3,12 +3,12 @@ name: Build Docs
 on: [pull_request, push]
 
 jobs:
-  host-doxygen:
+  doxygen-sphinx:
     runs-on: ubuntu-latest
     steps:
     - name: checkout
       uses: actions/checkout@v2
-    - name: build doxy
+    - name: build doxygen
       uses: mattnotmitt/doxygen-action@v1
       with:
           working-directory: './docs/'
