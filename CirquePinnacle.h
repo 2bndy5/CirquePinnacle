@@ -192,27 +192,28 @@ struct RelativeReport
      *
      * .. list-table::
      *     :header-rows: 1
-     *     :widths: 2, 15
+     *     :widths: 2, 5, 10
      *
      *     * - bit position
+     *       - button number
      *       - description
      *     * - 0 [LSB]
-     *       - Button 1 (thought of as Left mouse button). If ``allTaps``
-     *         parameter is passed as ``true`` when calling
+     *       - Button 1 (thought of as Left mouse button)
+     *       - If ``allTaps`` parameter is passed as ``true`` when calling
      *         `~PinnacleTouch::relativeModeConfig()`, a single tap will be
      *         reflected here.
      *     * - 1
-     *       - Button 2 (thought of as Right mouse button). If ``allTaps`` and
-     *         ``secondaryTap`` parameters are passed as ``true`` when calling
-     *         `~PinnacleTouch::relativeModeConfig()`, a single tap in the
-     *         perspective top-left-most corner will be reflected here
-     *         (secondary taps are  constantly disabled if
-     *         `~PinnacleTouch::isHardConfigured()` returns ``true``). Note
-     *         that the top-left-most corner can be perspectively moved if
+     *       - Button 2 (thought of as Right mouse button)
+     *       - If ``allTaps`` and ``secondaryTap`` parameters are passed as ``true``
+     *         when calling `~PinnacleTouch::relativeModeConfig()`, a single tap in the
+     *         perspective top-left-most corner will be reflected here (secondary taps
+     *         are constantly disabled if `~PinnacleTouch::isHardConfigured()` returns
+     *         ``true``). Note that the top-left-most corner can be perspectively moved if
      *         ``rotate90`` parameter is passed as ``true`` when calling
      *         `~PinnacleTouch::relativeModeConfig()`.
      *     * - 2
      *       - Button 3 (thought of as Middle mouse or scroll wheel button)
+     *       -
      * @endrst
      */
     uint8_t buttons;
