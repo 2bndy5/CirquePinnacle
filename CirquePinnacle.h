@@ -86,12 +86,13 @@ enum PinnacleAnyMeasGain
 /**
  * Allowed frequency configurations of AnyMeas mode.
  *
- * The frequencies defined here are approximated based on an aperture
- * width of 500 nanoseconds. If the `apertureWidth` parameter to
- * PinnacleTouch::anyMeasModeConfig() specified is less than 500 nanoseconds,
- * then the frequency will be larger than what is described here (& vice
- * versa).
  * @rst
+ * The frequencies defined here are approximated based on an aperture
+ * width of 500 nanoseconds. If the ``apertureWidth`` parameter to
+ * `~PinnacleTouch::anyMeasModeConfig()` specified is less than 500 nanoseconds,
+ * then the frequency will be larger than what is described here (and vice
+ * versa).
+ *
  * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
  */
@@ -184,22 +185,35 @@ struct RelativeReport
     /**
      * @brief This will always be in range [0, 7].
      *
+     * @rst
      * The returned button data is a byte in which each bit
      * represents if a button is pressed. The bit to button order is as
      * follows:
-     * - 0. [LSB] Button 1 (thought of as Left mouse button). If `allTaps`
-     *      parameter is passed as `true` when calling
-     *      PinnacleTouch::relativeModeConfig(), a single tap will be
-     *      reflected here.
-     * - 1. Button 2 (thought of as Right mouse button). If `allTaps` and
-     *      `secondaryTap` parameters are passed as `true` when calling
-     *      PinnacleTouch::relativeModeConfig(), a single tap in the perspective
-     *      top-left-most corner will be reflected here (secondary taps are
-     *      constantly disabled if isHardConfigured() returns `true`). Note
-     *      that the top-left-most corner can be perspectively moved if
-     *      `rotate90` parameter is passed as `true` when calling
-     *      PinnacleTouch::relativeModeConfig().
-     * - 2. Button 3 (thought of as Middle mouse or scroll wheel button)
+     *
+     * .. list-table::
+     *     :header-rows: 1
+     *     :widths: 2, 15
+     *
+     *     * - bit position
+     *       - description
+     *     * - 0 [LSB]
+     *       - Button 1 (thought of as Left mouse button). If ``allTaps``
+     *         parameter is passed as ``true`` when calling
+     *         `~PinnacleTouch::relativeModeConfig()`, a single tap will be
+     *         reflected here.
+     *     * - 1
+     *       - Button 2 (thought of as Right mouse button). If ``allTaps`` and
+     *         ``secondaryTap`` parameters are passed as ``true`` when calling
+     *         `~PinnacleTouch::relativeModeConfig()`, a single tap in the
+     *         perspective top-left-most corner will be reflected here
+     *         (secondary taps are  constantly disabled if
+     *         `~PinnacleTouch::isHardConfigured()` returns ``true``). Note
+     *         that the top-left-most corner can be perspectively moved if
+     *         ``rotate90`` parameter is passed as ``true`` when calling
+     *         `~PinnacleTouch::relativeModeConfig()`.
+     *     * - 2
+     *       - Button 3 (thought of as Middle mouse or scroll wheel button)
+     * @endrst
      */
     uint8_t buttons;
     /**
@@ -278,7 +292,7 @@ public:
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
      * "Data Ready" pin.
      */
-    PinnacleTouch(uint8_t dataReadyPin);
+    PinnacleTouch(uint16_t dataReadyPin);
     /**
      * @rst
      * This function controls if the touch/button event data is reported or
@@ -785,9 +799,6 @@ class PinnacleTouchSPI: public PinnacleTouch{
 public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an SPI bus.
-     * @rst
-     * .. seealso:: `PinnacleTouch`
-     * @endrst
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
      * "Data Ready" pin.
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle
@@ -820,9 +831,6 @@ class PinnacleTouchI2C: public PinnacleTouch{
 public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an I2C bus.
-     * @rst
-     * .. seealso:: `PinnacleTouch`
-     * @endrst
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
      * "Data Ready" pin.
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC.

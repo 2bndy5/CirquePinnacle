@@ -105,12 +105,12 @@ relativeModeConfig
 read() for Relative Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenfunction:: read(RelativeReport*)
+.. doxygenfunction:: read(RelativeReport *report)
 
 read() for Absolute Mode
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. doxygenfunction:: read(AbsoluteReport*)
+.. doxygenfunction:: read(AbsoluteReport *report)
 
 clearStatusFlags
 ^^^^^^^^^^^^^^^^^^^^^^^^
