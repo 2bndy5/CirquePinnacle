@@ -188,9 +188,6 @@ void PinnacleTouch::read(AbsoluteReport *report)
         report->x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
         report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
         report->z = (uint8_t)(temp[5] & 0x3F);
-        // clamp data per advice from spec sheet
-        report->x = report->x < 128 ? 128 : (report->x > 1920 ? 1920 : report->x);
-        report->y = report->y < 64 ? 64 : (report->y > 1472 ? 1472 : report->y);
     }
 }
 

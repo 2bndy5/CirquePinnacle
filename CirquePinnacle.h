@@ -247,11 +247,19 @@ struct AbsoluteReport
      */
     uint8_t buttons;
     /**
-     * @brief This will always be in range 128 <= `x` <= 1920
+     * @brief This will always be in range 0 <= `x` <= 2047
+     * @rst
+     * .. tip:: The datasheet recommends this value should be
+     *     clamped to range 128 <= `x` <= 1920 for reliability.
+     * @endrst
      */
     uint16_t x;
     /**
-     * @brief This will always be in range 64 <= `y` <= 1472
+     * @brief This will always be in range 0 <= `y` <= 1535
+     * @rst
+     * .. tip:: The datasheet recommends this value should be
+     *     clamped to range 64 <= `y` <= 1472 for reliability.
+     * @endrst
      */
     uint16_t y;
     /**
