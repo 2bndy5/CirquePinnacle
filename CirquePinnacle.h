@@ -278,7 +278,7 @@ public:
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
      * "Data Ready" pin.
      */
-    PinnacleTouch(uint8_t);
+    PinnacleTouch(uint8_t dataReadyPin);
     /**
      * @rst
      * This function controls if the touch/button event data is reported or
@@ -288,7 +288,7 @@ public:
      * @endrst
      * @param isEnabled Enables (`true`) or disables (`false`) data reporting.
      */
-    void feedEnabled(bool);
+    void feedEnabled(bool isEnabled);
     /**
      * This function describes if the touch/button event data is to be
      * reported or not.
@@ -313,7 +313,7 @@ public:
      * Invalid input values have no affect.
      * @endrst
      */
-    void setDataMode(uint8_t);
+    void setDataMode(PinnacleDataMode mode);
     /**
      * This function describes which mode the data report is configured for.
      * @rst
@@ -329,7 +329,7 @@ public:
      *   positions)
      * - `255` if begin() returns `false` (failed to initialize the trackpad)
      */
-    uint8_t getDataMode();
+    PinnacleDataMode getDataMode();
     /**
      * @rst
      * This function can be used to inform applications about the factory
@@ -449,7 +449,7 @@ public:
      * AnyMeas mode). `false` if you don't want the Pinnacle ASIC to enter
      * sleep mode.
      */
-    void allowSleep(bool);
+    void allowSleep(bool isEnabled);
     /**
      * This function describes if the Pinnacle ASIC is configured to enter
      * sleep mode. This does not apply to AnyMeas mode.
@@ -468,7 +468,7 @@ public:
      * @param isOff `true` means power down (AKA standby mode), and `false`
      * means power up (Active, Idle, or Sleep mode).
      */
-    void shutdown(bool);
+    void shutdown(bool isOff);
     /**
      * This function describes if the Pinnacle ASIC is in a power down mode
      * or not.
@@ -491,7 +491,7 @@ public:
      * 2mm diameter tip, while the values less than 200 are meant for a finger
      * or stylus with a 5.25mm diameter tip.
      */
-    void setSampleRate(uint16_t);
+    void setSampleRate(uint16_t value);
     /**
      * This function describes the sample rate that the Pinnacle ASIC uses for
      * reporting data.
@@ -562,7 +562,7 @@ public:
      *     ASIC's application note about deciding what values to use.
      * @endrst
      */
-    void setCalibrationMatrix(int16_t*);
+    void setCalibrationMatrix(int16_t* matrix);
     /**
      * Use this function to compare a prior compensation matrix with a new
      * matrix that was either loaded manually via setCalibrationMatrix() or
@@ -585,12 +585,12 @@ public:
      *     average any two values that differ by more than 500 and write this
      *     new matrix, with the average values, back into Pinnacle ASIC.
      * @endrst
-     * @param matrix A reference pointer (declared array of 46 16-bit unsigned
+     * @param[out] matrix A reference pointer (declared array of 46 16-bit unsigned
      * integers) for storing the compensation matrix configured by
      * setCalibrationMatrix() or created internally by calibrate() (or after a
      * "power-on-reset" condition).
      */
-    void getCalibrationMatrix(int16_t*);
+    void getCalibrationMatrix(int16_t* matrix);
     /**
      * @rst
      * Sets the ADC (Analog to Digital Converter) attenuation (gain ratio) to
@@ -664,12 +664,12 @@ public:
      *     `measureADC()` as the Pinnacle requires about 300 milliseconds to wake up.
      * @endrst
      */
-    void anyMeasModeConfig( uint8_t gain=PINNACLE_GAIN_200,
-                            uint8_t frequency=PINNACLE_FREQ_0,
-                            uint32_t sampleLength=512,
-                            uint8_t muxControl=PINNACLE_MUX_PNP,
-                            uint32_t appertureWidth=500,
-                            uint8_t controlPowerCount=1);
+    void anyMeasModeConfig(uint8_t gain=PINNACLE_GAIN_200,
+                           uint8_t frequency=PINNACLE_FREQ_0,
+                           uint32_t sampleLength=512,
+                           uint8_t muxControl=PINNACLE_MUX_PNP,
+                           uint32_t appertureWidth=500,
+                           uint8_t controlPowerCount=1);
     /**
      * @rst
      * This function instigates and returns the measurement (a signed short
@@ -728,13 +728,13 @@ public:
      * `1` toggles that bit positve, and a bit of `0` toggles that bit
      * negative.
      */
-    int16_t measureAdc(unsigned int, unsigned int);
+    int16_t measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
     /**
      * A non-blocking function to instigate ADC measurements when the
      * @ref PINNACLE_ANYMEAS mode. See parameters and table in measureAdc() as
      * this helper function's parameters are used exactly the same.
      */
-    void startMeasureAdc(unsigned int, unsigned int);
+    void startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
     /**
      * @rst
      * A non-blocking function (meant to be used in conjunction with
@@ -758,8 +758,8 @@ private:
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);
     void eraRead(uint16_t, uint8_t*);
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
-    uint8_t _dataMode;
-    uint8_t _dataReady;
+    PinnacleDataMode _dataMode;
+    uint16_t _dataReady;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
     virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;
     virtual void rapRead(uint8_t, uint8_t*) = 0;
@@ -793,7 +793,7 @@ public:
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle
      * ASIC.
      */
-    PinnacleTouchSPI(uint8_t, uint8_t);
+    PinnacleTouchSPI(uint16_t dataReadyPin, uint8_t slaveSelectPin);
     /**
      * Starts the driver interface on the appropriate SPI bus.
      * @rst
@@ -828,7 +828,7 @@ public:
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC.
      * Defaults to `0x2A`.
      */
-    PinnacleTouchI2C(uint8_t, uint8_t slaveAddress=0x2A);
+    PinnacleTouchI2C(uint16_t dataReadyPin, uint8_t slaveAddress=0x2A);
     /**
      * Starts the driver interface on the appropriate I2C bus.
      * @rst

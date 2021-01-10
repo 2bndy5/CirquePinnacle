@@ -25,7 +25,7 @@ void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len){
     rapReadBytes(reg, data, len);
 }
  */
-PinnacleTouch::PinnacleTouch(uint8_t dataReadyPin)
+PinnacleTouch::PinnacleTouch(uint16_t dataReadyPin)
 {
     _dataReady = dataReadyPin;
     pinMode(_dataReady, INPUT);
@@ -84,7 +84,7 @@ bool PinnacleTouch::isFeedEnabled()
     return false;
 }
 
-void PinnacleTouch::setDataMode(uint8_t mode)
+void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 {
     if (mode <= 2)
     {
@@ -122,7 +122,7 @@ void PinnacleTouch::setDataMode(uint8_t mode)
     }
 }
 
-uint8_t PinnacleTouch::getDataMode()
+PinnacleDataMode PinnacleTouch::getDataMode()
 {
     return _dataMode;
 }
@@ -541,7 +541,7 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t *data, uint8_
     }
 }
 
-PinnacleTouchSPI::PinnacleTouchSPI(uint8_t dataReadyPin, uint8_t slaveSelectPin) : PinnacleTouch(dataReadyPin)
+PinnacleTouchSPI::PinnacleTouchSPI(uint16_t dataReadyPin, uint8_t slaveSelectPin) : PinnacleTouch(dataReadyPin)
 {
     _slaveSelect = slaveSelectPin;
 }
@@ -592,7 +592,7 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t *data, uint
     SPI.endTransaction();
 }
 
-PinnacleTouchI2C::PinnacleTouchI2C(uint8_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin)
+PinnacleTouchI2C::PinnacleTouchI2C(uint16_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin)
 {
     _slaveAddress = (uint8_t)(slaveAddress << 1);
 }
