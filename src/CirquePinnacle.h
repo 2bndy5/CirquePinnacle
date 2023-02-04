@@ -174,10 +174,8 @@ enum PinnacleAnyMeasCtrl : uint8_t
 };
 
 /**
- * @rst
- * This data structure used for returning data reports in relative mode using
- * `read() for Relative Mode`_.
- * @endrst
+ * This data structure is used for returning data reports in relative mode using
+ * `PinnacleTouch::read(RelativeReport *report)`.
  */
 struct RelativeReport
 {
@@ -238,10 +236,8 @@ struct RelativeReport
 };
 
 /**
- * @rst
- * This data structure used for returning data reports in absolute mode using
- * `read() for Absolute Mode`_.
- * @endrst
+ * This data structure is used for returning data reports in absolute mode using
+ * `PinnacleTouch::read(AbsoluteReport *report)`.
  */
 struct AbsoluteReport
 {

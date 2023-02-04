@@ -64,21 +64,21 @@ FFC-FPC-Jumper-Cables/_/N-axro3?P=1yc8ojpZ1z0wxjx>`_ connector (the white block 
 bottom). The following table shows how the pins are connected in the `examples <examples.html>`_
 
 .. csv-table:: pinout (ordered the same as the FFC/FPC cable connector)
-    :header: Label,"MCU pin",Description
-    :widths: 5,5,13
+    :header: "cable pin number",Label,"MCU pin",Description
+    :widths: 1,5,5,13
 
-    SCK,SCK,"SPI clock line"
-    SO,MISO,"Master Input Slave Output"
-    SS,D7,"Slave Select (AKA Chip Select)"
-    DR,D2,"""data ready"" interrupt"
-    SI,MOSI,"SPI Master Output Slave Input"
-    B2,N/A,"Hardware input button #2"
-    B3,N/A,"Hardware input button #3"
-    B1,N/A,"Hardware input button #1"
-    SCL,SCL,"I2C clock line"
-    SDA,SDA,"I2C data line"
-    GND,GND,"Ground"
-    VDD,3V,"3V power supply"
+    1,SCK,SCK,"SPI clock line"
+    2,SO,MISO,"SPI Master Input Slave Output"
+    3,SS,D7,"Slave Select (AKA Chip Select)"
+    4,DR,D2,"Data Ready interrupt"
+    5,SI,MOSI,"SPI Master Output Slave Input"
+    6,B2,N/A,"Hardware input button #2"
+    7,B3,N/A,"Hardware input button #3"
+    8,B1,N/A,"Hardware input button #1"
+    9,SCL,SCL,"I2C clock line"
+    10,SDA,SDA,"I2C data line"
+    11,GND,GND,Ground
+    12,VDD,3V,"3V power supply"
 
 .. tip:: Of course, you can capture button data manually (if your application utilizes more
     than 3 buttons), but if you connect the pins B1, B2, B3 to momentary push buttons that

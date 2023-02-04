@@ -6,13 +6,11 @@
     self
 
 .. toctree::
-    :caption: Examples
     :hidden:
 
     examples
 
 .. toctree::
-    :caption: API Reference
     :hidden:
 
     api
