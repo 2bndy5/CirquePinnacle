@@ -93,24 +93,3 @@ jobs:
         with:
           name: Cirque_Pinnacle_sphinx_docs
           path: ${{ github.workspace }}/docs/_build
-
-  deploy-docs:
-    runs-on: ubuntu-latest
-    needs: [build-sphinx]
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master')
-    steps:
-      - name: get repo info
-        id: lib-info
-        run: echo "name=$(echo ${{ github.repository }} | sed 's;.\+/;;')" >> $GITHUB_OUTPUT
-
-      - name: downlod artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: Cirque_Pinnacle_doxygen_docs
-          path: docs
-
-      - name: upload to github pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
