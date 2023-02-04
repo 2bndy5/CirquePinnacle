@@ -14,8 +14,7 @@ void setup() {
   Serial.begin(9600);
   if (tpad.begin()) {
     Serial.println("found Cirque Pinnacle!");
-  }
-  else {
+  } else {
     Serial.println("Cirque Pinnacle not responding!");
   }
   tpad.setDataMode(PINNACLE_ABSOLUTE);

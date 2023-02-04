@@ -15,8 +15,8 @@
  *  License and copyright information is located at this repository's root
  *  directory under LICENSE
  */
-#ifndef CirquePinnacle_H
-#define CirquePinnacle_H
+#ifndef _CIRQUEPINNACLE_H
+#define _CIRQUEPINNACLE_H
 #include <stdint.h>
 
 /**
@@ -24,36 +24,35 @@
  * @brief defined constants for Pinnacle registers
  * @{
  */
-#define PINNACLE_FIRMWARE_ID       0x00
-#define PINNACLE_STATUS            0x02
-#define PINNACLE_SYS_CONFIG        0x03
-#define PINNACLE_FEED_CONFIG_1     0x04
-#define PINNACLE_FEED_CONFIG_2     0x05
-#define PINNACLE_FEED_CONFIG_3     0x06
-#define PINNACLE_CAL_CONFIG        0x07
-#define PINNACLE_SAMPLE_RATE       0x09
-#define PINNACLE_Z_IDLE            0x0A
-#define PINNACLE_Z_SCALER          0x0B
-#define PINNACLE_SLEEP_INTERVAL    0x0C  // time of sleep until checking for finger
-#define PINNACLE_SLEEP_TIMER       0x0D  // time after idle mode until sleep starts
-#define PINNACLE_PACKET_BYTE_0     0x12
-#define PINNACLE_PACKET_BYTE_1     0x13
-#define PINNACLE_ERA_VALUE         0x1B
-#define PINNACLE_ERA_ADDR          0x1C
-#define PINNACLE_ERA_CONTROL       0x1E
-#define PINNACLE_HCO_ID            0x1F
-
+#define PINNACLE_FIRMWARE_ID    0x00
+#define PINNACLE_STATUS         0x02
+#define PINNACLE_SYS_CONFIG     0x03
+#define PINNACLE_FEED_CONFIG_1  0x04
+#define PINNACLE_FEED_CONFIG_2  0x05
+#define PINNACLE_FEED_CONFIG_3  0x06
+#define PINNACLE_CAL_CONFIG     0x07
+#define PINNACLE_SAMPLE_RATE    0x09
+#define PINNACLE_Z_IDLE         0x0A
+#define PINNACLE_Z_SCALER       0x0B
+#define PINNACLE_SLEEP_INTERVAL 0x0C // time of sleep until checking for finger
+#define PINNACLE_SLEEP_TIMER    0x0D // time after idle mode until sleep starts
+#define PINNACLE_PACKET_BYTE_0  0x12
+#define PINNACLE_PACKET_BYTE_1  0x13
+#define PINNACLE_ERA_VALUE      0x1B
+#define PINNACLE_ERA_ADDR       0x1C
+#define PINNACLE_ERA_CONTROL    0x1E
+#define PINNACLE_HCO_ID         0x1F
 
 //*************** defined Constants for bitwise configuration*****************
 /**
  * @}
- * Allowed symbols for configuring the Pinanacle ASIC's data
+ * Allowed symbols for configuring the Pinnacle ASIC's data
  * reporting/measurements.
  * @rst
  * .. seealso:: `~PinnacleTouch::getDataMode()`, `~PinnacleTouch::setDataMode()`
  * @endrst
  */
-enum PinnacleDataMode
+enum PinnacleDataMode : uint8_t
 {
     /** Alias symbol for specifying Relative mode (AKA Mouse mode). */
     PINNACLE_RELATIVE = 0x00,
@@ -71,7 +70,7 @@ enum PinnacleDataMode
  * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
  */
-enum PinnacleAnyMeasGain
+enum PinnacleAnyMeasGain : uint8_t
 {
     /** around 100% gain */
     PINNACLE_GAIN_100 = 0xC0,
@@ -96,7 +95,7 @@ enum PinnacleAnyMeasGain
  * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
  */
-enum PinnacleAnyMeasFreq
+enum PinnacleAnyMeasFreq : uint8_t
 {
     /** frequency around 500,000Hz */
     PINNACLE_FREQ_0 = 0x02,
@@ -128,7 +127,7 @@ enum PinnacleAnyMeasFreq
  * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`, `~PinnacleTouch::measureAdc()`
  * @endrst
  */
-enum PinnacleAnyMeasMuxing
+enum PinnacleAnyMeasMuxing : uint8_t
 {
     /**
      * enables a builtin capacitor (~0.5pF).
@@ -162,7 +161,7 @@ enum PinnacleAnyMeasMuxing
  * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
  */
-enum PinnacleAnyMeasCtrl
+enum PinnacleAnyMeasCtrl : uint8_t
 {
     /**
      * only required for more than 1 measurement
@@ -277,7 +276,7 @@ struct AbsoluteReport
     uint16_t y;
     /**
      * @brief This will always be in range 0 <= `z` <= 65535. The maximum
-     * value will depend on senitivity.
+     * value will depend on sensitivity.
      */
     uint8_t z;
 };
@@ -285,7 +284,8 @@ struct AbsoluteReport
 /**
  * The abstract base class for driving the Pinnacle ASIC.
  */
-class PinnacleTouch{
+class PinnacleTouch
+{
 public:
     /**
      * @brief Create an instance to use as an interface with the Pinnacle ASIC
@@ -344,7 +344,7 @@ public:
      *   positions)
      * - `255` if begin() returns `false` (failed to initialize the trackpad)
      */
-    PinnacleDataMode getDataMode();
+    uint8_t getDataMode();
     /**
      * @rst
      * This function can be used to inform applications about the factory
@@ -361,10 +361,10 @@ public:
     bool isHardConfigured();
     /**
      * @rst
-     * Use this function to detirmine if there is new data to report.
+     * Use this function to determine if there is new data to report.
      * Internally, this function checks if the interrupt signal on the "data
      * ready" pin (labeled "DR" in the `pinout &lt;index.html#pinout&gt;`_ section)
-     * is active. Data (new or antiquated) can be retreived using
+     * is active. Data (new or antiquated) can be retrieved using
      * `read()` or `read()` depending on what `Data Mode`_ is set
      * to.
      * @endrst
@@ -386,9 +386,9 @@ public:
      * @param invertY Specifies if the y-axis data is to be inverted before reporting it.
      * Default is `false`.
      */
-    void absoluteModeConfig(uint8_t zIdleCount=30,
-                            bool invertX=false,
-                            bool invertY=false);
+    void absoluteModeConfig(uint8_t zIdleCount = 30,
+                            bool invertX = false,
+                            bool invertY = false);
     /**
      * @rst
      * Configure settings specific to Relative mode (AKA Mouse mode) data reporting. This function
@@ -409,11 +409,11 @@ public:
      * Default is `false`. This feature is always disabled if isHardConfigured()
      * is `true`.
      */
-    void relativeModeConfig(bool rotate90=false,
-                            bool allTaps=true,
-                            bool secondaryTap=true,
-                            bool glideExtend=false,
-                            bool intellimouse=false);
+    void relativeModeConfig(bool rotate90 = false,
+                            bool allTaps = true,
+                            bool secondaryTap = true,
+                            bool glideExtend = false,
+                            bool intellimouse = false);
     /**
      * @rst
      * This function will fetch touch (and button) event data from the
@@ -533,9 +533,9 @@ public:
      * @param sampleRate See the setSampleRate() as this parameter directly
      * calls that function.
      */
-    void detectFingerStylus(bool enableFinger=true,
-                            bool enableStylus=true,
-                            uint16_t sampleRate=100);
+    void detectFingerStylus(bool enableFinger = true,
+                            bool enableStylus = true,
+                            uint16_t sampleRate = 100);
     /**
      * @rst
      * Set calibration parameters when the Pinnacle ASIC calibrates itself.
@@ -560,24 +560,24 @@ public:
      * @param background Enable dynamic background compensation? Default is
      * `true`.
      */
-    void calibrate( bool run,
-                    bool tap=true,
-                    bool trackError=true,
-                    bool nerd=true,
-                    bool background=true);
+    void calibrate(bool run,
+                   bool tap = true,
+                   bool trackError = true,
+                   bool nerd = true,
+                   bool background = true);
     /**
      * Manually sets the compensation matrix (array) of the 46 16-bit unsigned
      * integer values stored in the Pinnacle ASIC's memory that is used for
      * taking measurements. This matrix may not applicable in AnyMeas mode
      * (specification sheet is lacking adequate information).
-     * @param matrix The array of 46 16-bit unsigned integers that will be used
+     * @param matrix The array of 16-bit unsigned integers that will be used
      * for compensation calculations when measuring of input events.
-     * @rst
-     * .. seealso:: Review the hint in `getCalibrationMatrix()` from the Pinnacle
-     *     ASIC's application note about deciding what values to use.
-     * @endrst
+     * @param len The length of the array passed to the `matrix` parameter.
+     * Default is 46 (the maximum elements used).
+     * @see Review the hint in `getCalibrationMatrix()` from the Pinnacle
+     * ASIC's application note about deciding what values to use.
      */
-    void setCalibrationMatrix(int16_t* matrix);
+    void setCalibrationMatrix(int16_t* matrix, uint8_t len = 46);
     /**
      * Use this function to compare a prior compensation matrix with a new
      * matrix that was either loaded manually via setCalibrationMatrix() or
@@ -611,8 +611,8 @@ public:
      * Sets the ADC (Analog to Digital Converter) attenuation (gain ratio) to
      * enhance performance based on the overlay type. This does not apply to
      * AnyMeas mode. However, the input value specified can be written while
-     * `Data Mode`_ is set to `PINNACLE_ANYMEAS`, but there is no garauntee that
-     * it will "stick" as it may be overidden by the Pinnacle ASIC
+     * `Data Mode`_ is set to `PINNACLE_ANYMEAS`, but there is no guarantee that
+     * it will "stick" as it may be overridden by the Pinnacle ASIC
      * (specification sheet does not imply either way).
      * @endrst
      * @param sensitivity This byte specifies how sensitive the ADC component
@@ -623,7 +623,7 @@ public:
      *     value of ``1``.
      * @endrst
      */
-    void setAdcGain(uint8_t);
+    void setAdcGain(uint8_t sensitivity);
     /**
      * According to the comments in the official example code from Cirque,
      * "Changes thresholds to improve detection of fingers." This function was
@@ -634,7 +634,7 @@ public:
      * alters values in the Pinnacle ASIC's memory. ALTER THESE PARAMETERS AT
      * YOUR OWN RISK!
      */
-    void tuneEdgeSensitivity(uint8_t xAxisWideZMin=4, uint8_t yAxisWideZMin=3);
+    void tuneEdgeSensitivity(uint8_t xAxisWideZMin = 4, uint8_t yAxisWideZMin = 3);
     /**
      * @rst
      * This function configures the Pinnacle ASIC for taking raw ADC
@@ -642,10 +642,10 @@ public:
      * `PINNACLE_ANYMEAS` before calling this function otherwise it will do
      * nothing.
      *
-     * .. note:: The ``appertureWidth`` parameter has a inverse relationship/affect
+     * .. note:: The ``apertureWidth`` parameter has a inverse relationship/affect
      *     on the ``frequency`` parameter. The approximated frequencies described
      *     in this documentation are based on an aperture width of 500
-     *     nanoseconds, and they will shrink as the apperture width grows or grow
+     *     nanoseconds, and they will shrink as the aperture width grows or grow
      *     as the aperture width shrinks.
      * @endrst
      * @param gain Sets the sensitivity of the ADC matrix. Valid values are the
@@ -661,30 +661,30 @@ public:
      * junctions and/or reference capacitors. Valid values are the constants
      * defined in @ref AnyMeasMuxing. Additional combination of these
      * constants is also allowed. Defaults to @ref PINNACLE_MUX_PNP.
-     * @param appertureWidth Sets the window of time (in nanoseconds) to allow
+     * @param apertureWidth Sets the window of time (in nanoseconds) to allow
      * for the ADC to take a measurement. Valid values are multiples of 125 in
      * range [`250`, `1875`]. Erroneous values are clamped/truncated to this range.
      * @param controlPowerCount Configure the Pinnacle to perform a number of
      * measurements for each call to measureADC(). Defaults to 1. Constants
      * defined in @ref AnyMeasCtrl can be added (with `+`) to specify if
      * sleep is allowed ( @ref PINNACLE_CRTL_PWR_IDLE -- this is not default) or
-     * if repetative measurements is allowed ( @ref PINNACLE_CRTL_REPEAT ) when
+     * if repetitive measurements is allowed ( @ref PINNACLE_CRTL_REPEAT ) when
      * number of measurements is more than 1.
      * @rst
      * .. warning:: There is no bounds checking on the number of measurements
      *     specified here. Specifying more than 63 will trigger sleep mode after
-     *     performing measuements.
+     *     performing measurements.
      * .. hint:: Be aware that allowing the Pinnacle to enter sleep mode after
      *     taking measurements will cause a latency in consecutive calls to
      *     `measureADC()` as the Pinnacle requires about 300 milliseconds to wake up.
      * @endrst
      */
-    void anyMeasModeConfig(uint8_t gain=PINNACLE_GAIN_200,
-                           uint8_t frequency=PINNACLE_FREQ_0,
-                           uint32_t sampleLength=512,
-                           uint8_t muxControl=PINNACLE_MUX_PNP,
-                           uint32_t appertureWidth=500,
-                           uint8_t controlPowerCount=1);
+    void anyMeasModeConfig(uint8_t gain = PINNACLE_GAIN_200,
+                           uint8_t frequency = PINNACLE_FREQ_0,
+                           uint32_t sampleLength = 512,
+                           uint8_t muxControl = PINNACLE_MUX_PNP,
+                           uint32_t apertureWidth = 500,
+                           uint8_t controlPowerCount = 1);
     /**
      * @rst
      * This function instigates and returns the measurement (a signed short
@@ -740,7 +740,7 @@ public:
      * unaffected.
      * @param togglePolarity This 4-byte integer specifies which polarity the
      * specified bits (from `bitsToToggle` parameter) are toggled. A bit of
-     * `1` toggles that bit positve, and a bit of `0` toggles that bit
+     * `1` toggles that bit positive, and a bit of `0` toggles that bit
      * negative.
      */
     int16_t measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
@@ -753,7 +753,7 @@ public:
     /**
      * @rst
      * A non-blocking function (meant to be used in conjunction with
-     * `startMeasureAdc()`) to retreive the result of ADC measurements based on
+     * `startMeasureAdc()`) to retrieve the result of ADC measurements based on
      * parameters passed to `startMeasureAdc()`. Be sure that the `Data Mode`_
      * attribute is set to `PINNACLE_ANYMEAS` and `available()` returns ``true``
      * before calling this function otherwise it will return ``0``.
@@ -768,17 +768,19 @@ public:
      */
     int16_t getMeasureAdc();
     // void readRegisters(uint8_t reg, uint8_t* data, uint8_t len);
+
 private:
     void eraWrite(uint16_t, uint8_t);
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);
     void eraRead(uint16_t, uint8_t*);
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
-    PinnacleDataMode _dataMode;
+    uint8_t _dataMode;
     uint16_t _dataReady;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
     virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;
     virtual void rapRead(uint8_t, uint8_t*) = 0;
     virtual void rapReadBytes(uint8_t, uint8_t*, uint8_t) = 0;
+
 protected:
     /**
      * Starts the driver interface on the appropriate data bus.
@@ -796,7 +798,8 @@ protected:
 /**
  * Derived class for interfacing with the Pinnacle ASIC via the SPI protocol.
  */
-class PinnacleTouchSPI: public PinnacleTouch{
+class PinnacleTouchSPI : public PinnacleTouch
+{
 public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an SPI bus.
@@ -817,6 +820,7 @@ public:
      * @endrst
      */
     bool begin();
+
 private:
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
@@ -828,7 +832,8 @@ private:
 /**
  * Derived class for interfacing with the Pinnacle ASIC via the I2C protocol.
  */
-class PinnacleTouchI2C: public PinnacleTouch{
+class PinnacleTouchI2C : public PinnacleTouch
+{
 public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an I2C bus.
@@ -837,7 +842,7 @@ public:
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC.
      * Defaults to `0x2A`.
      */
-    PinnacleTouchI2C(uint16_t dataReadyPin, uint8_t slaveAddress=0x2A);
+    PinnacleTouchI2C(uint16_t dataReadyPin, uint8_t slaveAddress = 0x2A);
     /**
      * Starts the driver interface on the appropriate I2C bus.
      * @rst
@@ -849,6 +854,7 @@ public:
      * @endrst
      */
     bool begin();
+
 private:
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
@@ -856,7 +862,6 @@ private:
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     uint8_t _slaveAddress;
 };
-#endif
 
 /**
  * @example examples/absolute_mode/absolute_mode.ino
@@ -870,3 +875,5 @@ private:
  * Arduino's MouseHID API to turn the Cirque GlidePoint circle trackpad
  * into a usb mouse for your computer.
  */
+
+#endif // _CIRQUEPINNACLE_H

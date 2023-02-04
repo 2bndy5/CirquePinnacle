@@ -107,21 +107,26 @@ TM\ ``yyyxxx``\ -202\ ``i``\ -\ ``cc``\ ``o``
 Sphinx documentation
 -----------------------
 
-Sphinx is used to build the documentation based on rST files. First,
+Sphinx is used to build the documentation based on XML output from Doxygen. First,
 install dependencies (Python 3 & Python's pip is required):
 
 .. code-block:: shell
 
-    python3 -m venv .env
-    source .env/bin/activate
-    pip install Sphinx sphinx-rtd-theme
+    pip3 install -r docs/requirements.txt
 
-Now, once you have the virtual environment activated:
+`Install Doxygen as instructed <https://www.doxygen.nl/download.html#srcbin>`_ and
+run it from the docs folder:
 
 .. code-block:: shell
 
     cd docs
-    sphinx-build -E -W -b html . _build/html
+    doxygen
+
+Now, run sphinx from the docs folder:
+
+.. code-block:: shell
+
+    sphinx-build -E -W . _build/html
 
 This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
 view them. It will also (due to -W) error out on any warning. This is a good way to

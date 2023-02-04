@@ -12,13 +12,13 @@
 // #define FORWARD_BUTTON_PIN 4
 
 class MouseHID {
-    MouseHID(void) {
-      static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
-      HID().AppendDescriptor(&node);
-    }
-    void sendReport(RelativeReport* r) {
-      HID().SendReport(1, r, 4);
-    }
+  MouseHID(void) {
+    static HIDSubDescriptor node(_hidReportDescriptor, sizeof(_hidReportDescriptor));
+    HID().AppendDescriptor(&node);
+  }
+  void sendReport(RelativeReport* r) {
+    HID().SendReport(1, r, 4);
+  }
 };
 
 #define ss_pin 5
@@ -34,8 +34,7 @@ bool hasNewReport = false;
 void setup() {
   if (tpad.begin()) {
     Serial.println("found Cirque Pinnacle!");
-  }
-  else {
+  } else {
     Serial.println("Cirque Pinnacle not responding!");
   }
 #ifdef FORWARD_BUTTON_PIN
@@ -48,11 +47,10 @@ void setup() {
 
 void loop() {
   relativeReport prevReportState = report;
-  if (tpad.available()) { // is there new data?
-    tpad.read(&report); // get new data
+  if (tpad.available()) {  // is there new data?
+    tpad.read(&report);    // get new data
     hasNewReport = true;
-  }
-  else {
+  } else {
     // clear previous forward/backward buttons' states
     report.buttons &= 7;
   }

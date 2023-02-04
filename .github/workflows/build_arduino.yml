@@ -16,19 +16,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Check code formatting
-        uses: per1234/artistic-style-action@main
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          options-file-path: ./examples/examples_formatter.conf
-          name-patterns: |
-            - '*.ino'
-            - '*.cpp'
-            - '*.hpp'
-            - '*.h'
-          target-paths: |
-            - examples
+          python-version: 3.x
+      # Ubuntu 22.04 runners ship with clang-tools v12
+      # - name: Install clang-tools
+      #   uses: KyleMayes/install-llvm-action@v1
+      #   with:
+      #     version: 12
+      - name: Install linter python package
+        run: python3 -m pip install cpp-linter
+      - name: run linter as a python package
+        id: linter
+        run: |
+          cpp-linter \
+          --version=12 \
+          --style=file \
+          --tidy-checks='-*' \
+          --files-changed-only='False' \
+          --extensions=${{ inputs.extensions }} \
+          --ignore='${{ inputs.ignore-pattern }}'
+      - name: Linter checks failed?
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
+
   build:
     needs: check_formatting
     runs-on: ubuntu-latest
@@ -51,38 +63,28 @@ jobs:
           - "arduino:avr:ethernet"
           - "arduino:avr:fio"
           - "arduino:avr:bt"
-          # - "arduino:avr:LilyPad"  # board not found
           - "arduino:avr:LilyPadUSB"
           - "arduino:avr:pro"
           - "arduino:avr:atmegang"
           - "arduino:avr:robotControl"
-          # - "arduino:avr:gemma"  # does not support SPI
           - "arduino:avr:circuitplay32u4cat"
           - "arduino:avr:yunmini"
           - "arduino:avr:chiwawa"
           - "arduino:avr:one"
           - "arduino:avr:unowifi"
           - "arduino:mbed:nano33ble"
-          # - "arduino:samd:mkr1000"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrzero"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrwifi1010"  # InterruptConfigure.ino uses pin 2
+          - "arduino:samd:mkrzero"
+          - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"
-          # - "arduino:samd:mkrfox1200"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrwan1300"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrwan1310"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrgsm1400"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrnb1500"  # InterruptConfigure.ino uses pin 2
-          # - "arduino:samd:mkrvidor4000"  # InterruptConfigure.ino uses pin 2
           - "arduino:samd:adafruit_circuitplayground_m0"
           - "arduino:samd:mzero_pro_bl"
           - "arduino:samd:mzero_bl"
           - "arduino:samd:tian"
           - "arduino:megaavr:uno2018"
-          # - "arduino:megaavr:nano4809"  # board not found
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Compile examples
         uses: arduino/compile-sketches@main
