@@ -1,25 +1,95 @@
-name: Build Docs
+name: build Docs
 
-on: [pull_request, push]
+on:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - "*.h"
+      - "docs/**"
+      - "examples**.ino"
+      - ".github/workflows/build_docs.yml"
+      - "library.properties" # get lib version from here
+  push:
+    paths:
+      - "*.h"
+      - "docs/**"
+      - "examples**.ino"
+      - ".github/workflows/build_docs.yml"
+      - "library.properties" # get lib version from here
+  release:
+    types: [published, edited]
+    branches: [master]
+  workflow_dispatch:
 
 jobs:
-  doxygen-sphinx:
+  build-doxygen:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v2
-    - name: build doxygen
-      uses: mattnotmitt/doxygen-action@v1
-      with:
-          working-directory: './docs/'
-          doxyfile-path: './Doxyfile'
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: install Sphinx extensions
-      run: pip install -r docs/requirements.txt
-    - name: run Sphinx
-      run: |
-        cd docs
-        sphinx-build -E -W . _build
+      - name: install Doxygen static libclang deps
+        run: sudo apt-get install libclang1-12 libclang-cpp12
+
+      - name: install doxygen from SF binary archives
+        env:
+          DOXYGEN_VERSION: '1.9.6'
+        run: |
+          mkdir .doxygen && cd .doxygen
+          curl -L https://sourceforge.net/projects/doxygen/files/rel-$DOXYGEN_VERSION/doxygen-$DOXYGEN_VERSION.linux.bin.tar.gz > doxygen.tar.gz
+          gunzip doxygen.tar.gz
+          tar xf doxygen.tar
+          cd doxygen-$DOXYGEN_VERSION
+          sudo make install
+
+      - uses: actions/checkout@v3
+
+      - name: overwrite doxygen tags
+        working-directory: docs
+        run: |
+          touch doxygenAction
+          echo "PROJECT_NUMBER = ${{ needs.get-info.outputs.lib-version }}" >> doxygenAction
+          echo -e "\n@INCLUDE = doxygenAction" >> Doxyfile
+
+      - run: doxygen
+        working-directory: docs
+
+      - name: Save doxygen docs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Cirque_Pinnacle_doxygen_docs
+          path: ${{ github.workspace }}/docs/doxygen/html
+
+      - name: Save doxygen XML as artifact
+        if: needs.get-info.outputs.mk-sphinx == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: Cirque_Pinnacle_doxygen_xml
+          path: ${{ github.workspace }}/docs/doxygen/xml
+
+  build-sphinx:
+    needs: [build-doxygen]
+    if: needs.get-info.outputs.mk-sphinx == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - uses: actions/checkout@v3
+
+      - name: download XML artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: Cirque_Pinnacle_doxygen_xml
+          path: ${{ github.workspace }}/docs/doxygen/xml
+
+      - name: Install sphinx deps
+        run: python -m pip install -r docs/requirements.txt
+
+      - name: build docs with Sphinx
+        working-directory: docs
+        run: sphinx-build . _build/html
+
+      - name: Save sphinx docs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Cirque_Pinnacle_sphinx_docs
+          path: ${{ github.workspace }}/docs/_build

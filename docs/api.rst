@@ -59,144 +59,63 @@ PinnacleTouch
 Data Mode
 ************************
 
-setDataMode
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: setDataMode
-
-getDataMode
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: getDataMode
 
 Relative or Absolute mode
 *************************
 
-feedEnabled
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: feedEnabled
-
-isFeedEnabled
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: isFeedEnabled
 
-isHardConfigured
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: isHardConfigured
-
-available
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: available
 
-absoluteModeConfig
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: absoluteModeConfig
-
-relativeModeConfig
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: relativeModeConfig
 
-read() for Relative Mode
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: read(RelativeReport *report)
-
-read() for Absolute Mode
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: read(AbsoluteReport *report)
 
-clearStatusFlags
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: clearStatusFlags
-
-allowSleep
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: allowSleep
 
-isAllowSleep
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: isAllowSleep
-
-shutdown
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: shutdown
 
-isShutdown
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: isShutdown
-
-setSampleRate
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: setSampleRate
 
-getSampleRate
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: getSampleRate
-
-detectFingerStylus
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: detectFingerStylus
 
-calibrate
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: calibrate
-
-setCalibrationMatrix
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: setCalibrationMatrix
 
-getCalibrationMatrix
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: getCalibrationMatrix
 
-setAdcGain
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: setAdcGain
-
-tuneEdgeSensitivity
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: tuneEdgeSensitivity
 
 AnyMeas Mode
 ************************
 
-anyMeasModeConfig
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: anyMeasModeConfig
-
-measureAdc
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: measureAdc
 
-startMeasureAdc
-^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. doxygenfunction:: startMeasureAdc
-
-getMeasureAdc
-^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. doxygenfunction:: getMeasureAdc
 

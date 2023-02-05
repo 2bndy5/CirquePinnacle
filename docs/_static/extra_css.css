@@ -1,0 +1,10 @@
+
+th {
+  background-color: var(--md-default-fg-color--lightest);
+}
+
+.md-nav.md-nav--primary > label {
+  white-space: normal;
+  line-height: inherit;
+  padding-top: 3.5rem;
+}

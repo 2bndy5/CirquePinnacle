@@ -37,4 +37,9 @@
 # docs build folder
 _build/
 docs/doxygen/*
-!docs/doxygen/.gitkeep
+
+# python venv (used for docs builds)
+.env/
+.venv/
+venv/
+env/

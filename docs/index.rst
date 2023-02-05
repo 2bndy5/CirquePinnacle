@@ -1,6 +1,4 @@
 
-.. include:: ../README.rst
-
 .. toctree::
     :maxdepth: 4
     :hidden:
@@ -8,13 +6,11 @@
     self
 
 .. toctree::
-    :caption: Examples
     :hidden:
 
     examples
 
 .. toctree::
-    :caption: API Reference
     :hidden:
 
     api
@@ -32,10 +28,4 @@
 
     Download <https://github.com/2bndy5/CirquePinnacle/releases>
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. include:: ../README.rst
