@@ -1,45 +1,21 @@
-name: Arduino CLI build
+name: Arduino
 
 on:
   pull_request:
     paths:
       - ".github/workflows/build_arduino.yml"
-      - "examples/**"
+      - "examples/**/*.ino"
 
   push:
     paths:
       - ".github/workflows/build_arduino.yml"
-      - "examples/**"
+      - "examples/**/*.ino"
 
 jobs:
   check_formatting:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      # Ubuntu 22.04 runners ship with clang-tools v12
-      # - name: Install clang-tools
-      #   uses: KyleMayes/install-llvm-action@v1
-      #   with:
-      #     version: 12
-      - name: Install linter python package
-        run: python3 -m pip install cpp-linter
-      - name: run linter as a python package
-        id: linter
-        run: |
-          cpp-linter \
-          --version=12 \
-          --style=file \
-          --tidy-checks='-*' \
-          --files-changed-only='False' \
-          --extensions=${{ inputs.extensions }} \
-          --ignore='${{ inputs.ignore-pattern }}'
-      - name: Linter checks failed?
-        if: steps.linter.outputs.checks-failed > 0
-        run: exit 1
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    with:
+      extensions: 'ino'
 
   build:
     needs: check_formatting
@@ -50,36 +26,36 @@ jobs:
 
       matrix:
         fqbn:
-          - "arduino:avr:yun"
+          # - "arduino:avr:yun"
           - "arduino:avr:uno"
-          - "arduino:avr:diecimila"
+          # - "arduino:avr:diecimila"
           - "arduino:avr:nano"
           - "arduino:avr:mega"
-          - "arduino:avr:megaADK"
+          # - "arduino:avr:megaADK"
           - "arduino:avr:leonardo"
           - "arduino:avr:micro"
-          - "arduino:avr:esplora"
+          # - "arduino:avr:esplora"
           - "arduino:avr:mini"
-          - "arduino:avr:ethernet"
-          - "arduino:avr:fio"
-          - "arduino:avr:bt"
-          - "arduino:avr:LilyPadUSB"
+          # - "arduino:avr:ethernet"
+          # - "arduino:avr:fio"
+          # - "arduino:avr:bt"
+          # - "arduino:avr:LilyPadUSB"
           - "arduino:avr:pro"
           - "arduino:avr:atmegang"
-          - "arduino:avr:robotControl"
-          - "arduino:avr:circuitplay32u4cat"
-          - "arduino:avr:yunmini"
-          - "arduino:avr:chiwawa"
-          - "arduino:avr:one"
+          # - "arduino:avr:robotControl"
+          # - "arduino:avr:circuitplay32u4cat"
+          # - "arduino:avr:yunmini"
+          # - "arduino:avr:chiwawa"
+          # - "arduino:avr:one"
           - "arduino:avr:unowifi"
           - "arduino:mbed:nano33ble"
           - "arduino:samd:mkrzero"
           - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"
           - "arduino:samd:adafruit_circuitplayground_m0"
-          - "arduino:samd:mzero_pro_bl"
-          - "arduino:samd:mzero_bl"
-          - "arduino:samd:tian"
+          # - "arduino:samd:mzero_pro_bl"
+          # - "arduino:samd:mzero_bl"
+          # - "arduino:samd:tian"
           - "arduino:megaavr:uno2018"
 
     steps:

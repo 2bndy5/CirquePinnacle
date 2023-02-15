@@ -1,0 +1,21 @@
+#ifndef CIRQUEPINNACLE_UTILITY_INCLUDES_H_
+#define CIRQUEPINNACLE_UTILITY_INCLUDES_H_
+
+#include "@CIRQUE_PINNACLE_DRIVER@/gpio.h"
+#include "@CIRQUE_PINNACLE_DRIVER@/spi.h"
+#include "@CIRQUE_PINNACLE_DRIVER@/i2c.h"
+#include "@CIRQUE_PINNACLE_DRIVER@/time_keeping.h"
+
+// clang-format off
+// A macro to help execute driver specific code
+#define PINNACLE_DRIVER_@CIRQUE_PINNACLE_DRIVER@
+// clang-format on
+
+// alias for SPI bus implementation
+#define _SPI cirque_pinnacle_arduino_wrappers::SPIClass
+// alias for I2C bus implementation
+#define _I2C cirque_pinnacle_arduino_wrappers::TwoWire
+
+#define PINNACLE_USE_ARDUINO_API using namespace cirque_pinnacle_arduino_wrappers;
+
+#endif // CIRQUEPINNACLE_UTILITY_INCLUDES_H_

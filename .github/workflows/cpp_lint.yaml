@@ -1,0 +1,42 @@
+name: Run clang-format on src changes
+
+on:
+  workflow_call:
+    inputs:
+      ignore:
+        required: false
+        type: string
+        default: .github
+      extensions:
+        required: false
+        type: string
+        default: c,h,cpp,hpp
+
+jobs:
+  cpp_linter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      # Ubuntu 22.04 runners ship with clang-tools v12
+      # - name: Install clang-tools
+      #   uses: KyleMayes/install-llvm-action@v1
+      #   with:
+      #     version: 12
+      - name: Install linter python package
+        run: python3 -m pip install cpp-linter
+      - name: run linter as a python package
+        id: linter
+        run: |
+          cpp-linter \
+          --version=12 \
+          --style=file \
+          --tidy-checks='-*' \
+          --files-changed-only='False' \
+          --extensions=${{ inputs.extensions }} \
+          --ignore='${{ inputs.ignore-pattern }}'
+      - name: Linter checks failed?
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1

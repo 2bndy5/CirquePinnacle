@@ -1,0 +1,121 @@
+name: PlatformIO
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - ".github/workflows/build_platformIio.yml"
+      - "library.json"
+      - "examples/**/*.ino"
+  push:
+    paths:
+      - ".github/workflows/build_platformIio.yml"
+      - "library.json"
+      - "examples/**/*.ino"
+  release:
+    types: [created]
+
+jobs:
+  validate_lib_json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: get lib info
+        id: lib-info
+        run: |
+          echo "name=$(echo ${{ github.repository }} | sed -e 's;.\+/;;')" >> $GITHUB_OUTPUT
+          echo "release=$(awk -F "=" '/version/ {print $2}' library.properties)" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: package lib
+        run: pio package pack -o PlatformIO-${{ steps.lib-info.outputs.name }}-${{ steps.lib-info.outputs.release }}.tar.gz
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: PIO_pkg_${{ steps.lib-info.outputs.name }}
+          path: PlatformIO*.tar.gz
+
+      - name: Upload Release assets
+        if: github.events.name == 'release'
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: "PlatformIO*.tar.gz"
+
+      - name: upload package to PlatformIO Registry
+        if: github.events.name == 'release'
+        # PIO lib packages cannot be re-published under the same tag
+        env:
+          PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
+        run: pio package publish --owner 2bndy5 --non-interactive
+
+  check_formatting:
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    with:
+      extensions: ino
+
+  build:
+    needs: [check_formatting, validate_lib_json]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - "examples/absolute_mode/absolute_mode.ino"
+          - "examples/relative_mode/relative_mode.ino"
+          - "examples/anymeas_mode/anymeas_mode.ino"
+        board:
+          - "teensy31"
+          - "teensy35"
+          - "teensy36"
+          - "teensy40"
+          - "teensy41"
+          - "teensylc"
+          - "genericSTM32F411CE"
+          - "blackpill_f103c8"
+          - "nodemcuv2"
+          - "adafruit_qtpy_esp32s2"
+
+    steps:
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v3
+        with:
+          path: ~/.platformio
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - uses: actions/checkout@v3
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade platformio
+
+      - name: Run PlatformIO
+        run: pio ci --lib="." --board=${{ matrix.board }}
+        env:
+          PLATFORMIO_CI_SRC: ${{ matrix.example }}

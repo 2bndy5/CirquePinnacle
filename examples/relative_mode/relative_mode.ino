@@ -1,10 +1,9 @@
-#include <Arduino.h>
 #include "CirquePinnacle.h"
 
-#define ss_pin 5
-#define dr_pin 6
+#define SS_PIN 5
+#define DR_PIN 6
 
-PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
 RelativeReport report;
 
 void setup() {
@@ -12,7 +11,7 @@ void setup() {
     delay(1);  // some boards need this to access USB Serial
   }
   Serial.begin(9600);
-  if (tpad.begin()) {
+  if (trackpad.begin()) {
     Serial.println("found Cirque Pinnacle!");
   } else {
     Serial.println("Cirque Pinnacle not responding!");
@@ -20,8 +19,8 @@ void setup() {
 }
 
 void loop() {
-  if (tpad.available()) {
-    tpad.read(&report);
+  if (trackpad.available()) {
+    trackpad.read(&report);
     Serial.print("Left: ");
     Serial.print(report.buttons & 1);
     Serial.print(" Right: ");

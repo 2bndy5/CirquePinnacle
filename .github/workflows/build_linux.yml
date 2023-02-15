@@ -1,0 +1,219 @@
+name: Linux
+
+on:
+  pull_request_target:
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - "library.properties" # CMake gets lib info from here
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/mraa/*"
+      - "src/utility/linux_kernel/*"
+      - "src/utility/pigpio/*"
+      - "src/utility/bcm2xxx/*"
+      - "examples/linux/*"
+      - "!examples/linux/*.py"
+      - "!examples/linux/*.md"
+      - ".github/workflows/build_linux.yml"
+  push:
+    paths:
+      - "library.properties" # CMake gets lib info from here
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/mraa/*"
+      - "src/utility/linux_kernel/*"
+      - "src/utility/pigpio/*"
+      - "src/utility/bcm2xxx/*"
+      - "examples/linux/*"
+      - "!examples/linux/*.py"
+      - "!examples/linux/*.md"
+      - ".github/workflows/build_linux.yml"
+  release:
+    types: [created]
+
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  check_formatting:
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    with:
+      ignore: 'examples|examples_pico|utility/bcm2xxx/bcm2835.h|utility/bcm2xxx/bcm2835.c'
+  build:
+    needs: check_formatting
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        driver:
+          - "bcm2xxx"
+          - "linux_kernel"
+          - "mraa"
+        toolchain:
+          - compiler: "armhf"
+            usr_dir: "arm-linux-gnueabihf"
+          - compiler: "arm64"
+            usr_dir: "aarch64-linux-gnu"
+          # - compiler: "x86_64"
+          #   usr_dir: "x86_64-linux-gnux32"
+          # - compiler: "i686"
+          #   usr_dir: "i686-linux-gnu"
+          - compiler: "default" # github runner is hosted on a "amd64"
+            usr_dir: "local" # using this toolchain to test python wrapper
+        # exclude:
+        #   # mraa is not compatible with i686 arch
+        #   - driver: "mraa"
+        #     toolchain:
+        #       compiler: "i686"
+        #       usr_dir: "i686-linux-gnu"
+        include:
+          - driver: "pigpio"
+            toolchain:
+              compiler: "default"
+              usr_dir: "local"
+    env:
+      CIRQUE_PINNACLE_DRIVER: ${{ matrix.driver }}
+      # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+      BUILD_TYPE: Release
+    steps:
+      # - name: provide toolchain (for x86_64)
+      #   if: ${{ matrix.toolchain.compiler == 'x86_64' }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install gcc-x86-64-linux-gnux32 g++-x86-64-linux-gnux32
+
+      # - name: provide toolchain (for i686)
+      #   if: ${{ matrix.toolchain.compiler == 'i686' }}
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install gcc-i686-linux-gnu g++-i686-linux-gnu
+
+      - name: provide toolchain (for arm64)
+        if: ${{ matrix.toolchain.compiler == 'arm64' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
+      - name: provide toolchain (for armhf)
+        if: ${{ matrix.toolchain.compiler == 'armhf' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+
+      - name: get repo info
+        id: lib-info
+        run: echo "name=$(echo ${{ github.repository }} | sed 's;.\+/;;')" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v3
+        with:
+          path: ${{ steps.lib-info.outputs.name }}
+
+      - name: provide mraa
+        if: matrix.driver == 'mraa'
+        run: |
+          git clone https://github.com/intel-iot-devkit/mraa.git
+          cd mraa
+          mkdir build
+          cd build
+          cmake .. -D BUILDSWIGNODE=OFF \
+          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+          sudo make install
+
+      - name: provide pigpio
+        if: matrix.driver == 'pigpio'
+        run: |
+          git clone https://github.com/joan2937/pigpio.git
+          cd pigpio
+          git fetch --tags
+          latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          git checkout $latestTag
+          mkdir build
+          cd build
+          cmake .. -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+          make
+          sudo make install
+
+      - name: create CMake build environment
+        run: cmake -E make_directory ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+
+      - name: configure lib
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: |
+          cmake ../src -D CMAKE_BUILD_TYPE=$BUILD_TYPE \
+          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
+          -D CMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+
+      - name: build lib
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: cmake --build .
+
+      - name: install lib
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: sudo cmake --install .
+
+      - name: package lib
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: sudo cpack
+
+      - name: Save artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pkg_${{ steps.lib-info.outputs.name }}
+          path: |
+            ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/pkgs/*.deb
+            ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/pkgs/*.rpm
+
+      - name: Upload Release assets
+        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') && (matrix.driver =='bcm2xxx' || matrix.driver =='linux_kernel')
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: "${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/pkgs/lib*"
+
+      - name: clean build environment
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: sudo rm -r ./*
+
+      - name: provide ncurses
+        # This script assumes that any examples using ncurses reside in a 'ncurses' subdirectory
+        # as is the case w/ RF24Mesh, RF24Gateway, and any new ncurses examples going forward.
+        run: |
+          if [[ -d ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/examples/linux/ncurses ]]; then
+            if [[ ${{ matrix.toolchain.compiler }} == 'default' ]]; then
+              sudo apt-get install libncurses5-dev
+            else
+              echo "skipping the ncurses examples for cross-compiled builds"
+
+              # avoid cross-compiling linker problems in CI; this works locally but takes a while to build
+              # curl -L https://invisible-island.net/datafiles/release/ncurses.tar.gz > ncurses.tar.gz
+              # gunzip ncurses.tar.gz
+              # tar xf ncurses.tar
+              # cd ncurses-*
+              # ./configure --prefix=/usr/${{ matrix.toolchain.usr_dir }} --build=${{ matrix.toolchain.usr_dir }}
+              # make
+              # sudo make install
+            fi
+          else
+            echo "ncurses is not needed for these examples"
+          fi
+
+      - name: configure examples
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: |
+          cmake ../examples/linux \
+          -D CMAKE_TOOLCHAIN_FILE=../src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+
+      - name: build examples
+        working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
+        run: cmake --build .

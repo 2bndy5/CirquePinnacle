@@ -21,18 +21,18 @@ class MouseHID {
   }
 };
 
-#define ss_pin 5
-#define dr_pin 6
+#define SS_PIN 5
+#define DR_PIN 6
 
 // using a custom Mouse HID class that exposes the HID::sendReport()
 MouseHID* mouse = new MouseHID;
 
-PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
 RelativeReport report;
 bool hasNewReport = false;
 
 void setup() {
-  if (tpad.begin()) {
+  if (trackpad.begin()) {
     Serial.println("found Cirque Pinnacle!");
   } else {
     Serial.println("Cirque Pinnacle not responding!");
@@ -47,8 +47,8 @@ void setup() {
 
 void loop() {
   relativeReport prevReportState = report;
-  if (tpad.available()) {  // is there new data?
-    tpad.read(&report);    // get new data
+  if (trackpad.available()) {  // is there new data?
+    trackpad.read(&report);    // get new data
     hasNewReport = true;
   } else {
     // clear previous forward/backward buttons' states

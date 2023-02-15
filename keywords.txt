@@ -80,7 +80,7 @@ setCalibrationMatrix        KEYWORD2
 getCalibrationMatrix        KEYWORD2
 setAdcGain                  KEYWORD2
 tuneEdgeSensitivity         KEYWORD2
-anyMeasModeConfig           KEYWORD2
+anymeasModeConfig           KEYWORD2
 measureAdc                  KEYWORD2
 startMeasureAdc             KEYWORD2
 getMeasureAdc               KEYWORD2

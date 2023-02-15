@@ -34,8 +34,13 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_immaterial",
     "sphinx_immaterial.apidoc.cpp.cppreference",
+    "sphinx.ext.intersphinx",
     # "rst2pdf.pdfbuilder",  # for local pdf builder support
 ]
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -125,6 +130,9 @@ html_theme_options = {
         },
     ],
 }
+object_description_options = [
+    ("cpp:.*", dict(include_fields_in_toc=False)),
+]
 
 sphinx_immaterial_custom_admonitions = [
     {

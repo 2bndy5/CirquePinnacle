@@ -1,4 +1,4 @@
-name: build Docs
+name: Docs
 
 on:
   pull_request:
@@ -22,8 +22,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-info:
+    runs-on: ubuntu-latest
+    outputs:
+      lib-version: ${{ steps.fetch-repo.outputs.release }}
+      lib-name: ${{ steps.fetch-repo.outputs.name }}
+      mk-sphinx: ${{ steps.fetch-repo.outputs.has-sphinx-docs }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: get latest release version number
+        id: fetch-repo
+        run: |
+          if [[ -f library.properties ]]; then
+            echo "release=v$(awk -F "=" '/version/ {print $2}' library.properties)" >> $GITHUB_OUTPUT
+          else
+            echo "release=$(git describe --tags | grep -o -E 'v[0-9]+\.[0-9]+\.[0-9]+')" >> $GITHUB_OUTPUT
+          fi
+          echo "name=$(echo ${{ github.repository }} | sed 's;.\+/;;')" >> $GITHUB_OUTPUT
+          echo "has-sphinx-docs=true" >> $GITHUB_OUTPUT
   build-doxygen:
     runs-on: ubuntu-latest
+    needs: [get-info]
     steps:
       - name: install Doxygen static libclang deps
         run: sudo apt-get install libclang1-12 libclang-cpp12
@@ -65,7 +84,7 @@ jobs:
           path: ${{ github.workspace }}/docs/doxygen/xml
 
   build-sphinx:
-    needs: [build-doxygen]
+    needs: [get-info, build-doxygen]
     if: needs.get-info.outputs.mk-sphinx == 'true'
     runs-on: ubuntu-latest
     steps:

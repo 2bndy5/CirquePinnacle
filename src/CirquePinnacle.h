@@ -1,7 +1,7 @@
 /**
  *  @file CirquePinnacle.h
  *  A library to interface (via I2C or SPI protocol) with Cirque's Glidepoint circle
- *  touchpads that employ Cirque's Pinnacle ASIC touch controller (1CA027).
+ *  trackpads that employ Cirque's Pinnacle ASIC touch controller (1CA027).
  *
  *  Store links (where to buy):
  *  - [Individual trackpads](https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=118816186)
@@ -15,12 +15,13 @@
  *  License and copyright information is located at this repository's root
  *  directory under LICENSE
  */
-#ifndef _CIRQUEPINNACLE_H
-#define _CIRQUEPINNACLE_H
+#ifndef _CIRQUEPINNACLE_H_
+#define _CIRQUEPINNACLE_H_
 #include <stdint.h>
+#include "CirquePinnacle_arch_common.h"
 
 /**
- * @defgroup RegisterOffsets Pinacle Register Addresses
+ * @defgroup RegisterOffsets Pinnacle Register Addresses
  * @brief defined constants for Pinnacle registers
  * @{
  */
@@ -43,14 +44,12 @@
 #define PINNACLE_ERA_CONTROL    0x1E
 #define PINNACLE_HCO_ID         0x1F
 
-//*************** defined Constants for bitwise configuration*****************
+//*************** defined Constants for bitwise configuration *****************
 /**
  * @}
  * Allowed symbols for configuring the Pinnacle ASIC's data
  * reporting/measurements.
- * @rst
- * .. seealso:: `~PinnacleTouch::getDataMode()`, `~PinnacleTouch::setDataMode()`
- * @endrst
+ * @see `PinnacleTouch::getDataMode()`, `PinnacleTouch::setDataMode()`
  */
 enum PinnacleDataMode : uint8_t
 {
@@ -66,9 +65,7 @@ enum PinnacleDataMode : uint8_t
  * Allowed ADC gain configurations of AnyMeas mode.
  *
  * The percentages defined here are approximate values.
- * @rst
- * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
- * @endrst
+ * @see `PinnacleTouch::anymeasModeConfig()`
  */
 enum PinnacleAnyMeasGain : uint8_t
 {
@@ -88,12 +85,11 @@ enum PinnacleAnyMeasGain : uint8_t
  * @rst
  * The frequencies defined here are approximated based on an aperture
  * width of 500 nanoseconds. If the ``apertureWidth`` parameter to
- * `~PinnacleTouch::anyMeasModeConfig()` specified is less than 500 nanoseconds,
+ * `~PinnacleTouch::anymeasModeConfig()` specified is less than 500 nanoseconds,
  * then the frequency will be larger than what is described here (and vice
  * versa).
- *
- * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
+ * @see `PinnacleTouch::anymeasModeConfig()`
  */
 enum PinnacleAnyMeasFreq : uint8_t
 {
@@ -124,23 +120,19 @@ enum PinnacleAnyMeasFreq : uint8_t
  * .. note:: The sign of the measurements taken in AnyMeas mode is inverted
  *     depending on which muxing gate is specified (when specifying an individual
  *     gate polarity).
- * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`, `~PinnacleTouch::measureAdc()`
  * @endrst
+ * @see `PinnacleTouch::anymeasModeConfig()`, `PinnacleTouch::measureAdc()`
  */
 enum PinnacleAnyMeasMuxing : uint8_t
 {
     /**
      * enables a builtin capacitor (~0.5pF).
-     * @rst
-     * .. seealso:: `~PinnacleTouch::measureAdc()`
-     * @endrst
+     * @see `PinnacleTouch::measureAdc()`
      */
     PINNACLE_MUX_REF1 = 0x10,
     /**
      * enables a builtin capacitor (~0.25pF).
-     * @rst
-     * .. seealso:: `~PinnacleTouch::measureAdc()`
-     * @endrst
+     * @see `PinnacleTouch::measureAdc()`
      */
     PINNACLE_MUX_REF0 = 0x08,
     /**
@@ -158,8 +150,8 @@ enum PinnacleAnyMeasMuxing : uint8_t
  * PinnacleTouch::measureADC().
  * @rst
  * .. important:: The number of measurements can range [0, 63].
- * .. seealso:: `~PinnacleTouch::anyMeasModeConfig()`
  * @endrst
+ * @see `PinnacleTouch::anymeasModeConfig()`
  */
 enum PinnacleAnyMeasCtrl : uint8_t
 {
@@ -215,22 +207,20 @@ struct RelativeReport
      */
     uint8_t buttons;
     /**
-     * @brief This will always be in range -128 <= `x` <= 127
+     * @brief This will always be in range `-128 <= x <= 127`
      */
     int8_t x;
     /**
-     * @brief This will always be in range -128 <= `y` <= 127
+     * @brief This will always be in range `-128 <= y <= 127`
      */
     int8_t y;
     /**
-     * @brief This will always be in range -128 <= `scroll` <= 127
+     * @brief This will always be in range `-128 <= scroll <= 127`
      *
-     * @rst
-     * .. note:: In Relative/Mouse mode the scroll wheel data is only reported
-     *     if the ``intellimouse`` parameter is passed as ``true`` to
-     *     `~PinnacleTouch::relativeModeConfig()`. Otherwise this is an empty byte as
-     *     the `RelativeReport` follows the buffer structure of a mouse HID report.
-     * @endrst
+     * @note In Relative/Mouse mode the scroll wheel data is only reported
+     * if the `intellimouse` parameter is passed as `true` to
+     * `PinnacleTouch::relativeModeConfig()`. Otherwise this is an empty byte as
+     * the `RelativeReport` follows the buffer structure of a mouse HID report.
      */
     int8_t scroll;
 };
@@ -257,21 +247,21 @@ struct AbsoluteReport
      */
     uint8_t buttons;
     /**
-     * @brief This will always be in range 0 <= `x` <= 2047
+     * @brief This will always be in range `0 <= x <= 2047`
      *
      * The datasheet recommends this value should be
-     * clamped to range 128 <= `x` <= 1920 for reliability.
+     * clamped to range `128 <= x <= 1920` for reliability.
      */
     uint16_t x;
     /**
-     * @brief This will always be in range 0 <= `y` <= 1535
+     * @brief This will always be in range `0 <= y <= 1535`
      *
      * The datasheet recommends this value should be
-     * clamped to range 64 <= `y` <= 1472 for reliability.
+     * clamped to range `64 <= y <= 1472` for reliability.
      */
     uint16_t y;
     /**
-     * @brief This will always be in range 0 <= `z` <= 65535. The maximum
+     * @brief This will always be in range `0 <= z <= 65535`. The maximum
      * value will depend on sensitivity.
      */
     uint8_t z;
@@ -289,7 +279,7 @@ public:
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
      * "Data Ready" pin.
      */
-    PinnacleTouch(uint16_t dataReadyPin);
+    PinnacleTouch(pinnacle_gpio_t dataReadyPin);
     /**
      * @rst
      * This function controls if the touch/button event data is reported or
@@ -448,13 +438,11 @@ public:
     /**
      * This will specify if the Pinnacle ASIC is allowed to sleep after about
      * 5 seconds of idle activity (no input event).
-     * @rst
-     * .. note:: While the touch controller is in sleep mode, if a touch event or
-     *     button press is detected, the Pinnacle ASIC will take about 300
-     *     milliseconds to wake up (does not include handling the touch event or
-     *     button press data). Remember that releasing a held button is also
-     *     considered an input event.
-     * @endrst
+     * @note While the touch controller is in sleep mode, if a touch event or
+     * button press is detected, the Pinnacle ASIC will take about 300
+     * milliseconds to wake up (does not include handling the touch event or
+     * button press data). Remember that releasing a held button is also
+     * considered an input event.
      * @param isEnabled `true` if you want the Pinnacle ASIC to enter sleep
      * (low power) mode after about 5 seconds of inactivity (does not apply to
      * AnyMeas mode). `false` if you don't want the Pinnacle ASIC to enter
@@ -470,12 +458,10 @@ public:
     bool isAllowSleep();
     /**
      * This function controls power state of the Pinnacle ASIC that drives the
-     * touchpad.
-     * @rst
-     * .. note:: The ASIC will take about 300 milliseconds to complete the
-     *     transition from powered down mode to active mode. No touch events or
-     *     button presses will be monitored while powered down.
-     * @endrst
+     * trackpad.
+     * @note The ASIC will take about 300 milliseconds to complete the
+     * transition from powered down mode to active mode. No touch events or
+     * button presses will be monitored while powered down.
      * @param isOff `true` means power down (AKA standby mode), and `false`
      * means power up (Active, Idle, or Sleep mode).
      */
@@ -538,12 +524,12 @@ public:
      * This function only applies to `PINNACLE_RELATIVE` or
      * `PINNACLE_ABSOLUTE` mode, otherwise if `Data Mode`_ is set to
      * `PINNACLE_ANYMEAS`, then this function will do nothing.
-     *
-     * .. note:: According to the datasheet, calibration of the sensor takes about
-     *     100 milliseconds. This function will block until calibration is complete
-     *     (if ``run`` is ``true``). It is recommended for typical applications to
-     *     leave all optional parameters in their default states.
      * @endrst
+     *
+     * @note According to the datasheet, calibration of the sensor takes about
+     * 100 milliseconds. This function will block until calibration is complete
+     * (if `run` is `true`). It is recommended for typical applications to
+     * leave all optional parameters in their default states.
      * @param run If `true`, this function forces a calibration of the sensor.
      * If `false`, this function just writes the following parameters to the
      * Pinnacle ASIC's "CalConfig1" register. This parameter is required while
@@ -637,33 +623,33 @@ public:
      * measurements. Be sure to set the `Data Mode`_ attribute to
      * `PINNACLE_ANYMEAS` before calling this function otherwise it will do
      * nothing.
-     *
-     * .. note:: The ``apertureWidth`` parameter has a inverse relationship/affect
-     *     on the ``frequency`` parameter. The approximated frequencies described
-     *     in this documentation are based on an aperture width of 500
-     *     nanoseconds, and they will shrink as the aperture width grows or grow
-     *     as the aperture width shrinks.
      * @endrst
+     *
+     * @note The `apertureWidth` parameter has an inverse relationship/affect
+     * on the `frequency` parameter. The approximated frequencies described
+     * in this documentation are based on an aperture width of 500
+     * nanoseconds, and they will shrink as the aperture width grows or grow
+     * as the aperture width shrinks.
      * @param gain Sets the sensitivity of the ADC matrix. Valid values are the
-     * constants defined in @ref AnyMeasGain. Defaults to
+     * constants defined in @ref PinnacleAnyMeasGain. Defaults to
      * @ref PINNACLE_GAIN_200.
      * @param frequency Sets the frequency of measurements made by the ADC
      * matrix. Valid values are the constants defined in
-     * @ref AnyMeasFreq. Defaults @ref PINNACLE_FREQ_0.
+     * @ref PinnacleAnyMeasFreq. Defaults @ref PINNACLE_FREQ_0.
      * @param sampleLength Sets the maximum bit length of the measurements made
      * by the ADC matrix. Valid values are `128`, `256`, or `512`. Defaults to
      * `512`.
      * @param muxControl The Pinnacle ASIC can employ different bipolar
      * junctions and/or reference capacitors. Valid values are the constants
-     * defined in @ref AnyMeasMuxing. Additional combination of these
+     * defined in @ref PinnacleAnyMeasMuxing. Additional combination of these
      * constants is also allowed. Defaults to @ref PINNACLE_MUX_PNP.
      * @param apertureWidth Sets the window of time (in nanoseconds) to allow
      * for the ADC to take a measurement. Valid values are multiples of 125 in
      * range [`250`, `1875`]. Erroneous values are clamped/truncated to this range.
      * @param controlPowerCount Configure the Pinnacle to perform a number of
      * measurements for each call to measureADC(). Defaults to 1. Constants
-     * defined in @ref AnyMeasCtrl can be added (with `+`) to specify if
-     * sleep is allowed ( @ref PINNACLE_CRTL_PWR_IDLE -- this is not default) or
+     * defined in @ref PinnacleAnyMeasCtrl can be added (with `+`) to specify if
+     * sleep is allowed ( @ref PINNACLE_CRTL_PWR_IDLE @em -- this is not default) or
      * if repetitive measurements is allowed ( @ref PINNACLE_CRTL_REPEAT ) when
      * number of measurements is more than 1.
      * @rst
@@ -675,7 +661,7 @@ public:
      *     `measureADC()` as the Pinnacle requires about 300 milliseconds to wake up.
      * @endrst
      */
-    void anyMeasModeConfig(uint8_t gain = PINNACLE_GAIN_200,
+    void anymeasModeConfig(uint8_t gain = PINNACLE_GAIN_200,
                            uint8_t frequency = PINNACLE_FREQ_0,
                            uint32_t sampleLength = 512,
                            uint8_t muxControl = PINNACLE_MUX_PNP,
@@ -698,7 +684,7 @@ public:
      *     Bits 29 and 28 represent the optional implementation of reference
      *     capacitors built into the Pinnacle ASIC. To use these capacitors, the
      *     corresponding constants (`PINNACLE_MUX_REF0` and/or
-     *     `PINNACLE_MUX_REF1`) must be passed to anyMeasModeConfig() in the
+     *     `PINNACLE_MUX_REF1`) must be passed to anymeasModeConfig() in the
      *     ``muxControl`` parameter, and their representative bits must be flagged
      *     in both the ``bitsToToggle`` and ``togglePolarity`` parameters.
      *
@@ -763,7 +749,11 @@ public:
      * @endrst
      */
     int16_t getMeasureAdc();
-    // void readRegisters(uint8_t reg, uint8_t* data, uint8_t len);
+
+#if PINNACLE_DEV_HW_DEBUG
+    // A handy function to get a register dump from the sensor.
+    void readRegisters(uint8_t reg, uint8_t* data, uint8_t len);
+#endif
 
 private:
     void eraWrite(uint16_t, uint8_t);
@@ -804,18 +794,21 @@ public:
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle
      * ASIC.
      */
-    PinnacleTouchSPI(uint16_t dataReadyPin, uint8_t slaveSelectPin);
+    PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin);
     /**
      * Starts the driver interface on the appropriate SPI bus.
-     * @rst
-     * :Return:
-     *     - ``true`` if the Pinnacle ASIC was setup and configured properly (with data
-     *       feed enabled using Relative mode).
-     *     - ``false`` if the Pinnacle ASIC was unresponsive for some reason (all further
-     *       operations will be nullified by setting `Data Mode`_ to ``0xFF``).
-     * @endrst
+     * @returns The same value as `PinnacleTouch::begin()`.
      */
     bool begin();
+    /**
+     * Starts the driver interface on the specified SPI bus object. This function is useful if the
+     * application uses more than one SPI bus.
+     * 
+     * @param spi_bus A reference to the instantiated object that corresponds to
+     * a specific SPI bus.
+     * @returns The same value as `PinnacleTouch::begin()`.
+     */
+    bool begin(_SPI* spi_bus);
 
 private:
     void rapWrite(uint8_t, uint8_t);
@@ -823,6 +816,7 @@ private:
     void rapRead(uint8_t, uint8_t*);
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     uint8_t _slaveSelect;
+    _SPI* spi;
 };
 
 /**
@@ -838,18 +832,21 @@ public:
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC.
      * Defaults to `0x2A`.
      */
-    PinnacleTouchI2C(uint16_t dataReadyPin, uint8_t slaveAddress = 0x2A);
+    PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress = 0x2A);
     /**
      * Starts the driver interface on the appropriate I2C bus.
-     * @rst
-     * :Return:
-     *     - ``true`` if the Pinnacle ASIC was setup and configured properly (with data
-     *       feed enabled using Relative mode).
-     *     - ``false`` if the Pinnacle ASIC was unresponsive for some reason (all further
-     *       operations will be nullified by setting `Data Mode`_ to ``0xFF``).
-     * @endrst
+     * @returns The same value as `PinnacleTouch::begin()`.
      */
     bool begin();
+    /**
+     * Starts the driver interface on the specified I2C bus object. This function is useful if the
+     * application uses more than one I2C bus.
+     * 
+     * @param i2c_bus A reference to the instantiated object that corresponds to
+     * a specific I2C bus.
+     * @returns The same value as `PinnacleTouch::begin()`.
+     */
+    bool begin(_I2C* i2c_bus);
 
 private:
     void rapWrite(uint8_t, uint8_t);
@@ -857,6 +854,7 @@ private:
     void rapRead(uint8_t, uint8_t*);
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     uint8_t _slaveAddress;
+    _I2C* i2c;
 };
 
 /**
@@ -866,10 +864,12 @@ private:
  * Basic example of Relative mode using PinnacleTouch API
  * @example examples/anymeas_mode/anymeas_mode.ino
  * Basic example of AnyMeas mode using PinnacleTouch API
+ */
+/*
  * @example examples/usb_mouse/usb_mouse.ino
  * This basic example of PinnacleTouch API's Relative mode is uses
  * Arduino's MouseHID API to turn the Cirque GlidePoint circle trackpad
  * into a usb mouse for your computer.
  */
 
-#endif // _CIRQUEPINNACLE_H
+#endif // _CIRQUEPINNACLE_H_

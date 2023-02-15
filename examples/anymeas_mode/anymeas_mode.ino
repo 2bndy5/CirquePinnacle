@@ -1,21 +1,16 @@
-/**
- * AnyMeas mode basic example of PinnacleTouch API
- */
-
-#include <Arduino.h>
 #include "CirquePinnacle.h"
 
-#define ss_pin 5
-#define dr_pin 6
+#define SS_PIN 5
+#define DR_PIN 6
 
-PinnacleTouchSPI tpad = PinnacleTouchSPI(ss_pin, dr_pin);
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(SS_PIN, DR_PIN);
 
 typedef struct _MeasureVector {
   unsigned long toggle;
   unsigned long polarity;
 } measureVector;
 
-measureVector vectorDetirminants[] = {
+measureVector vectorDeterminants[] = {
   // {toggle, polarity}
   { 0x0000FFFF, 0x00000000 },  // toggle all x-axis bits negatively (to 0)
   { 0x0FFF0000, 0x00000000 },  // toggle all y-axis bits negatively (to 0)
@@ -23,23 +18,23 @@ measureVector vectorDetirminants[] = {
   { 0x00FF00FF, 0x00FF0000 }   // toggle Y0-Y7 positively (to 1) & X0-X7 negatively (to 0)
 };
 
-uint8_t variousVectors_size = sizeof(vectorDetirminants) / sizeof(measureVector);
+uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
 
 void setup() {
   Serial.begin(9600);
-  if (tpad.begin()) {
+  if (trackpad.begin()) {
     Serial.println("found Cirque Pinnacle!");
   } else {
     Serial.println("Cirque Pinnacle not responding!");
   }
-  tpad.setDataMode(PINNACLE_ANYMEAS);
+  trackpad.setDataMode(PINNACLE_ANYMEAS);
 }
 
 void loop() {
   for (uint8_t i = 0; i < variousVectors_size; i++) {
-    int16_t measurement = tpad.measureAdc(
-      vectorDetirminants[i].toggle,
-      vectorDetirminants[i].polarity);
+    int16_t measurement = trackpad.measureAdc(
+      vectorDeterminants[i].toggle,
+      vectorDeterminants[i].polarity);
     Serial.print("meas");
     Serial.print(i);
     Serial.print(": ");
