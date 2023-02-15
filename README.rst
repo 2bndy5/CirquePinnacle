@@ -2,9 +2,18 @@
 .. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
   :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
   :alt: Documentation Status
-.. image:: https://github.com/2bndy5/CirquePinnacle/workflows/Arduino%20CLI%20build/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions?query=workflow%3A%22Arduino+CLI+build%22
-  :alt: Arduino CLI build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml/badge.svg
+  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml
+  :alt: Arduino build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml/badge.svg
+  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml
+  :alt: PlatformIO build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml/badge.svg
+  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml
+  :alt: Pico SDK build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml/badge.svg
+  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml
+  :alt: Linux build
 
 Introduction
 ============

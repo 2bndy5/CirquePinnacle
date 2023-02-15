@@ -48,14 +48,12 @@ elseif("${CIRQUE_PINNACLE_DRIVER}" STREQUAL "mraa") # use mraa
 elseif("${CIRQUE_PINNACLE_DRIVER}" STREQUAL "pigpio") # use pigpio
     install(FILES
             ${CIRQUE_PINNACLE_UTILITY_HEADERS}
-            ${CIRQUE_PINNACLE_DRIVER}/interrupt.h
         DESTINATION include/CirquePinnacle/utility/${CIRQUE_PINNACLE_DRIVER}
     )
     set(CIRQUE_PINNACLE_LINKED_DRIVER ${LibPIGPIO} PARENT_SCOPE)
     set(CIRQUE_PINNACLE_DRIVER_SOURCES
         ${CIRQUE_PINNACLE_UTILITY_IMPLEMENTATION_FILES}
         ${CMAKE_CURRENT_LIST_DIR}/${CIRQUE_PINNACLE_DRIVER}/gpio.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/${CIRQUE_PINNACLE_DRIVER}/interrupt.cpp
         PARENT_SCOPE
     )
 else() # No valid/supported driver selected nor detected... this is vital

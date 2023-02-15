@@ -1,0 +1,91 @@
+name: Python
+
+on:
+  pull_request_target:
+  workflow_dispatch:
+  release:
+    types: [published]
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/linux_kernel/*"
+      - ".github/workflows/build_python.yml"
+  push:
+    paths:
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/linux_kernel/*"
+      - ".github/workflows/build_python.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Checkout Current Repo
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3-dev
+          python3 -m pip install --upgrade pip
+          python3 -m pip install twine
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: aarch64
+
+      - name: Build binary wheels with cibuildwheels
+        uses: pypa/cibuildwheel@v2.12.0
+        env:
+          CIBW_ARCHS_LINUX: aarch64 native
+          CIBW_SKIP: cp36* pp* *musllinux*
+
+      - name: Move cross-compiled wheels to dist folder
+        run: |
+          mkdir -p dist
+          mv ./wheelhouse/*.whl ${{ github.workspace }}/dist/
+
+      - name: build source distributable wheel
+        # sdist for non-supprted platforms will serve as a stub lib install
+        run: python setup.py sdist
+
+      - name: checks distributables with twine
+        run: python3 -m twine check dist/*
+
+      - name: Save distributable wheels as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "cirque_pinnacle-pypi-dists"
+          path: ${{ github.workspace }}/dist
+
+      - name: Publish package (to TestPyPI)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: twine upload --repository testpypi dist/*
+
+      - name: Publish to PyPi
+        # only upload distributions to PyPi when triggered by a published release
+        if: github.event_name == 'release'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+        run: twine upload dist/*

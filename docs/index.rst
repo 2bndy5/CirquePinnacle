@@ -12,8 +12,25 @@
 
 .. toctree::
     :hidden:
+    :caption: API Reference
 
-    api
+    API/cpp
+    API/python
+
+.. toctree::
+    :hidden:
+
+    linux
+
+.. toctree::
+    :hidden:
+
+    python
+
+.. toctree::
+    :hidden:
+
+    pico_sdk
 
 .. toctree::
     :caption: Related Products

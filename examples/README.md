@@ -12,3 +12,5 @@ The following folders have examples for the Arduino IDE (and PlatformIO):
 The `linux` folder has examples for Linux (C++ only).
 
 The `pico_sdk` folder has examples for the RPi Pico SDK.
+
+The `cpython` folder has examples for the CPython bindings.

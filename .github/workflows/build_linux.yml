@@ -16,8 +16,6 @@ on:
       - "src/utility/pigpio/*"
       - "src/utility/bcm2xxx/*"
       - "examples/linux/*"
-      - "!examples/linux/*.py"
-      - "!examples/linux/*.md"
       - ".github/workflows/build_linux.yml"
   push:
     paths:
@@ -32,8 +30,6 @@ on:
       - "src/utility/pigpio/*"
       - "src/utility/bcm2xxx/*"
       - "examples/linux/*"
-      - "!examples/linux/*.py"
-      - "!examples/linux/*.md"
       - ".github/workflows/build_linux.yml"
   release:
     types: [created]
