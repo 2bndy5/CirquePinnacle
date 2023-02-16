@@ -261,7 +261,7 @@ struct AbsoluteReport
      */
     uint16_t y;
     /**
-     * @brief This will always be in range `0 <= z <= 65535`. The maximum
+     * @brief This will always be in range `0 <= z <= 31`. The maximum
      * value will depend on sensitivity.
      */
     uint8_t z;

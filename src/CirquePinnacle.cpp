@@ -165,7 +165,7 @@ void PinnacleTouch::read(AbsoluteReport* report)
         report->buttons = temp[0] & 0x3F;
         report->x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
         report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
-        report->z = (uint8_t)(temp[5] & 0x3F);
+        report->z = (uint8_t)(temp[5] & 0x1F);
     }
 }
 
