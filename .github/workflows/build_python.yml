@@ -78,6 +78,15 @@ jobs:
           submodules: true
           fetch-depth: 0
 
+      - name: Fetch distributable source artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: "cirque_pinnacle-sdist"
+          path: ${{ github.workspace }}/sdist
+
+      - name: Try install from source distributable
+        run: pip install sdist/*.tar.gz -v
+
       - name: Install dependencies
         run: |
           sudo apt-get install python3-dev
@@ -125,7 +134,7 @@ jobs:
           name: "cirque_pinnacle-bdist"
           path: ${{ github.workspace }}/dist
 
-      - name: Fetch distributable source artifacts
+      - name: Fetch distributable source artifact
         uses: actions/download-artifact@v3
         with:
           name: "cirque_pinnacle-sdist"
