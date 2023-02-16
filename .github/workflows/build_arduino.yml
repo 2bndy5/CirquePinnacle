@@ -81,8 +81,17 @@ jobs:
           enable-deltas-report: ${{ matrix.enable-deltas-report }}
           sketches-report-path: ${{ env.SKETCH_REPORTS_PATH }}
 
+      # This step is needed to pass the size data to the report job 
+      - name: Upload sketches report to workflow artifact
+        if: matrix.enable-deltas-report
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.SKETCH_REPORTS_PATH }}
+          path: ${{ env.SKETCH_REPORTS_PATH }}
+
   report_size_deltas:
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - name: Download sketches reports artifact
         uses: actions/download-artifact@v3
