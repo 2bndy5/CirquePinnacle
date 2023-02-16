@@ -63,7 +63,7 @@ jobs:
           name: "cirque_pinnacle-sdist"
           path: ${{ github.workspace }}/dist
 
-  build-linux:
+  build_linux:
     runs-on: ubuntu-latest
     needs: [check_source]
     steps:
