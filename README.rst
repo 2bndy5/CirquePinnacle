@@ -76,17 +76,16 @@ connector (the white block near the bottom). The following table shows how the p
 the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
 
 .. csv-table:: pinout (ordered the same as the FFC/FPC cable connector)
-    :header: "cable pin number",Label,"MCU pin","RPi",Description
-    :widths: 1,5,5,13
+    :header: "cable pin number",Label,"MCU pin","RPi pin",Description
 
     1,SCK,SCK,"SCLK (GPIO11)","SPI clock line"
     2,SO,MISO,"MISO (GPIO9)","SPI Master Input Slave Output"
-    3,SS,D7,,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
-    4,DR,D2,GPIO6,"Data Ready interrupt"
+    3,SS,5,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
+    4,DR,6,GPIO6,"Data Ready interrupt"
     5,SI,MOSI,"MOSI (GPIO10)","SPI Master Output Slave Input"
-    6,B2,N/A,"Hardware input button #2"
-    7,B3,N/A,"Hardware input button #3"
-    8,B1,N/A,"Hardware input button #1"
+    6,B2,N/A,N/A,"Hardware input button #2"
+    7,B3,N/A,N/A,"Hardware input button #3"
+    8,B1,N/A,N/A,"Hardware input button #1"
     9,SCL,SCL,"SCL (GPIO3)","I2C clock line"
     10,SDA,SDA,"SDA (GPIO2)","I2C data line"
     11,GND,GND,Ground,Ground

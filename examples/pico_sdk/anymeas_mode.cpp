@@ -1,3 +1,8 @@
+/*
+ * This example reads data from the Cirque trackpad in "anymeas mode" and prints the values.
+ *
+ * See documentation at https://cirquepinnacle.rtfd.io/
+ */
 #include "pico/stdlib.h"    // printf(), sleep_ms(), getchar_timeout_us(), to_us_since_boot(), get_absolute_time()
 #include "pico/bootrom.h"   // reset_usb_boot()
 #include <tusb.h>           // tud_cdc_connected()
@@ -44,11 +49,7 @@ void loop()
         int16_t measurement = trackpad.measureAdc(
             vectorDeterminants[i].toggle,
             vectorDeterminants[i].polarity);
-        printf("meas");
-        printf("%d", i);
-        printf(": ");
-        printf("%d", measurement);
-        printf("\t");
+        printf("meas%d: %d\t", i, measurement);
     }
     printf("\n");
 

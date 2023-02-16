@@ -1,7 +1,15 @@
+/*
+ * This example reads data from the Cirque trackpad in "relative mode" and prints the values.
+ *
+ * See documentation at https://cirquepinnacle.rtfd.io/
+ */
 #include <iostream>                        // cout, endl
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad  object
 
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(6, 0);
+#define DR_PIN 6
+#define SS_PIN 0
+
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
 RelativeReport report;
 
 bool setup()

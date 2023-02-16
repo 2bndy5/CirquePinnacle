@@ -1,8 +1,12 @@
-# pylint: disable=missing-docstring,import-error
+""" 
+This example reads data from the Cirque trackpad in "anymeas mode" and prints the values.
+
+See documentation at https://cirquepinnacle.rtfd.io/
+"""
 import sys
 from cirque_pinnacle import PinnacleTouchSPI, PINNACLE_ANYMEAS
 
-trackpad = PinnacleTouchSPI(6, 0)
+trackpad = PinnacleTouchSPI(6, 0)  # DR pin = 6, SS pin = 0 (CE0)
 
 vector_determinants = [
     # (toggle, polarity)

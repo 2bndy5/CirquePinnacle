@@ -71,7 +71,7 @@ public:
     /**
      * Transfer a single byte to/from a SPI slave device.
      * @param tx The byte to send over MOSI.
-     * @return The byte recieved over MISO while sending the `tx` byte.
+     * @return The byte received over MISO when sending the `tx` byte over MOSI.
      */
     uint8_t transfer(uint8_t tx);
 

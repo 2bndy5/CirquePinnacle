@@ -1,3 +1,8 @@
+/*
+ * This example reads data from the Cirque trackpad in "relative mode" and prints the values.
+ *
+ * See documentation at https://cirquepinnacle.rtfd.io/
+ */
 #include "pico/stdlib.h"    // printf(), sleep_ms(), getchar_timeout_us(), to_us_since_boot(), get_absolute_time()
 #include "pico/bootrom.h"   // reset_usb_boot()
 #include <tusb.h>           // tud_cdc_connected()
@@ -27,18 +32,12 @@ void loop()
 {
     if (trackpad.available()) {
         trackpad.read(&report);
-        printf("Left: ");
-        printf("%d", report.buttons & 1);
-        printf(" Right: ");
-        printf("%d", report.buttons & 2);
-        printf(" Middle: ");
-        printf("%d", report.buttons & 4);
-        printf("\tdelta X: ");
-        printf("%d", report.x);
-        printf("\tdelta Y: ");
-        printf("%d", report.y);
-        printf("\tdelta Scroll: ");
-        printf("%d\n", report.scroll);
+        printf("Left: %d ", report.buttons & 1);
+        printf("Right: %d ", report.buttons & 2);
+        printf("Middle: %d", report.buttons & 4);
+        printf("\tdelta X: %d", report.x);
+        printf("\tdelta Y: %d", report.y);
+        printf("\tdelta Scroll: %d\n", report.scroll);
     }
 
     char input = getchar_timeout_us(0); // get char from buffer for user input

@@ -1,3 +1,8 @@
+/*
+ * This example reads data from the Cirque trackpad in "anymeas mode" and prints the values.
+ *
+ * See documentation at https://cirquepinnacle.rtfd.io/
+ */
 #include "CirquePinnacle.h"
 
 #define SS_PIN 5
