@@ -1,29 +1,31 @@
 
 .. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
-  :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
-  :alt: Documentation Status
+    :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 .. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml
-  :alt: Arduino build
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml
+    :alt: Arduino build
 .. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml
-  :alt: PlatformIO build
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml
+    :alt: PlatformIO build
 .. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml
-  :alt: Pico SDK build
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml
+    :alt: Pico SDK build
 .. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml
-  :alt: Linux build
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml
+    :alt: Linux build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml
+    :alt: Python build
 
 Introduction
 ============
 
 A driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
 
-.. warning:: this is a work in progress... This library has not been tested yet as it is
-  being ported from `CircuitPython_Cirque_Pinnacle
-  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
-
+.. warning::
+    This is a work in progress... This library has not been tested yet as it is being ported from
+    `CircuitPython_Cirque_Pinnacle  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
 
 Supported Features
 ------------------
@@ -37,7 +39,7 @@ Supported Features
   Pinnacle (1CA027), thus this is a rather experimental mode.
 * Hardware input buttons' states included in data reports. There are 3 button input lines on
   the Cirque circle trackpads -- see `Pinout`_ section.
-* Configure measurements for finger or stylus (or automatically detirmine either) touch
+* Configure measurements for finger or stylus (or automatically determine either) touch
   events. The Cirque circle trackpads are natively capable of measuring only 1 touch
   point per event.
 * Download/upload the underlying compensation matrix for ADC measurements.
@@ -68,26 +70,27 @@ Pinout
 
 The above picture is a example of the Cirque GlidePoint circle trackpad. This picture
 is chosen as the test pads (larger copper circular pads) are clearly labeled. The test pads
-are extended to the `12-pin FFC/FPC cable <https://www.mouser.com/Connectors/FFC-FPC/
-FFC-FPC-Jumper-Cables/_/N-axro3?P=1yc8ojpZ1z0wxjx>`_ connector (the white block near the
-bottom). The following table shows how the pins are connected in the `examples <examples.html>`_
+are extended to the `12-pin FFC/FPC cable <https://www.mouser.com/c/connectors/ffc-fpc/ffc-fpc-jumper-cables/
+?number%20of%20conductors=12~~12%20Conductor&pitch=0.5%20mm&rp=connectors%2Fffc-fpc%2Fffc-fpc-jumper-cables%7C~Number%20of%20Conductors>`_
+connector (the white block near the bottom). The following table shows how the pins are connected in
+the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
 
 .. csv-table:: pinout (ordered the same as the FFC/FPC cable connector)
-    :header: "cable pin number",Label,"MCU pin",Description
+    :header: "cable pin number",Label,"MCU pin","RPi",Description
     :widths: 1,5,5,13
 
-    1,SCK,SCK,"SPI clock line"
-    2,SO,MISO,"SPI Master Input Slave Output"
-    3,SS,D7,"Slave Select (AKA Chip Select)"
-    4,DR,D2,"Data Ready interrupt"
-    5,SI,MOSI,"SPI Master Output Slave Input"
+    1,SCK,SCK,"SCLK (GPIO11)","SPI clock line"
+    2,SO,MISO,"MISO (GPIO9)","SPI Master Input Slave Output"
+    3,SS,D7,,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
+    4,DR,D2,GPIO6,"Data Ready interrupt"
+    5,SI,MOSI,"MOSI (GPIO10)","SPI Master Output Slave Input"
     6,B2,N/A,"Hardware input button #2"
     7,B3,N/A,"Hardware input button #3"
     8,B1,N/A,"Hardware input button #1"
-    9,SCL,SCL,"I2C clock line"
-    10,SDA,SDA,"I2C data line"
-    11,GND,GND,Ground
-    12,VDD,3V,"3V power supply"
+    9,SCL,SCL,"SCL (GPIO3)","I2C clock line"
+    10,SDA,SDA,"SDA (GPIO2)","I2C data line"
+    11,GND,GND,Ground,Ground
+    12,VDD,3V,3V3,"3V power supply"
 
 .. tip:: Of course, you can capture button data manually (if your application utilizes more
     than 3 buttons), but if you connect the pins B1, B2, B3 to momentary push buttons that
@@ -138,5 +141,5 @@ Now, run sphinx from the docs folder:
     sphinx-build -E -W . _build/html
 
 This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
-view them. It will also (due to -W) error out on any warning. This is a good way to
-locally verify it will pass.
+view them. It will also (due to ``-W``) error out on any warning. This is a good way to locally verify
+it will pass the CI workflow (and ReadTheDocs builds).

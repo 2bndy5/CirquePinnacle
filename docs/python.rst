@@ -22,6 +22,14 @@ Installing from Github
 
        git clone --recurse-submodules https://github.com/2bndy5/CirquePinnacle.git
 
+   Or, if you already cloned the repository, you can simply ensure the pybind11 submodule is
+   initialized in the src folder:
+
+   .. code-block:: shell
+       :caption: from the repository's root folder
+
+       git submodule update src/pybind11
+
 3. Navigate into the repository folder.
 
    .. code-block:: shell

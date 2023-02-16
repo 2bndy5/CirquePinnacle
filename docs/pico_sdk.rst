@@ -177,8 +177,11 @@ then passing the ``SPI`` object to ``PinnacleTouchSPI::begin(_SPI *spi_bus)``.
     CirquePinnacle trackpad(7, 8); // pin numbers connected to the trackpad's DR and SS pins (respectively)
     int main()
     {
+        // first pull in the namespace for the pre-instantiated `SPI` object
+        using namespace cirque_pinnacle_arduino_wrappers;
+
         // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
-        spi.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
+        SPI.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
         if (!trackpad.begin(&spi)) {
             printf("Radio hardware is not responding!\n");
         }
@@ -236,7 +239,7 @@ If you want to drive each trackpad with a separate SPI bus, then the following e
     // different SPI bus for the second trackpad.
     // 
     // So, here we declare a second SPI bus instance:
-    SPI my_spi; // we specify the `spi1` bus interface below
+    cirque_pinnacle_arduino_wrappers::SPIClass my_spi; // we specify the `spi1` bus interface below
     bool setupTrackpads()
     {
         // Initialize the first trackpad using the default SPI instance
