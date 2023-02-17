@@ -96,7 +96,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build aarch64?
-        if: github.event_name == 'release'
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
         run: echo "BUILD_ARCH=aarch64 ${{ env.BUILD_ARCH }}" >> $GITHUB_ENV
 
       - name: Set up QEMU
@@ -164,5 +164,5 @@ jobs:
         if: github.event_name == 'release'
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.pypi_token }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         run: twine upload dist/*
