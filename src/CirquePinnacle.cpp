@@ -486,24 +486,23 @@ void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len)
 
 PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin) : PinnacleTouch(dataReadyPin)
 {
-    PINNACLE_USE_ARDUINO_API
     _slaveSelect = slaveSelectPin;
-    spi = &SPI;
 }
 
 bool PinnacleTouchSPI::begin(_SPI* spi_bus)
 {
+    PINNACLE_USE_ARDUINO_API
     spi = spi_bus;
-    return PinnacleTouchSPI::begin();
+    pinMode(_slaveSelect, OUTPUT);
+    PINNACLE_SS_CTRL(_slaveSelect, HIGH);
+    return PinnacleTouch::begin();
 }
 
 bool PinnacleTouchSPI::begin()
 {
     PINNACLE_USE_ARDUINO_API
-    pinMode(_slaveSelect, OUTPUT);
-    PINNACLE_SS_CTRL(_slaveSelect, HIGH);
-    spi->begin();
-    return PinnacleTouch::begin();
+    SPI.begin();
+    return PinnacleTouchSPI::begin(&SPI);
 }
 
 void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue)
@@ -552,22 +551,21 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
 
 PinnacleTouchI2C::PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin)
 {
-    PINNACLE_USE_ARDUINO_API
     _slaveAddress = slaveAddress;
-    i2c = &Wire;
 }
 
 bool PinnacleTouchI2C::begin(_I2C* i2c_bus)
 {
     i2c = i2c_bus;
-    return PinnacleTouchI2C::begin();
+    return PinnacleTouch::begin();
 }
 
 bool PinnacleTouchI2C::begin()
 {
-    i2c->begin();
-    // no max or min I2C clock speed is specified (in ASIC's specs); use controller's default clock divider.
-    return PinnacleTouch::begin();
+    PINNACLE_USE_ARDUINO_API
+    Wire.begin();
+    // no max/min I2C clock speed is specified (in ASIC's specs); use MCU's default.
+    return PinnacleTouchI2C::begin(&Wire);
 }
 
 void PinnacleTouchI2C::rapWrite(uint8_t registerAddress, uint8_t registerValue)

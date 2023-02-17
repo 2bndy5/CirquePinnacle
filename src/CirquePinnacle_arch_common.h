@@ -16,7 +16,15 @@
     // alias for I2C bus implementation
     #define _I2C TwoWire
 
+    #ifdef NUM_DIGITAL_PINS
+        #if NUM_DIGITAL_PINS < 256
 typedef uint8_t pinnacle_gpio_t;
+        #else
+typedef uint16_t pinnacle_gpio_t;
+        #endif
+    #else
+typedef uint16_t pinnacle_gpio_t;
+    #endif
 
     #define PINNACLE_SS_CTRL(pin, value) digitalWrite(pin, value)
 

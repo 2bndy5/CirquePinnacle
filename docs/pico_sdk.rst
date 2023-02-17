@@ -29,7 +29,7 @@ next to the folder containing your project using the CirquePinnacle library:
 
 Alternatively, the CirquePinnacle repository can be included into your project's "lib"
 folder as copies or git submodules. For more detail, see the below instructions to
-`incorporating_in_user_src`_.
+:ref:`incorporating_in_user_src`.
 
 Building the library examples for the Pico SDK
 **********************************************
@@ -226,20 +226,24 @@ Using Multiple Cirque Pinnacle Trackpads
 It is possible to drive multiple Cirque Pinnacle Trackpads on a single board.
 To do this each trackpad needs dedicated digital output pins for the DR and SS pins.
 
-If you want to drive each trackpad with a separate SPI bus, then the following example will demonstrate how to do that.
+If you want to drive each trackpad with a separate SPI bus, then the following example will
+demonstrate how to do that.
 
 .. code-block:: cpp
 
     #include <CirquePinnacle.h>
+
     // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
     CirquePinnacle trackpad0(8, 5);   // first trackpad object
     CirquePinnacle trackpad1(14, 13); // second trackpad object
+
     // By default, one SPI bus instance is created by the CirquePinnacle lib. We'll use this
     // default instance of the `spi0` interface for our first trackpad, but we want a
     // different SPI bus for the second trackpad.
     // 
     // So, here we declare a second SPI bus instance:
     cirque_pinnacle_arduino_wrappers::SPIClass my_spi; // we specify the `spi1` bus interface below
+
     bool setupTrackpads()
     {
         // Initialize the first trackpad using the default SPI instance
@@ -248,6 +252,7 @@ If you want to drive each trackpad with a separate SPI bus, then the following e
             return false;
         }
         // first trackpad object initialized successfully
+
         // specify the the second SPI bus interface and corresponding GPIO pins
         my_spi.begin(spi1, 10, 11, 12); // spi1 bus, SCK, TX, RX
         if (!trackpad1.begin(&my_spi)) {

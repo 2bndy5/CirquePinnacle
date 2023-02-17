@@ -761,7 +761,7 @@ private:
     void eraRead(uint16_t, uint8_t*);
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
     uint8_t _dataMode;
-    uint16_t _dataReady;
+    pinnacle_gpio_t _dataReady;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
     virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;
     virtual void rapRead(uint8_t, uint8_t*) = 0;
@@ -815,7 +815,7 @@ private:
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
     void rapRead(uint8_t, uint8_t*);
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
-    uint8_t _slaveSelect;
+    pinnacle_gpio_t _slaveSelect;
     _SPI* spi;
 };
 

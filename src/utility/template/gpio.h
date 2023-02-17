@@ -5,7 +5,7 @@
 
     #include <stdexcept>
 
-typedef int pinnacle_gpio_t;
+typedef uint16_t pinnacle_gpio_t;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
