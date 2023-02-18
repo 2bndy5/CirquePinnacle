@@ -79,6 +79,7 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
         sysConfig &= 0xE7;
         if (mode == PINNACLE_RELATIVE || mode == PINNACLE_ABSOLUTE) {
+#ifdef PINNACLE_ANYMEAS_SUPPORT
             if (_dataMode == PINNACLE_ANYMEAS) { // if leaving AnyMeas mode
                 _dataMode = mode;
                 uint8_t configs[3] = {sysConfig, static_cast<uint8_t>(_dataMode | 1), 0};
@@ -91,8 +92,11 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
                 rapWrite(PINNACLE_Z_IDLE, 30);       // 30 z-idle packets
             }
             else { // ok to just write appropriate mode
+
+#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
                 _dataMode = mode;
                 rapWrite(PINNACLE_FEED_CONFIG_1, 1 | mode);
+#ifdef PINNACLE_ANYMEAS_SUPPORT
             }
         }
         else if (mode == PINNACLE_ANYMEAS) {
@@ -100,6 +104,8 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
             delay(10);           // wait 10 ms for tracking measurements to expire
             anymeasModeConfig(); // configure registers for the AnyMeas mode
+
+#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
         }
     }
 }
@@ -330,6 +336,8 @@ void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWide
     }
 }
 
+#ifdef PINNACLE_ANYMEAS_SUPPORT
+
 void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint32_t apertureWidth, uint8_t controlPowerCount)
 {
     if (_dataMode == PINNACLE_ANYMEAS)
@@ -384,6 +392,8 @@ int16_t PinnacleTouch::getMeasureAdc()
     }
     return 0;
 }
+
+#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
 void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
 {

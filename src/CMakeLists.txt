@@ -107,6 +107,11 @@ if(NOT PINNACLE_PY_BINDING)
         )
     endif()
 
+    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+        message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
+        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+    endif()
+
     if(NOT "${CIRQUE_PINNACLE_LINKED_DRIVER}" STREQUAL "") # linking to a pre-compiled utility driver
         message(STATUS "Using utility library: ${CIRQUE_PINNACLE_LINKED_DRIVER}")
         target_link_libraries(${LibTargetName} INTERFACE
@@ -137,7 +142,7 @@ if(NOT PINNACLE_PY_BINDING)
 
     install(FILES
             ${CMAKE_CURRENT_LIST_DIR}/CirquePinnacle.h
-            ${CMAKE_CURRENT_LIST_DIR}/CirquePinnacle_arch_common.h
+            ${CMAKE_CURRENT_LIST_DIR}/CirquePinnacle_common.h
         DESTINATION include/CirquePinnacle
     )
 
@@ -156,7 +161,7 @@ else()
     pybind11_add_module(cirque_pinnacle 
         py_bindings.cpp
         CirquePinnacle.h
-        CirquePinnacle_arch_common.h
+        CirquePinnacle_common.h
         CirquePinnacle.cpp
         utility/includes.h
         ${CIRQUE_PINNACLE_DRIVER_SOURCES}
@@ -167,6 +172,11 @@ else()
         target_compile_definitions(cirque_pinnacle PUBLIC
             CIRQUE_PINNACLE_SPI_SPEED=${CIRQUE_PINNACLE_SPI_SPEED}
         )
+    endif()
+
+    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+        message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
+        target_compile_definitions(cirque_pinnacle PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
     endif()
 
     target_include_directories(cirque_pinnacle PUBLIC ${CMAKE_CURRENT_LIST_DIR})

@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 
 project = "Cirque Pinnacle"
-copyright = "2020, Brendan Doherty"
+copyright = "2023, Brendan Doherty"
 author = "Brendan Doherty"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -130,6 +130,7 @@ html_theme_options = {
         },
     ],
 }
+
 object_description_options = [
     ("cpp:.*", dict(include_fields_in_toc=False)),
 ]

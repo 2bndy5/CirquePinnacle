@@ -33,6 +33,11 @@ foreach(example ${EXAMPLES_LIST})
         hardware_i2c
     )
 
+    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+        message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
+        target_compile_definitions(${example} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+    endif()
+
     # specify USB port as default serial communication's interface (not UART RX/TX pins)
     pico_enable_stdio_usb(${example} 1)
     pico_enable_stdio_uart(${example} 0)

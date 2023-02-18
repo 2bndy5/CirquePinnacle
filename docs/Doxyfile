@@ -157,7 +157,8 @@ WARN_IF_UNDOCUMENTED   = NO
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../src/CirquePinnacle.cpp \
-                         ../src/CirquePinnacle.h
+                         ../src/CirquePinnacle.h \
+                         ../src/CirquePinnacle_common.h
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include

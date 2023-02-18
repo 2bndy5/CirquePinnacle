@@ -87,7 +87,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
 {
     /**
      * Expose constants used for interfacing with the Pinnacle ASIC's registers.
-     * The Idea here is to allow users to implement their own SPI or I2C functionality in python.
+     * The idea here is to allow users to implement their own SPI or I2C functionality in python.
      * TODO: We need a way for users to override the register read/write operations in python.
     m.attr("PINNACLE_FIRMWARE_ID") = PINNACLE_FIRMWARE_ID;
     m.attr("PINNACLE_STATUS") = PINNACLE_STATUS;
@@ -112,9 +112,13 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     // ******************** expose PinnacleDataMode
     py::enum_<PinnacleDataMode> dataMode(m, "PinnacleDataMode");
     dataMode.value("PINNACLE_RELATIVE", PINNACLE_RELATIVE);
+    #ifdef PINNACLE_ANYMEAS_SUPPORT
     dataMode.value("PINNACLE_ANYMEAS", PINNACLE_ANYMEAS);
+    #endif
     dataMode.value("PINNACLE_ABSOLUTE", PINNACLE_ABSOLUTE);
     dataMode.export_values();
+
+    #ifdef PINNACLE_ANYMEAS_SUPPORT
 
     // ******************** expose PinnacleAnyMeasGain
     py::enum_<PinnacleAnyMeasGain> anyMeasGain(m, "PinnacleAnyMeasGain");
@@ -149,6 +153,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     anyMeasCtrl.value("PINNACLE_CRTL_PWR_IDLE", PINNACLE_CRTL_PWR_IDLE);
     anyMeasCtrl.value("PINNACLE_CRTL_REPEAT", PINNACLE_CRTL_REPEAT);
     anyMeasCtrl.export_values();
+
+    #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
     // ******************** bindings for RelativeReport
     py::class_<RelativeReport> relativeReports(m, "RelativeReport");
@@ -216,6 +222,9 @@ PYBIND11_MODULE(cirque_pinnacle, m)
                       py::arg("x_axis_wide_z_min") = 4, py::arg("y_axis_wide_z_min") = 3);
     pinnacleTouch.def("set_adc_gain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
     pinnacleTouch.def("setAdcGain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
+ 
+    #ifdef PINNACLE_ANYMEAS_SUPPORT
+
     pinnacleTouch.def("anymeas_mode_config", &PinnacleTouch::anymeasModeConfig,
                       py::arg("gain") = PINNACLE_GAIN_200, py::arg("frequency") = PINNACLE_FREQ_0, py::arg("sample_length") = 512,
                       py::arg("mux_control") = PINNACLE_MUX_PNP, py::arg("aperture_width") = 500, py::arg("control_power_count") = 1);
@@ -228,6 +237,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("get_measure_adc", &PinnacleTouch::getMeasureAdc);
     pinnacleTouch.def("startMeasureAdc", &PinnacleTouch::startMeasureAdc, py::arg("bits_to_toggle"), py::arg("toggle_polarity"));
     pinnacleTouch.def("getMeasureAdc", &PinnacleTouch::getMeasureAdc);
+
+    #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
     // ******************** bindings for PinnacleTouchSPI
     py::class_<PinnacleTouchSPI> pinnacleTouchSPI(m, "PinnacleTouchSPI", pinnacleTouch);

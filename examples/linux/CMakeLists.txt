@@ -33,4 +33,9 @@ foreach(example ${EXAMPLES_LIST})
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread)
     endif()
 
+    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+        message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
+        target_compile_definitions(${example} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+    endif()
+
 endforeach()

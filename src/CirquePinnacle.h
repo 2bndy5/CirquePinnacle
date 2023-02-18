@@ -18,7 +18,7 @@
 #ifndef _CIRQUEPINNACLE_H_
 #define _CIRQUEPINNACLE_H_
 #include <stdint.h>
-#include "CirquePinnacle_arch_common.h"
+#include "CirquePinnacle_common.h"
 
 /**
  * @defgroup RegisterOffsets Pinnacle Register Addresses
@@ -55,11 +55,15 @@ enum PinnacleDataMode : uint8_t
 {
     /** Alias symbol for specifying Relative mode (AKA Mouse mode). */
     PINNACLE_RELATIVE = 0x00,
+#ifdef PINNACLE_ANYMEAS_SUPPORT
     /** Alias symbol for specifying "AnyMeas" mode (raw ADC measurement) */
     PINNACLE_ANYMEAS = 0x01,
+#endif
     /** Alias symbol for specifying Absolute mode (axis positions) */
     PINNACLE_ABSOLUTE = 0x02,
 };
+
+#ifdef PINNACLE_ANYMEAS_SUPPORT
 
 /**
  * Allowed ADC gain configurations of AnyMeas mode.
@@ -164,6 +168,8 @@ enum PinnacleAnyMeasCtrl : uint8_t
      */
     PINNACLE_CRTL_PWR_IDLE = 0x40,
 };
+
+#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
 /**
  * This data structure is used for returning data reports in relative mode using
@@ -617,6 +623,7 @@ public:
      * YOUR OWN RISK!
      */
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin = 4, uint8_t yAxisWideZMin = 3);
+#ifndef PINNACLE_NO_ANYMEAS_SUPPORT
     /**
      * @rst
      * This function configures the Pinnacle ASIC for taking raw ADC
@@ -749,6 +756,7 @@ public:
      * @endrst
      */
     int16_t getMeasureAdc();
+#endif // !defined(PINNACLE_NO_ANYMEAS_SUPPORT)
 
 #if PINNACLE_DEV_HW_DEBUG
     // A handy function to get a register dump from the sensor.
