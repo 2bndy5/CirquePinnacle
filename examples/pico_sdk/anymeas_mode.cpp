@@ -3,11 +3,11 @@
  *
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
-#include "pico/stdlib.h"    // printf(), sleep_ms(), getchar_timeout_us(), to_us_since_boot(), get_absolute_time()
+#include "pico/stdlib.h"    // printf(), getchar_timeout_us()
 #include "pico/bootrom.h"   // reset_usb_boot()
 #include <tusb.h>           // tud_cdc_connected()
 #include <CirquePinnacle.h> // trackpad  object
-#include "defaultPins.h"    // board presumptive default pin numbers for CE_PIN and CSN_PIN
+#include "defaultPins.h"    // board presumptive default pin numbers for SS_PIN and DR_PIN
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(SS_PIN, DR_PIN);
 

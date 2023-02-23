@@ -19,6 +19,11 @@
 .. toctree::
     :hidden:
 
+    arduino
+
+.. toctree::
+    :hidden:
+
     linux
 
 .. toctree::

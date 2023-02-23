@@ -80,7 +80,7 @@ public:
     uint8_t transfer(uint8_t tx);
 
     /** Clean-up any internal pointers/buffers/etc. */
-    ~SPIClass();
+    virtual ~SPIClass();
 };
 
 // pre-instantiated SPI bus object (to use as a convenient default)

@@ -494,9 +494,10 @@ void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len)
 }
 #endif
 
-PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin) : PinnacleTouch(dataReadyPin)
+PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin, uint32_t spiSpeed) : PinnacleTouch(dataReadyPin)
 {
     _slaveSelect = slaveSelectPin;
+    _spiSpeed = spiSpeed;
 }
 
 bool PinnacleTouchSPI::begin(_SPI* spi_bus)
@@ -519,7 +520,7 @@ void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue)
 {
     PINNACLE_USE_ARDUINO_API
 #ifdef SPI_HAS_TRANSACTION
-    spi->beginTransaction(SPISettings(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1));
+    spi->beginTransaction(SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1));
 #endif
     PINNACLE_SS_CTRL(_slaveSelect, LOW);
     spi->transfer((uint8_t)(0x80 | registerAddress));
@@ -545,7 +546,7 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
 {
     PINNACLE_USE_ARDUINO_API
 #ifdef SPI_HAS_TRANSACTION
-    spi->beginTransaction(SPISettings(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1));
+    spi->beginTransaction(SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1));
 #endif
     PINNACLE_SS_CTRL(_slaveSelect, LOW);
     spi->transfer(0xA0 | registerAddress);

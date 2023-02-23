@@ -26,11 +26,12 @@ measureVector vectorDeterminants[] = {
 uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
 
 void setup() {
-  Serial.begin(9600);
-  if (trackpad.begin()) {
-    Serial.println("found Cirque Pinnacle!");
-  } else {
+  Serial.begin(115200);
+  if (!trackpad.begin()) {
     Serial.println("Cirque Pinnacle not responding!");
+    while (true) {
+      // hold program in infinite loop
+    }
   }
   trackpad.setDataMode(PINNACLE_ANYMEAS);
 }

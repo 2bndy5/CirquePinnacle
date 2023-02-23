@@ -131,10 +131,6 @@ html_theme_options = {
     ],
 }
 
-object_description_options = [
-    ("cpp:.*", dict(include_fields_in_toc=False)),
-]
-
 sphinx_immaterial_custom_admonitions = [
     {
         "name": "warning",

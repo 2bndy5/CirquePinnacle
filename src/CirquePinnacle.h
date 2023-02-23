@@ -245,7 +245,7 @@ struct AbsoluteReport
      * @rst
      * .. csv-table::
      *     :header: "bit position", "button number"
-
+     *
      *     "0 (LSB)", "Button 1"
      *     1, "Button 2"
      *     2, "Button 3"
@@ -734,9 +734,11 @@ public:
      */
     int16_t measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
     /**
-     * A non-blocking function to instigate ADC measurements when the
-     * @ref PINNACLE_ANYMEAS mode. See parameters and table in measureAdc() as
+     * @rst
+     * A non-blocking function to instigate ADC measurements when the `Data Mode`_ is set to
+     * `PINNACLE_ANYMEAS` mode. See parameters and table in `measureAdc()` as
      * this helper function's parameters are used exactly the same.
+     * @endrst
      */
     void startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
     /**
@@ -801,8 +803,10 @@ public:
      * "Data Ready" pin.
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle
      * ASIC.
+     * @param spiSpeed The speed (or baudrate) to use on the SPI bus.
+     * Defaults to the Pinnacle ASIC's maximum 13 MHz (`13000000`).
      */
-    PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin);
+    PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin, uint32_t spiSpeed = PINNACLE_SPI_SPEED);
     /**
      * Starts the driver interface on the appropriate SPI bus.
      * @returns The same value as `PinnacleTouch::begin()`.
@@ -825,6 +829,7 @@ private:
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     pinnacle_gpio_t _slaveSelect;
     _SPI* spi;
+    uint32_t _spiSpeed;
 };
 
 /**

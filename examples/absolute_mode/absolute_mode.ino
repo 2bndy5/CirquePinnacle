@@ -15,11 +15,12 @@ void setup() {
   while (!Serial) {
     delay(1);  // some boards need this to access USB Serial
   }
-  Serial.begin(9600);
-  if (trackpad.begin()) {
-    Serial.println("found Cirque Pinnacle!");
-  } else {
+  Serial.begin(115200);
+  if (!trackpad.begin()) {
     Serial.println("Cirque Pinnacle not responding!");
+    while (true) {
+      // hold program in infinite loop
+    }
   }
   trackpad.setDataMode(PINNACLE_ABSOLUTE);
   trackpad.absoluteModeConfig(1);  // set count of z-idle packets to 1

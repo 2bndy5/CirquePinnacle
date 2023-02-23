@@ -100,10 +100,10 @@ if(NOT PINNACLE_PY_BINDING)
         VERSION ${${LibName}_VERSION_STRING}
     )
 
-    if(DEFINED CIRQUE_PINNACLE_SPI_SPEED)
-        message(STATUS "CIRQUE_PINNACLE_SPI_SPEED set to ${CIRQUE_PINNACLE_SPI_SPEED}")
+    if(DEFINED PINNACLE_SPI_SPEED)
+        message(STATUS "PINNACLE_SPI_SPEED set to ${PINNACLE_SPI_SPEED}")
         target_compile_definitions(${LibTargetName} PUBLIC
-            CIRQUE_PINNACLE_SPI_SPEED=${CIRQUE_PINNACLE_SPI_SPEED}
+            PINNACLE_SPI_SPEED=${PINNACLE_SPI_SPEED}
         )
     endif()
 
@@ -167,10 +167,10 @@ else()
         ${CIRQUE_PINNACLE_DRIVER_SOURCES}
     )
 
-    if(DEFINED CIRQUE_PINNACLE_SPI_SPEED)
-        message(STATUS "CIRQUE_PINNACLE_SPI_SPEED set to ${CIRQUE_PINNACLE_SPI_SPEED}")
+    if(DEFINED PINNACLE_SPI_SPEED)
+        message(STATUS "PINNACLE_SPI_SPEED set to ${PINNACLE_SPI_SPEED}")
         target_compile_definitions(cirque_pinnacle PUBLIC
-            CIRQUE_PINNACLE_SPI_SPEED=${CIRQUE_PINNACLE_SPI_SPEED}
+            PINNACLE_SPI_SPEED=${PINNACLE_SPI_SPEED}
         )
     endif()
 
