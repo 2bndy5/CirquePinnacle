@@ -37,7 +37,7 @@ Building the library examples for the Pico SDK
 Each example imports a set of constants (``DR_PIN``, ``SS_PIN``) from the
 examples/pico_sdk/defaultPins.h file. Default values for SPI pins (SCK, MOSI, MISO)
 and I2C pins (SDA & SCL) come from the Pico SDK repository's
-`pico-sdk/src/boards/include/boards/\<board_name>.h files 
+`pico-sdk/src/boards/include/boards/\<board_name>.h files
 <https://github.com/raspberrypi/pico-sdk/tree/master/src/boards/include/boards>`_.
 
 1. Create a "build" directory in the CirquePinnacle repository's root directory and
@@ -64,7 +64,7 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
        cmake -G "NMake Makefiles" ../examples/pico_sdk -DCMAKE_BUILD_TYPE=Release -DPICO_BOARD=pico
 
    The supported RP2040-based boards are listed in header files in the Pico SDK
-   repository's `pico-sdk/src/boards/include/boards/\<board_name>.h files 
+   repository's `pico-sdk/src/boards/include/boards/\<board_name>.h files
    <https://github.com/raspberrypi/pico-sdk/tree/master/src/boards/include/boards>`_.
 
    If the ``-DPICO_BOARD`` option is not specified, then the Pico SDK will default to building for
@@ -240,7 +240,7 @@ demonstrate how to do that.
     // By default, one SPI bus instance is created by the CirquePinnacle lib. We'll use this
     // default instance of the `spi0` interface for our first trackpad, but we want a
     // different SPI bus for the second trackpad.
-    // 
+    //
     // So, here we declare a second SPI bus instance:
     cirque_pinnacle_arduino_wrappers::SPIClass my_spi; // we specify the `spi1` bus interface below
 

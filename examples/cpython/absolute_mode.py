@@ -1,4 +1,4 @@
-""" 
+"""
 This example reads data from the Cirque trackpad in "absolute mode" and prints the values.
 
 See documentation at https://cirquepinnacle.rtfd.io/

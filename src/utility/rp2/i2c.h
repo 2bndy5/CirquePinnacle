@@ -35,10 +35,10 @@ public:
 
     /**
      * Terminate transactions on the bus.
-     * 
+     *
      * This function is used to send the bytes in the internal TX buffer (set with `write()`) over
      * the bus with an optional stop condition.
-     * 
+     *
      * @note This will also reset the internal TX buffer.
      * @param sendStop If set to a non-zero value, then a stop condition is sent over the bus.
      * @return The number of bytes sent over the bus.

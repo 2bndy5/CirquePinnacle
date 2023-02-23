@@ -96,7 +96,7 @@ public:
      * Transfer a buffer of bytes to a SPI slave device.
      * @param buf The pointer to a buffer of bytes to send over MOSI.
      * @param len The length of the buffer of bytes.
-     * 
+     *
      * @note Any bytes received over MISO are discarded.
      */
     void transfern(const uint8_t* buf, uint32_t len);

@@ -39,19 +39,15 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-      
+
       - name: Create source distribution
         run: python setup.py sdist
 
-      - name: Install mypy, pylint, twine, and lib stubs
-        run: pip install mypy pylint twine .
+      - name: Install pre-commit, twine, and lib stubs
+        run: pip install pre-commit twine .
 
-      - name: Type-check stubs and examples
-        run: mypy src/cirque_pinnacle-stubs examples/cpython
-
-      - name: Lint examples
-        shell: bash
-        run: pylint examples/cpython/*.py
+      - name: run pre-commit on all files
+        run: pre-commit run --all-files
 
       - name: Checks distributable with twine
         shell: bash

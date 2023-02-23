@@ -78,5 +78,5 @@ Installing from Github
 
        .. code-block:: shell
            :caption: given that the virtual environment is located in ``~/venv``
-           
+
            sudo ~/venv/bin/python example/cpython/relative_mode.py

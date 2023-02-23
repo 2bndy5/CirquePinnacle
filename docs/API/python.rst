@@ -20,7 +20,7 @@ A list of exposed functions in python and their exposed C++ equivalents:
 
 .. list-table::
     :header-rows: 1
-    
+
     * - Python
       - C++
     * - ``PinnacleTouch.available()``
@@ -70,7 +70,7 @@ A list of properties and their exposed C++ equivalent setters/getters:
 
 .. list-table::
     :header-rows: 1
-    
+
     * - Python
       - C++
     * - ``PinnacleTouch.data_mode``
@@ -94,7 +94,7 @@ A list of properties and their exposed C++ equivalent setters/getters:
       - + `PinnacleTouch::getCalibrationMatrix()`
         + `PinnacleTouch::setCalibrationMatrix()`
 
-.. [note] 
+.. [note]
     .. failure:: Missing
 
         One exception to this is there is no function in the python binding for
@@ -133,5 +133,5 @@ This is helpful when using relative mode data as a mouse HID report buffer.
     It returns an empty buffer if the data mode is set to `PINNACLE_ANYMEAS` mode.
 
 .. code-block:: python
-    
+
     report: bytearray = touchpad.read()

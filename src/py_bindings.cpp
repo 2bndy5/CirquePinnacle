@@ -222,7 +222,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
                       py::arg("x_axis_wide_z_min") = 4, py::arg("y_axis_wide_z_min") = 3);
     pinnacleTouch.def("set_adc_gain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
     pinnacleTouch.def("setAdcGain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
- 
+
     #ifdef PINNACLE_ANYMEAS_SUPPORT
 
     pinnacleTouch.def("anymeas_mode_config", &PinnacleTouch::anymeasModeConfig,

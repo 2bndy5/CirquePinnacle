@@ -58,8 +58,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     ".env",
-    "CODE_OF_CONDUCT.md"
-    "requirements.txt",
+    "CODE_OF_CONDUCT.md" "requirements.txt",
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
@@ -96,6 +95,7 @@ html_theme = "sphinx_immaterial"
 html_theme_options = {
     "features": [
         "search.share",
+        "navigation.top",
     ],
     # Set the color and the accent color
     "palette": [

@@ -52,6 +52,12 @@ version_scheme = "no-guess-dev"
 [tool.mypy]
 show_error_codes = true
 pretty = true
+files = [
+    "src/cirque_pinnacle-stubs/*.pyi",
+    "examples/cpython/*.py",
+]
+exclude = "setup.py"
+check_untyped_defs = true
 
 [tool.ruff]
 line-length = 100

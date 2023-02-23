@@ -14,4 +14,4 @@ recursive-exclude src/utility/rp2 *.h *.cpp *.txt
 recursive-exclude cirque_pinnacle.egg-info *
 global-exclude .clang-format .clang-tidy .git* library.json keywords.txt **.yml **.yaml
 exclude src/utility/includes.h src/cmake/pico_sdk_import.cmake src/cmake/CPackInfo.cmake
-include pyproject.toml setup.py src/utility/includes.h.in library.properties 
+include pyproject.toml setup.py src/utility/includes.h.in library.properties

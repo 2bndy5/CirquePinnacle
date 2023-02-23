@@ -3,7 +3,6 @@ import os
 import platform
 import subprocess
 import sys
-from typing import List
 from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext

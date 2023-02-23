@@ -815,7 +815,7 @@ public:
     /**
      * Starts the driver interface on the specified SPI bus object. This function is useful if the
      * application uses more than one SPI bus.
-     * 
+     *
      * @param spi_bus A reference to the instantiated object that corresponds to
      * a specific SPI bus.
      * @returns The same value as `PinnacleTouch::begin()`.
@@ -854,7 +854,7 @@ public:
     /**
      * Starts the driver interface on the specified I2C bus object. This function is useful if the
      * application uses more than one I2C bus.
-     * 
+     *
      * @param i2c_bus A reference to the instantiated object that corresponds to
      * a specific I2C bus.
      * @returns The same value as `PinnacleTouch::begin()`.

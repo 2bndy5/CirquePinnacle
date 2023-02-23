@@ -158,7 +158,7 @@ if(NOT PINNACLE_PY_BINDING)
     endif()
 else()
     add_subdirectory(pybind11)
-    pybind11_add_module(cirque_pinnacle 
+    pybind11_add_module(cirque_pinnacle
         py_bindings.cpp
         CirquePinnacle.h
         CirquePinnacle_common.h
