@@ -8,6 +8,7 @@ on:
       - "library.properties" # CMake gets lib info from here
       - "src/*.h"
       - "src/*.cpp"
+      - "!src/py_bindings.cpp"
       - "src/CMakeLists.txt"
       - "src/cmake/**"
       - "src/utility/CMakeLists.txt"
@@ -22,6 +23,7 @@ on:
       - "library.properties" # CMake gets lib info from here
       - "src/*.h"
       - "src/*.cpp"
+      - "!src/py_bindings.cpp"
       - "src/CMakeLists.txt"
       - "src/cmake/**"
       - "src/utility/CMakeLists.txt"

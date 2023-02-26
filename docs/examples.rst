@@ -22,6 +22,8 @@ Example to output data reports in Absolute Mode (using SPI protocol).
     :caption: examples/absolute_mode/absolute_mode.ino
     :linenos:
 
+.. _arduino_anymeas_example:
+
 AnyMeas Mode
 ------------
 

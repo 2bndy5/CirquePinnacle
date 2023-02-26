@@ -69,14 +69,14 @@ Installing from Github
 
    .. important::
        Remember that any driver other than ``linux_kernel`` will require ``sudo`` permission.
-       This *will* cause problems if using ``sudo`` from a python virtual environment because ``sudo``
-       will invoke the system install of the python interpreter (not the virtual environment's
-       install of the python interpreter).
+       This *will* cause problems if using ``sudo`` from a python virtual environment because
+       ``sudo`` will invoke the system install of the python interpreter (not the virtual
+       environment's install of the python interpreter).
 
-       If you need to use ``sudo`` from within a virtual environment, then you must specify the
+       If you need to use ``sudo`` from within a virtual environment, then you *must* specify the
        path to the virtual environment's install of the python interpreter.
 
        .. code-block:: shell
            :caption: given that the virtual environment is located in ``~/venv``
 
-           sudo ~/venv/bin/python example/cpython/relative_mode.py
+           sudo ~/venv/bin/python examples/cpython/relative_mode.py

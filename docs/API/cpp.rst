@@ -2,124 +2,93 @@
 C++ API
 ==================
 
-Datatypes for data reports
---------------------------
+.. _Data Mode:
+
+Data Mode
+***********
+
+.. cpp-apigen-group:: data-mode
 
 Relative Data
 **************
 
-.. doxygenstruct:: RelativeReport
-    :members:
+.. cpp-apigen-group:: relative-mode
 
 Absolute Data
 **************
 
-.. doxygenstruct:: AbsoluteReport
-    :members:
+.. cpp-apigen-group:: absolute-mode
 
-Accepted Constants
-------------------
+AnyMeas Constants
+*****************
 
-Data Modes
-***********
+.. cpp-apigen-group:: anymeas-const
 
-.. doxygenenum:: PinnacleDataMode
+PinnacleTouch API
+*****************
 
-AnyMeas mode Gain
-******************
+.. cpp-apigen-group:: pinnacle-touch-api
 
-.. doxygenenum:: PinnacleAnyMeasGain
+..
+    Data Mode
+    ************************
 
-AnyMeas mode Frequencies
-************************
+    .. doxygenfunction:: setDataMode
 
-.. doxygenenum:: PinnacleAnyMeasFreq
+    .. doxygenfunction:: getDataMode
 
-AnyMeas mode Muxing
-*******************
+    Relative or Absolute mode
+    *************************
 
-.. doxygenenum:: PinnacleAnyMeasMuxing
+    .. doxygenfunction:: feedEnabled
 
-AnyMeas mode Control
-********************
+    .. doxygenfunction:: isFeedEnabled
 
-.. doxygenenum:: PinnacleAnyMeasCtrl
+    .. doxygenfunction:: isHardConfigured
 
-PinnacleTouch
--------------
+    .. doxygenfunction:: available
 
-.. doxygenclass:: PinnacleTouch
-    :members: PinnacleTouch
-    :protected-members:
+    .. doxygenfunction:: absoluteModeConfig
 
-Data Mode
-************************
+    .. doxygenfunction:: relativeModeConfig
 
-.. doxygenfunction:: setDataMode
+    .. doxygenfunction:: PinnacleTouch::read(RelativeReport *report)
 
-.. doxygenfunction:: getDataMode
+    .. doxygenfunction:: PinnacleTouch::read(AbsoluteReport *report)
 
-Relative or Absolute mode
-*************************
+    .. doxygenfunction:: clearStatusFlags
 
-.. doxygenfunction:: feedEnabled
+    .. doxygenfunction:: allowSleep
 
-.. doxygenfunction:: isFeedEnabled
+    .. doxygenfunction:: isAllowSleep
 
-.. doxygenfunction:: isHardConfigured
+    .. doxygenfunction:: shutdown
 
-.. doxygenfunction:: available
+    .. doxygenfunction:: isShutdown
 
-.. doxygenfunction:: absoluteModeConfig
+    .. doxygenfunction:: setSampleRate
 
-.. doxygenfunction:: relativeModeConfig
+    .. doxygenfunction:: getSampleRate
 
-.. doxygenfunction:: PinnacleTouch::read(RelativeReport *report)
+    .. doxygenfunction:: detectFingerStylus
 
-.. doxygenfunction:: PinnacleTouch::read(AbsoluteReport *report)
+    .. doxygenfunction:: calibrate
 
-.. doxygenfunction:: clearStatusFlags
+    .. doxygenfunction:: setCalibrationMatrix
 
-.. doxygenfunction:: allowSleep
+    .. doxygenfunction:: getCalibrationMatrix
 
-.. doxygenfunction:: isAllowSleep
+    .. doxygenfunction:: setAdcGain
 
-.. doxygenfunction:: shutdown
+    .. doxygenfunction:: tuneEdgeSensitivity
 
-.. doxygenfunction:: isShutdown
+    AnyMeas Mode
+    ************************
 
-.. doxygenfunction:: setSampleRate
+    .. doxygenfunction:: anymeasModeConfig
 
-.. doxygenfunction:: getSampleRate
+    .. doxygenfunction:: measureAdc
 
-.. doxygenfunction:: detectFingerStylus
+    .. doxygenfunction:: startMeasureAdc
 
-.. doxygenfunction:: calibrate
-
-.. doxygenfunction:: setCalibrationMatrix
-
-.. doxygenfunction:: getCalibrationMatrix
-
-.. doxygenfunction:: setAdcGain
-
-.. doxygenfunction:: tuneEdgeSensitivity
-
-AnyMeas Mode
-************************
-
-.. doxygenfunction:: anymeasModeConfig
-
-.. doxygenfunction:: measureAdc
-
-.. doxygenfunction:: startMeasureAdc
-
-.. doxygenfunction:: getMeasureAdc
-
-SPI & I2C Interfaces
-------------------------
-
-.. doxygenclass:: PinnacleTouchSPI
-    :members:
-
-.. doxygenclass:: PinnacleTouchI2C
-    :members:
+    .. doxygenfunction:: getMeasureAdc

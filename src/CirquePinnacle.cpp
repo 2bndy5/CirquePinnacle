@@ -17,11 +17,10 @@
  */
 #include "CirquePinnacle.h"
 
-PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin)
+PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
 {
     PINNACLE_USE_ARDUINO_API
-    _dataReady = dataReadyPin;
-    pinMode(dataReadyPin, INPUT);
+    pinMode(_dataReady, INPUT);
 }
 
 bool PinnacleTouch::begin()
@@ -494,10 +493,9 @@ void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len)
 }
 #endif
 
-PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin, uint32_t spiSpeed) : PinnacleTouch(dataReadyPin)
+PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin, uint32_t spiSpeed)
+    : PinnacleTouch(dataReadyPin), _slaveSelect(slaveSelectPin), _spiSpeed(spiSpeed)
 {
-    _slaveSelect = slaveSelectPin;
-    _spiSpeed = spiSpeed;
 }
 
 bool PinnacleTouchSPI::begin(_SPI* spi_bus)
@@ -560,9 +558,9 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
 #endif
 }
 
-PinnacleTouchI2C::PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress) : PinnacleTouch(dataReadyPin)
+PinnacleTouchI2C::PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress)
+    : PinnacleTouch(dataReadyPin), _slaveAddress(slaveAddress)
 {
-    _slaveAddress = slaveAddress;
 }
 
 bool PinnacleTouchI2C::begin(_I2C* i2c_bus)

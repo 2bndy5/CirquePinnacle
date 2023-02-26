@@ -242,7 +242,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
 
     // ******************** bindings for PinnacleTouchSPI
     py::class_<PinnacleTouchSPI> pinnacleTouchSPI(m, "PinnacleTouchSPI", pinnacleTouch);
-    pinnacleTouchSPI.def(py::init<pinnacle_gpio_t, pinnacle_gpio_t>(), py::arg("dataReadyPin"), py::arg("slaveSelectPin"));
+    pinnacleTouchSPI.def(py::init<pinnacle_gpio_t, pinnacle_gpio_t, uint32_t>(), py::arg("dataReadyPin"), py::arg("slaveSelectPin"), py::arg("spiSpeed") = PINNACLE_SPI_SPEED);
     pinnacleTouchSPI.def("begin", static_cast<bool (PinnacleTouchSPI::*)(void)>(&PinnacleTouchSPI::begin));
     // The overloaded begin(_SPI*) is not exposed since it would require binding driver-specific implementation (a lot of work).
     // Additionally, begin(_SPI*) is meant for boards that naturally expose more than 1 SPI bus (RPi defaults don't provide this).
