@@ -89,7 +89,7 @@ enum PinnacleAnyMeasGain : uint8_t
  *
  * The frequencies defined here are approximated based on an aperture
  * width of 500 nanoseconds. If the ``apertureWidth`` parameter to
- * `~PinnacleTouch::anymeasModeConfig()` specified is less than 500 nanoseconds,
+ * `PinnacleTouch::anymeasModeConfig()` specified is less than 500 nanoseconds,
  * then the frequency will be larger than what is described here (and vice
  * versa).
  *
@@ -152,7 +152,7 @@ enum PinnacleAnyMeasMuxing : uint8_t
 
 /**
  * These constants control the number of measurements performed in
- * PinnacleTouch::measureADC().
+ * `PinnacleTouch::anymeasModeConfig()`.
  *
  * .. important:: The number of measurements can range [0, 63].
  * .. seealso:: `PinnacleTouch::anymeasModeConfig()`

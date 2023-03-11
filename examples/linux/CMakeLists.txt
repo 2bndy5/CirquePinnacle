@@ -7,7 +7,7 @@ add_compile_options(-Ofast -Wall) # passing the compiler a `-pthread` flag doesn
 include(../../src/cmake/detectCPU.cmake) # sets the variable SOC accordingly
 
 # auto-detect what driver to use
-# auto-detect can be overriden using `cmake .. -D CIRQUE_PINNACLE_DRIVER=<supported driver>`
+# auto-detect can be overriden using `cmake .. -D PINNACLE_DRIVER=<supported driver>`
 include(../../src/cmake/auto_config_driver.cmake)
 
 find_library(CirquePinnacle cirquepinnacle REQUIRED)
@@ -25,9 +25,9 @@ foreach(example ${EXAMPLES_LIST})
     add_executable(${example} ${example}.cpp)
 
     # link the CirquePinnacle lib to the target. Notice we specify pthread as a linked lib here
-    if("${CIRQUE_PINNACLE_DRIVER}" STREQUAL "mraa")
+    if("${PINNACLE_DRIVER}" STREQUAL "mraa")
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread ${LibMRAA})
-    elseif("${CIRQUE_PINNACLE_DRIVER}" STREQUAL "pigpio")
+    elseif("${PINNACLE_DRIVER}" STREQUAL "pigpio")
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} ${LibPIGPIO} pthread)
     else() # not using mraa or pigpio drivers
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread)

@@ -22,20 +22,20 @@ void SPIClass::init(uint32_t speed)
 {
 }
 
-void SPIClass::transfernb(char* tx_buf, char* rx_buf, uint32_t len)
+void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
-    spiXfer(spiHandle, tx_buf, rx_buf, len);
+    spiXfer(spiHandle, (char*)tx_buf, (char*)rx_buf, len);
 }
 
-void SPIClass::transfern(char* buf, uint32_t len)
+void SPIClass::transfer(void* buf, uint32_t len)
 {
-    transfernb(buf, buf, len);
+    transfer(buf, buf, len);
 }
 
 uint8_t SPIClass::transfer(char tx)
 {
     char rx_buf = 0;
-    transfernb(&tx, &rx_buf, 1);
+    transfer(&tx, &rx_buf, 1);
     return rx_buf;
 }
 

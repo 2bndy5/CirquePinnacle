@@ -65,17 +65,17 @@ void SPIClass::endTransaction()
         pthread_mutex_unlock(&spiMutex0);
 }
 
-void SPIClass::transfernb(char* tx_buf, char* rx_buf, uint32_t len)
+void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     if (busID > 10)
-        bcm2835_aux_spi_transfernb(tx_buf, rx_buf, len);
+        bcm2835_aux_spi_transfernb((char*)tx_buf, (char*)rx_buf, len);
     else
-        bcm2835_spi_transfernb(tx_buf, rx_buf, len);
+        bcm2835_spi_transfernb((char*)tx_buf, (char*)rx_buf, len);
 }
 
-void SPIClass::transfern(char* buf, uint32_t len)
+void SPIClass::transfer(void* buf, uint32_t len)
 {
-    transfernb(buf, buf, len);
+    transfer(buf, buf, len);
 }
 
 uint8_t SPIClass::transfer(uint8_t tx)

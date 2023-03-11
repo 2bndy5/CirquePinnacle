@@ -27,11 +27,13 @@ namespace cirque_pinnacle_arduino_wrappers {
     #define SPI_MODE2 BCM2835_SPI_MODE2
     #define SPI_MODE3 BCM2835_SPI_MODE3
 
-    // this SPI implements beginTransaction() & endTransaction() to
+    // this SPIClass implements beginTransaction() & endTransaction() to
     // configure the SPI bus
     #define SPI_HAS_TRANSACTION 1
 
     #define PINNACLE_SS_CTRL(pin, value)
+
+    #define PINNACLE_SPI_BUFFER_OPS 1
 
 /** Specific exception for SPI errors */
 class SPIException : public std::runtime_error
@@ -107,7 +109,7 @@ public:
      * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
      * @param len The length of each buffer of bytes; each buffer should have equal length.
      */
-    void transfernb(char* tx_buf, char* rx_buf, uint32_t len);
+    void transfer(void* tx_buf, void* rx_buf, uint32_t len);
 
     /**
      * Transfer a buffer of bytes to a SPI slave device.
@@ -117,7 +119,7 @@ public:
      * @note The bytes received over MISO will replace the
      * buffer contents as the bytes are sent over MOSI.
      */
-    void transfern(char* buf, uint32_t len);
+    void transfer(void* buf, uint32_t len);
 
     /**
      * Transfer a single byte to/from a SPI slave device.

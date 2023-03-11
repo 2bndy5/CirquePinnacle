@@ -16,6 +16,8 @@
  *  directory under LICENSE
  */
 #include "CirquePinnacle.h"
+#include <cstdlib> // memset()
+#include <cstring> // memcpy()
 
 PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
 {
@@ -25,6 +27,8 @@ PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataRead
 
 bool PinnacleTouch::begin()
 {
+    PINNACLE_USE_ARDUINO_API
+    delay(100);
     uint8_t firmware[2] = {};
     rapReadBytes(PINNACLE_FIRMWARE_ID, firmware, 2);
     if (firmware[0] == 7 || firmware[1] == 0x3A) {
@@ -42,10 +46,9 @@ bool PinnacleTouch::begin()
         calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
         return true;
     } // hardware check passed
-    else {
-        _dataMode = static_cast<uint8_t>(0xFF); // prevent operations if hardware check failed
-        return false;
-    }
+
+    _dataMode = static_cast<uint8_t>(0xFF); // prevent operations if hardware check failed
+    return false;
 }
 
 void PinnacleTouch::feedEnabled(bool isEnabled)
@@ -101,7 +104,8 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
         else if (mode == PINNACLE_ANYMEAS) {
             // disable tracking computations for AnyMeas mode
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
-            delay(10);           // wait 10 ms for tracking measurements to expire
+            delay(10); // wait 10 ms for tracking measurements to expire
+            _dataMode = mode;
             anymeasModeConfig(); // configure registers for the AnyMeas mode
 
 #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
@@ -341,6 +345,8 @@ void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
 {
     if (_dataMode == PINNACLE_ANYMEAS)
     {
+        uint8_t togPol[8] = {0};
+        rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
         uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
         anymeas_config[0] = gain | frequency;
         sampleLength /= 128;
@@ -350,8 +356,6 @@ void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
         anymeas_config[4] = (uint8_t)(apertureWidth < 2 ? 2 : (apertureWidth > 15 ? 15 : apertureWidth));
         anymeas_config[9] = controlPowerCount;
         rapWriteBytes(5, anymeas_config, 10);
-        uint8_t togPol[8] = {};
-        rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
         clearStatusFlags();
     }
 }
@@ -521,8 +525,16 @@ void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue)
     spi->beginTransaction(SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1));
 #endif
     PINNACLE_SS_CTRL(_slaveSelect, LOW);
+#ifdef PINNACLE_SPI_BUFFER_OPS
+    uint8_t* buf = (uint8_t*)malloc(2);
+    buf[0] = (uint8_t)(0x80 | registerAddress);
+    buf[1] = registerValue;
+    spi->transfer(buf, 2);
+    free(buf);
+#else  // !defined(PINNACLE_SPI_BUFFER_OPS)
     spi->transfer((uint8_t)(0x80 | registerAddress));
     spi->transfer(registerValue);
+#endif // !defined(PINNACLE_SPI_BUFFER_OPS)
     PINNACLE_SS_CTRL(_slaveSelect, HIGH);
 #ifdef SPI_HAS_TRANSACTION
     spi->endTransaction();
@@ -547,11 +559,21 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
     spi->beginTransaction(SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1));
 #endif
     PINNACLE_SS_CTRL(_slaveSelect, LOW);
+#ifdef PINNACLE_SPI_BUFFER_OPS
+    static uint8_t bufSize = 3 + registerCount;
+    uint8_t* buf = (uint8_t*)malloc(bufSize);
+    memset(buf, 0xFC, bufSize);
+    buf[0] = 0xA0 | registerAddress;
+    spi->transfer(buf, bufSize);
+    memcpy(data, buf + 3, registerCount);
+    free(buf);
+#else  // !defined(PINNACLE_SPI_BUFFER_OPS)
     spi->transfer(0xA0 | registerAddress);
     spi->transfer(0xFC);
     spi->transfer(0xFC);
     for (uint8_t i = 0; i < registerCount; ++i)
         data[i] = spi->transfer(0xFC);
+#endif // !defined(PINNACLE_SPI_BUFFER_OPS)
     PINNACLE_SS_CTRL(_slaveSelect, HIGH);
 #ifdef SPI_HAS_TRANSACTION
     spi->endTransaction();
@@ -606,7 +628,7 @@ void PinnacleTouchI2C::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
     i2c->beginTransmission(_slaveAddress);
     i2c->write(0xA0 | registerAddress);
     i2c->endTransmission(true);
-    i2c->requestFrom((uint8_t)(_slaveAddress | 1), (uint8_t)registerCount, (uint8_t) true);
+    i2c->requestFrom((uint8_t)(_slaveAddress | 1), registerCount, (uint8_t) true);
     while (i2c->available()) {
         data[i++] = i2c->read();
     }

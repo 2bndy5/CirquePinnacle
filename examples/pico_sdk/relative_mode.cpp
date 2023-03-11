@@ -23,8 +23,7 @@ bool setup()
         printf("Cirque Pinnacle not responding!\n");
         return false;
     }
-    // else
-    printf("found Cirque Pinnacle!\n");
+    printf("CirquePinnacle/examples/pico_sdk/relative_mode\n");
     return true;
 }
 

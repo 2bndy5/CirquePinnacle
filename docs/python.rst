@@ -50,7 +50,7 @@ Installing from Github
 
    - ``PINNACLE_SPI_SPEED`` can be set to lower the baudrate used on the SPI bus. Default value is the maximum
      13 MHz.
-   - ``CIRQUE_PINNACLE_DRIVER`` can be used to change the underlying implementation used for the I2C and SPI busses.
+   - ``PINNACLE_DRIVER`` can be used to change the underlying implementation used for the I2C and SPI busses.
      Supported options include:
 
      - ``linux_kernel`` (default) is recommended for best user experience and cross-platform/architecture compatibility.

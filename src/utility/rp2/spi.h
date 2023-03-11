@@ -85,12 +85,17 @@ public:
         uint8_t _rx = PICO_DEFAULT_SPI_RX_PIN);
 
     /**
+     * de-initialize the specified SPI bus
+     */
+    void end();
+
+    /**
      * Transfer a buffer of bytes to/from a SPI slave device.
      * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
      * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
      * @param len The length of each buffer of bytes; each buffer should have equal length.
      */
-    void transfernb(const uint8_t* tx_buf, uint8_t* rx_buf, uint32_t len);
+    void transfer(void* tx_buf, void* rx_buf, uint32_t len);
 
     /**
      * Transfer a buffer of bytes to a SPI slave device.
@@ -99,7 +104,7 @@ public:
      *
      * @note Any bytes received over MISO are discarded.
      */
-    void transfern(const uint8_t* buf, uint32_t len);
+    void transfer(void* buf, uint32_t len);
 
     /**
      * Transfer a single byte to/from a SPI slave device.

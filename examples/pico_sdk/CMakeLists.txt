@@ -38,6 +38,11 @@ foreach(example ${EXAMPLES_LIST})
         target_compile_definitions(${example} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
     endif()
 
+    if(DEFINED PINNACLE_DEV_HW_DEBUG)
+        message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
+        target_compile_definitions(${example} PUBLIC PINNACLE_DEV_HW_DEBUG=1)
+    endif()
+
     # specify USB port as default serial communication's interface (not UART RX/TX pins)
     pico_enable_stdio_usb(${example} 1)
     pico_enable_stdio_uart(${example} 0)

@@ -116,7 +116,7 @@ uint8_t SPIClass::transfer(uint8_t tx)
     return rx;
 }
 
-void SPIClass::transfernb(char* tx_buf, char* rx_buf, uint32_t len)
+void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     struct spi_ioc_transfer tr;
     memset(&tr, 0, sizeof(tr));
@@ -135,9 +135,9 @@ void SPIClass::transfernb(char* tx_buf, char* rx_buf, uint32_t len)
     }
 }
 
-void SPIClass::transfern(char* buf, uint32_t len)
+void SPIClass::transfer(void* buf, uint32_t len)
 {
-    transfernb(buf, buf, len);
+    transfer(buf, buf, len);
 }
 
 SPIClass::~SPIClass()

@@ -8,7 +8,7 @@
 #define SS_PIN 5
 #define DR_PIN 6
 
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(SS_PIN, DR_PIN);
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
 AbsoluteReport report;
 
 void setup() {
@@ -24,6 +24,7 @@ void setup() {
   }
   trackpad.setDataMode(PINNACLE_ABSOLUTE);
   trackpad.absoluteModeConfig(1);  // set count of z-idle packets to 1
+  Serial.println("CirquePinnacle/examples/absolute_mode");
 }
 
 void loop() {

@@ -9,7 +9,7 @@
 #include <CirquePinnacle.h> // trackpad  object
 #include "defaultPins.h"    // board presumptive default pin numbers for SS_PIN and DR_PIN
 
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(SS_PIN, DR_PIN);
+PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
 AbsoluteReport report;
 
 bool setup()
@@ -23,7 +23,7 @@ bool setup()
         printf("Cirque Pinnacle not responding!\n");
         return false;
     }
-    printf("found Cirque Pinnacle!\n");
+    printf("CirquePinnacle/examples/pico_sdk/absolute_mode\n");
     trackpad.setDataMode(PINNACLE_ABSOLUTE);
     trackpad.absoluteModeConfig(1); // set count of z-idle packets to 1
     return true;

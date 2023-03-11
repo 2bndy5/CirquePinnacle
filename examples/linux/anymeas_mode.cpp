@@ -4,9 +4,9 @@
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
 #include <iostream>                        // cout, endl
-#include <CirquePinnacle/CirquePinnacle.h> // trackpad  object
+#include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#define DR_PIN 6
+#define DR_PIN 25
 #define SS_PIN 0
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
@@ -25,7 +25,26 @@ measureVector vectorDeterminants[] = {
     {0x00FF00FF, 0x00FF0000}  // toggle Y0-Y7 positively (to 1) & X0-X7 negatively (to 0)
 };
 
-uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
+const uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
+int16_t compensations[variousVectors_size];
+
+void compensationInit()
+{
+    uint8_t sweep;
+    int16_t value;
+    signed long accumulatedValue;
+    for (uint8_t x = 0; x < variousVectors_size; ++x) {
+        sweep = 0;
+        accumulatedValue = 0;
+        while (sweep < 5) //take 5 measurements and average them for a bit lower noise compensation value
+        {
+            value = trackpad.measureAdc(vectorDeterminants[x].toggle, vectorDeterminants[x].polarity);
+            sweep++;
+            accumulatedValue += value;
+        }
+        compensations[x] = accumulatedValue / 5;
+    }
+}
 
 bool setup()
 {
@@ -33,8 +52,10 @@ bool setup()
         std::cout << "Cirque Pinnacle not responding!" << std::endl;
         return false;
     }
-    std::cout << "found Cirque Pinnacle!" << std::endl;
+    std::cout << "CirquePinnacle/examples/linux/anymeas_mode" << std::endl;
     trackpad.setDataMode(PINNACLE_ANYMEAS);
+    trackpad.anymeasModeConfig();
+    compensationInit();
     return true;
 }
 
@@ -44,6 +65,7 @@ void loop()
         int16_t measurement = trackpad.measureAdc(
             vectorDeterminants[i].toggle,
             vectorDeterminants[i].polarity);
+        measurement -= compensations[i];
         std::cout << "meas" << i << ": " << measurement << "\t";
     }
     std::cout << std::endl;

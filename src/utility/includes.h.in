@@ -1,14 +1,14 @@
 #ifndef CIRQUEPINNACLE_UTILITY_INCLUDES_H_
 #define CIRQUEPINNACLE_UTILITY_INCLUDES_H_
 
-#include "@CIRQUE_PINNACLE_DRIVER@/gpio.h"
-#include "@CIRQUE_PINNACLE_DRIVER@/spi.h"
-#include "@CIRQUE_PINNACLE_DRIVER@/i2c.h"
-#include "@CIRQUE_PINNACLE_DRIVER@/time_keeping.h"
+#include "@PINNACLE_DRIVER@/gpio.h"
+#include "@PINNACLE_DRIVER@/spi.h"
+#include "@PINNACLE_DRIVER@/i2c.h"
+#include "@PINNACLE_DRIVER@/time_keeping.h"
 
 // clang-format off
 // A macro to help execute driver specific code
-#define PINNACLE_DRIVER_@CIRQUE_PINNACLE_DRIVER@
+#define PINNACLE_DRIVER_@PINNACLE_DRIVER@
 // clang-format on
 
 // alias for SPI bus implementation

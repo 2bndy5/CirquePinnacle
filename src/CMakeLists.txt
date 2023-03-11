@@ -73,12 +73,12 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/detectCPU.cmake) # sets the variable SOC accordingly
 
 # auto-detect what driver to use
-# auto-detect can be overriden using `cmake .. -D CIRQUE_PINNACLE_DRIVER=<supported driver>`
+# auto-detect can be overriden using `cmake .. -D PINNACLE_DRIVER=<supported driver>`
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/auto_config_driver.cmake)
 
 #[[ adding the utility sub-directory will
-    1. set variables CIRQUE_PINNACLE_LINKED_DRIVER and CIRQUE_PINNACLE_DRIVER_SOURCES
-    2. set additional install rules according to the CIRQUE_PINNACLE_DRIVER specified
+    1. set variables CIRQUE_PINNACLE_LINKED_DRIVER and PINNACLE_DRIVER_SOURCES
+    2. set additional install rules according to the PINNACLE_DRIVER specified
 ]]
 add_subdirectory(utility)
 
@@ -86,7 +86,7 @@ if(NOT PINNACLE_PY_BINDING)
     add_library(${LibTargetName} SHARED
         CirquePinnacle.cpp
         utility/includes.h
-        ${CIRQUE_PINNACLE_DRIVER_SOURCES}
+        ${PINNACLE_DRIVER_SOURCES}
     )
 
     target_compile_options(${LibTargetName} PUBLIC -Ofast -Wall -pthread)
@@ -110,6 +110,11 @@ if(NOT PINNACLE_PY_BINDING)
     if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
         message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
         target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+    endif()
+
+    if(DEFINED PINNACLE_DEV_HW_DEBUG)
+        message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
+        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_DEV_HW_DEBUG=1)
     endif()
 
     if(NOT "${CIRQUE_PINNACLE_LINKED_DRIVER}" STREQUAL "") # linking to a pre-compiled utility driver
@@ -164,7 +169,7 @@ else()
         CirquePinnacle_common.h
         CirquePinnacle.cpp
         utility/includes.h
-        ${CIRQUE_PINNACLE_DRIVER_SOURCES}
+        ${PINNACLE_DRIVER_SOURCES}
     )
 
     if(DEFINED PINNACLE_SPI_SPEED)

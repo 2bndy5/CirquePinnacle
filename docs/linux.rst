@@ -30,10 +30,10 @@ Installing from Source
 
    .. code-block:: shell
 
-       cmake ../src -D CIRQUE_PINNACLE_DRIVER=linux_kernel
+       cmake ../src -D PINNACLE_DRIVER=linux_kernel
 
-   The ``-D CIRQUE_PINNACLE_DRIVER`` will force the build to use 1 of the supported hardware drivers.
-   This can also be specified using an environment variable named ``CIRQUE_PINNACLE_DRIVER``.
+   The ``-D PINNACLE_DRIVER`` will force the build to use 1 of the supported hardware drivers.
+   This can also be specified using an environment variable named ``PINNACLE_DRIVER``.
    With out this specified, CMake will look for required dependencies and use the first driver found.
    Supported options include (in order of precedence):
 
@@ -70,7 +70,7 @@ repository's root folder (as created in step 3 above).
 
    .. code-block:: shell
 
-       cmake ../examples/linux -D CIRQUE_PINNACLE_DRIVER=linux_kernel
+       cmake ../examples/linux -D PINNACLE_DRIVER=linux_kernel
 
    Again, specify the driver used to build the library (see step 4 above) is recommended because
    some drivers require the built applications to be linked to ``pthread``.

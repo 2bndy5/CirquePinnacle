@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(CirquePinnacle INTERFACE)
 
 # generate the lib-specific includes.h for the Pico SDK
-set(CIRQUE_PINNACLE_DRIVER "rp2")
+set(PINNACLE_DRIVER "rp2")
 configure_file(${CMAKE_CURRENT_LIST_DIR}/../includes.h.in ${CMAKE_CURRENT_LIST_DIR}/../includes.h)
 
 target_sources(CirquePinnacle INTERFACE

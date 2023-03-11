@@ -4,9 +4,9 @@
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
 #include <iostream>                        // cout, endl
-#include <CirquePinnacle/CirquePinnacle.h> // trackpad  object
+#include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#define DR_PIN 6
+#define DR_PIN 25
 #define SS_PIN 0
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
@@ -18,7 +18,7 @@ bool setup()
         std::cout << "Cirque Pinnacle not responding!" << std::endl;
         return false;
     }
-    std::cout << "found Cirque Pinnacle!" << std::endl;
+    std::cout << "CirquePinnacle/examples/linux/relative_mode" << std::endl;
     return true;
 }
 

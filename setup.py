@@ -56,13 +56,13 @@ class CMakeBuild(build_ext):
             for item in os.environ["CMAKE_ARGS"].split(" "):
                 if item:
                     cmake_args.append(item)
-        # lastly, specify the CIRQUE_PINNACLE_DRIVER to configure the build with
+        # lastly, specify the PINNACLE_DRIVER to configure the build with
         for arg in cmake_args:
-            if arg.split("=")[0].endswith("CIRQUE_PINNACLE_DRIVER"):
+            if arg.split("=")[0].endswith("PINNACLE_DRIVER"):
                 break
         else:
-            driver = os.environ.get("CIRQUE_PINNACLE_DRIVER", "linux_kernel")
-            cmake_args.append(f"-DCIRQUE_PINNACLE_DRIVER={driver}")
+            driver = os.environ.get("PINNACLE_DRIVER", "linux_kernel")
+            cmake_args.append(f"-DPINNACLE_DRIVER={driver}")
 
         build_temp = Path(self.build_temp, ext.name)
         if not build_temp.exists():

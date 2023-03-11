@@ -22,6 +22,7 @@ void setup() {
       // hold program in infinite loop
     }
   }
+  Serial.println("CirquePinnacle/examples/relative_mode");
 }
 
 void loop() {

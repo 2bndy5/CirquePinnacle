@@ -36,14 +36,14 @@ void SPIClass::endTransaction()
 {
 }
 
-void SPIClass::transfernb(char* tx_buf, char* rx_buf, uint32_t len)
+void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     spi_inst->transfer((uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
 }
 
-void SPIClass::transfern(char* buf, uint32_t len)
+void SPIClass::transfer(void* buf, uint32_t len)
 {
-    transfernb(buf, buf, len);
+    transfer(buf, buf, len);
 }
 
 uint8_t SPIClass::transfer(uint8_t tx)
