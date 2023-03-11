@@ -32,10 +32,10 @@ void SPIClass::transfer(void* buf, uint32_t len)
     transfer(buf, buf, len);
 }
 
-uint8_t SPIClass::transfer(char tx)
+uint8_t SPIClass::transfer(uint8_t tx)
 {
-    char rx_buf = 0;
-    transfer(&tx, &rx_buf, 1);
+    uint8_t rx_buf = 0;
+    transfer((void*)(&tx), (void*)(&rx_buf), 1);
     return rx_buf;
 }
 

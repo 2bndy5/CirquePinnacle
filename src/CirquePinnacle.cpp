@@ -16,8 +16,10 @@
  *  directory under LICENSE
  */
 #include "CirquePinnacle.h"
-#include <cstdlib> // memset()
-#include <cstring> // memcpy()
+#ifdef PINNACLE_SPI_BUFFER_OPS
+    #include <cstdlib> // malloc(), free()
+    #include <cstring> // memcpy(), memset()
+#endif
 
 PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
 {
@@ -595,7 +597,7 @@ bool PinnacleTouchI2C::begin()
 {
     PINNACLE_USE_ARDUINO_API
     Wire.begin();
-    // no max/min I2C clock speed is specified (in ASIC's specs); use MCU's default.
+    // no max/min I2C clock speed is specified (in ASIC's specs); use MCU default.
     return PinnacleTouchI2C::begin(&Wire);
 }
 
