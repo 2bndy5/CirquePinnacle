@@ -6,7 +6,11 @@
 #include <iostream>                        // cout, endl
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#define DR_PIN 25
+#ifdef PINNACLE_DRIVER_mraa
+    #define DR_PIN 22 // GPIO25
+#else
+    #define DR_PIN 25
+#endif
 #define SS_PIN 0
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
@@ -29,9 +33,9 @@ void loop()
         std::cout << "Left: " << (unsigned int)(report.buttons & 1)
                   << " Right: " << (unsigned int)(report.buttons & 2)
                   << " Middle: " << (unsigned int)(report.buttons & 4)
-                  << "\tdelta X: " << (unsigned int)(report.x)
-                  << "\tdelta Y: " << (unsigned int)(report.y)
-                  << "\tdelta Scroll: " << (unsigned int)(report.scroll) << std::endl;
+                  << "\tdelta X: " << (int)(report.x)
+                  << "\tdelta Y: " << (int)(report.y)
+                  << "\tdelta Scroll: " << (int)(report.scroll) << std::endl;
     }
 }
 

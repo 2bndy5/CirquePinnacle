@@ -4,7 +4,6 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-bool initialized = 0;
 
 GPIOClass::GPIOClass()
 {
@@ -17,10 +16,6 @@ GPIOClass::~GPIOClass()
 
 void GPIOClass::open(pinnacle_gpio_t port, int direction)
 {
-    if (!initialized) {
-        gpioInitialise();
-    }
-    initialized = true;
     gpioSetMode(port, direction);
 }
 

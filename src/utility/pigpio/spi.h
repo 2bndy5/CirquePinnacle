@@ -4,6 +4,7 @@
 
     #include <cstdint>
     #include <stdexcept>
+    #include "gpio.h"
 
 namespace cirque_pinnacle_arduino_wrappers {
 
@@ -21,6 +22,18 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BUFFER_OPS 1
 
+    // this SPI implements beginTransaction() & endTransaction() to
+    // configure the SPI bus
+    #define SPI_HAS_TRANSACTION 1
+
+    #define SPI_MODE0 0
+    #define SPI_MODE1 1
+    #define SPI_MODE2 2
+    #define SPI_MODE3 3
+
+    #define MSBFIRST 0
+    #define LSBFIRST (1 << 14)
+
 /** Specific exception for SPI errors */
 class SPIException : public std::runtime_error
 {
@@ -28,6 +41,32 @@ public:
     explicit SPIException(const std::string& msg)
         : std::runtime_error(msg)
     {
+    }
+};
+
+class SPISettings
+{
+public:
+    SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
+    {
+        init(clock, bitOrder, dataMode);
+    }
+
+    SPISettings()
+    {
+        init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
+    }
+
+    uint32_t clock;
+    uint8_t bitOrder;
+    uint8_t mode;
+
+private:
+    void init(uint32_t _clock, uint8_t _bitOrder, uint8_t _dataMode)
+    {
+        clock = _clock;
+        bitOrder = _bitOrder;
+        mode = _dataMode;
     }
 };
 
@@ -51,6 +90,20 @@ public:
      * @param spi_speed The baudrate (aka frequency) to be used on the specified SPI bus.
      */
     void begin(uint8_t busNumber = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
+
+    /** De-initialize the SPI bus specified to `SPIClass::begin()` */
+    void end();
+
+    /**
+     * Set the SPI bus flags that correspond to the given `SPISettings`.
+     *
+     * @note If the specified settings differ from the cached flags (default value set in `SPIClass::begin()`), then
+     * this will re-init the SPI bus because pigpio only accepts SPI flags as a parameter to ``spiOpen()``.
+     */
+    void beginTransaction(SPISettings settings);
+
+    /** A non-op to compliment `beginTransaction()` */
+    void endTransaction();
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
@@ -81,9 +134,12 @@ public:
     ~SPIClass();
 
 private:
-    unsigned spiHandle;
+    unsigned int spiHandle;
+    unsigned int flags;
+    uint8_t busChannel;
     bool spiIsInitialized = false;
-    void init(uint32_t spi_speed);
+    uint32_t spiSpeed;
+    void init();
 };
 
 // pre-instantiated SPI bus object (to use as a convenient default)

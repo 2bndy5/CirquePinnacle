@@ -5,10 +5,13 @@
     #include <cstdio>
     #include <map>
     #include <stdexcept>
+    #include <pigpio.h>
 
 typedef int pinnacle_gpio_t;
 
 namespace cirque_pinnacle_arduino_wrappers {
+
+static bool pigpioInitialized = (bool)gpioInitialise();
 
 /** Specific exception for GPIO errors */
 class GPIOException : public std::runtime_error

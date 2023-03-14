@@ -6,7 +6,11 @@
 #include <iostream>                        // cout, endl
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#define DR_PIN 25
+#ifdef PINNACLE_DRIVER_mraa
+    #define DR_PIN 22 // GPIO25
+#else
+    #define DR_PIN 25
+#endif
 #define SS_PIN 0
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);

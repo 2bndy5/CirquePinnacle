@@ -10,7 +10,7 @@ typedef int pinnacle_gpio_t;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/** Specific excpetion for SPI errors */
+/** Specific exception for SPI errors */
 class GPIOException : public std::runtime_error
 {
 public:

@@ -29,7 +29,6 @@ void SPIClass::beginTransaction(SPISettings spiSettings)
     spi_inst->mode(spiSettings.mode);
     spi_inst->bitPerWord(8);
     spi_inst->frequency(spiSettings.clock);
-    spi_inst->mode(spiSettings.mode);
 }
 
 void SPIClass::endTransaction()
