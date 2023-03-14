@@ -5,14 +5,6 @@
     #include "spi.h"
 
 namespace cirque_pinnacle_arduino_wrappers {
-#if PINNACLE_DEV_HW_DEBUG
-void debug_printf(uint8_t* buf, uint32_t len)
-{
-    for (uint8_t i = 0; i < len; ++i) {
-        printf(" 0x%02X", (unsigned int)(buf[i]));
-    }
-}
-#endif
 
 SPIClass::SPIClass() : spiHandle(-1), spiIsInitialized(false)
 {
@@ -62,14 +54,6 @@ void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
         throw SPIException("buffer length not bound by specified 'len' parameter");
     else if (result == PI_SPI_XFER_FAILED)
         throw SPIException("pigpio spiXfer() failed");
-
-    #if PINNACLE_DEV_HW_DEBUG
-    printf("SPI out:");
-    debug_printf((uint8_t*)tx_buf, len);
-    printf(" in:");
-    debug_printf((uint8_t*)rx_buf, len);
-    printf("\n");
-    #endif
 }
 
 void SPIClass::transfer(void* buf, uint32_t len)

@@ -280,9 +280,9 @@ void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
         uint8_t cal_config = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
         rapWrite(PINNACLE_CAL_CONFIG, cal_config | run);
         if (run) {
-            uint8_t temp = 1;
-            while (temp & 1)
-                rapRead(PINNACLE_CAL_CONFIG, &temp); // calibration is running
+            while (!available()) {
+                // calibration is running
+            }
 
             clearStatusFlags(); // now that calibration is done
         }
@@ -562,7 +562,7 @@ void PinnacleTouchSPI::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
 #endif
     PINNACLE_SS_CTRL(_slaveSelect, LOW);
 #ifdef PINNACLE_SPI_BUFFER_OPS
-    static uint8_t bufSize = 3 + registerCount;
+    uint8_t bufSize = 3 + registerCount;
     uint8_t* buf = (uint8_t*)malloc(bufSize);
     memset(buf, 0xFC, bufSize);
     buf[0] = 0xA0 | registerAddress;

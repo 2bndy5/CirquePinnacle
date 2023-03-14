@@ -25,7 +25,7 @@ void GPIOClass::open(pinnacle_gpio_t port, mraa::Dir direction)
     // check that mraa::Gpio context doesn't already exist
     std::map<int, mraa::Gpio*>::iterator i = cache.find(port);
     if (i == cache.end()) {
-        mraa::Gpio* gpio_inst = new mraa::Gpio(port, 0);
+        mraa::Gpio* gpio_inst = new mraa::Gpio(port);
         cache[port] = gpio_inst;
         gpio_inst->dir(direction);
     }

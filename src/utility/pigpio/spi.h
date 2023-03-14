@@ -54,11 +54,11 @@ public:
     }
 
     uint32_t clock;
-    uint8_t bitOrder;
-    uint8_t mode;
+    unsigned int bitOrder;
+    unsigned int mode;
 
 private:
-    void init(uint32_t _clock, uint8_t _bitOrder, uint8_t _dataMode)
+    void init(uint32_t _clock, unsigned int _bitOrder, unsigned int _dataMode)
     {
         clock = _clock;
         bitOrder = _bitOrder;

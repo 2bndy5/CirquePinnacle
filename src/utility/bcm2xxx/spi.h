@@ -33,6 +33,8 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SS_CTRL(pin, value)
 
+    #define PINNACLE_SPI_BUFFER_OPS 1
+
 /** Specific exception for SPI errors */
 class SPIException : public std::runtime_error
 {
