@@ -1,51 +1,43 @@
 #ifndef ARDUINO
-    #include <pigpio.h>
     #include <cstring>
     #include <cstdio>
+    #include <pigpio.h>
     #include "spi.h"
 
 namespace cirque_pinnacle_arduino_wrappers {
+#if PINNACLE_DEV_HW_DEBUG
+void debug_printf(uint8_t* buf, uint32_t len)
+{
+    for (uint8_t i = 0; i < len; ++i) {
+        printf(" 0x%02X", (unsigned int)(buf[i]));
+    }
+}
+#endif
 
-SPIClass::SPIClass() : flags(0), busChannel(0), spiIsInitialized(false), spiSpeed(PINNACLE_SPI_SPEED)
+SPIClass::SPIClass() : spiHandle(-1), spiIsInitialized(false)
 {
 }
 
-void SPIClass::begin(uint8_t busNumber, uint32_t spi_speed)
+void SPIClass::begin(uint8_t busNumber, SPISettings settings)
 {
-    flags = (unsigned int)((busNumber / 10) << 8);
-    spiSpeed = spi_speed;
-    busChannel = (unsigned int)(busNumber & 2);
-    init();
-}
-
-void SPIClass::init()
-{
+    unsigned int flags = (unsigned int)((busNumber / 10) << 8);
+    flags |= settings.bitOrder;
+    flags |= settings.mode;
+    unsigned int busChannel = (unsigned int)(busNumber & 2);
     if (spiIsInitialized) {
         end();
     }
-    spiHandle = spiOpen(busChannel, spiSpeed, flags);
-    if (spiHandle < 0) {
-        switch (spiHandle) {
-            case PI_BAD_SPI_CHANNEL:
-                throw SPIException("pigpio failed to initialize the specified channel for the specified SPI bus");
-                break;
-            case PI_BAD_SPI_SPEED:
-                throw SPIException("pigpio failed to use the specified SPI speed");
-                break;
-            case PI_BAD_FLAGS:
-                throw SPIException("pigpio did not accept the specifed SPI flags");
-                break;
-            case PI_NO_AUX_SPI:
-                throw SPIException("pigpio failed to initialize auxilary SPI bus");
-                break;
-            case PI_SPI_OPEN_FAILED:
-                throw SPIException("pigpio failed to open SPI bus");
-                break;
-            default:
-                throw SPIException("pigpio failed to initialize SPI handle");
-                break;
-        }
-    }
+    spiHandle = spiOpen(busChannel, settings.clock, flags);
+    if (spiHandle == PI_BAD_SPI_CHANNEL)
+        throw SPIException("pigpio failed to initialize the specified channel for the specified SPI bus");
+    else if (spiHandle == PI_BAD_SPI_SPEED)
+        throw SPIException("pigpio failed to use the specified SPI speed");
+    else if (spiHandle == PI_BAD_FLAGS)
+        throw SPIException("pigpio did not accept the specifed SPI flags");
+    else if (spiHandle == PI_NO_AUX_SPI)
+        throw SPIException("pigpio failed to initialize auxilary SPI bus");
+    else if (spiHandle == PI_SPI_OPEN_FAILED)
+        throw SPIException("pigpio failed to open SPI bus");
     spiIsInitialized = true;
 }
 
@@ -55,40 +47,29 @@ void SPIClass::end()
         return;
     }
     int result = spiClose(spiHandle);
+    spiIsInitialized = false;
     if (result != 0) {
         throw SPIException("pigpio handle invalid");
     }
-    spiIsInitialized = false;
-}
-
-void SPIClass::beginTransaction(SPISettings settings)
-{
-    unsigned int newFlags = flags & 0x80; // clear all flags but bus number
-    newFlags |= settings.mode;
-    newFlags |= settings.bitOrder;
-    if (newFlags != flags || spiSpeed != settings.clock) {
-        flags = newFlags;
-        spiSpeed = settings.clock;
-        init();
-    }
-}
-
-void SPIClass::endTransaction()
-{
 }
 
 void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     int result = spiXfer(spiHandle, (char*)tx_buf, (char*)rx_buf, len);
-    if (result == PI_BAD_HANDLE) {
+    if (result == PI_BAD_HANDLE)
         throw SPIException("pigpio handle not initialized");
-    }
-    else if (result == PI_BAD_SPI_COUNT) {
+    else if (result == PI_BAD_SPI_COUNT)
         throw SPIException("buffer length not bound by specified 'len' parameter");
-    }
-    else if (result == PI_SPI_XFER_FAILED) {
+    else if (result == PI_SPI_XFER_FAILED)
         throw SPIException("pigpio spiXfer() failed");
-    }
+
+    #if PINNACLE_DEV_HW_DEBUG
+    printf("SPI out:");
+    debug_printf((uint8_t*)tx_buf, len);
+    printf(" in:");
+    debug_printf((uint8_t*)rx_buf, len);
+    printf("\n");
+    #endif
 }
 
 void SPIClass::transfer(void* buf, uint32_t len)
@@ -109,7 +90,6 @@ uint8_t SPIClass::transfer(uint8_t tx)
 
 SPIClass::~SPIClass()
 {
-    end();
 }
 
 SPIClass SPI = SPIClass();

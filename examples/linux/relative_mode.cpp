@@ -36,6 +36,12 @@ void loop()
                   << "\tdelta X: " << (int)(report.x)
                   << "\tdelta Y: " << (int)(report.y)
                   << "\tdelta Scroll: " << (int)(report.scroll) << std::endl;
+
+        uint8_t* buf = (uint8_t*)(&report);
+        for (uint8_t i = 0; i < sizeof(report); ++i) {
+            std::cout << std::hex << (unsigned int)(buf[i]) << " ";
+        }
+        std::cout << std::dec << std::endl;
     }
 }
 

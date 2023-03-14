@@ -48,7 +48,7 @@ void SPIClass::begin(int busNumber, uint32_t spi_speed)
 void SPIClass::init(uint32_t speed)
 {
     uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
-    uint8_t mode = 0;
+    uint8_t mode = SPI_MODE_1;
 
     int ret;
 
@@ -57,7 +57,7 @@ void SPIClass::init(uint32_t speed)
      */
     ret = ioctl(this->fd, SPI_IOC_WR_MODE, &mode);
     if (ret == -1) {
-        throw SPIException("cant set WR spi mode");
+        throw SPIException("can't set WR spi mode");
     }
 
     ret = ioctl(this->fd, SPI_IOC_RD_MODE, &mode);

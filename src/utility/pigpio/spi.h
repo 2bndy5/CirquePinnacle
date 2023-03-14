@@ -22,10 +22,6 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BUFFER_OPS 1
 
-    // this SPI implements beginTransaction() & endTransaction() to
-    // configure the SPI bus
-    #define SPI_HAS_TRANSACTION 1
-
     #define SPI_MODE0 0
     #define SPI_MODE1 1
     #define SPI_MODE2 2
@@ -89,21 +85,10 @@ public:
      * |    1   |     2     |     12      | /dev/spidev1.2 |
      * @param spi_speed The baudrate (aka frequency) to be used on the specified SPI bus.
      */
-    void begin(uint8_t busNumber = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
+    void begin(uint8_t busNumber = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
 
     /** De-initialize the SPI bus specified to `SPIClass::begin()` */
     void end();
-
-    /**
-     * Set the SPI bus flags that correspond to the given `SPISettings`.
-     *
-     * @note If the specified settings differ from the cached flags (default value set in `SPIClass::begin()`), then
-     * this will re-init the SPI bus because pigpio only accepts SPI flags as a parameter to ``spiOpen()``.
-     */
-    void beginTransaction(SPISettings settings);
-
-    /** A non-op to compliment `beginTransaction()` */
-    void endTransaction();
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
@@ -134,12 +119,8 @@ public:
     ~SPIClass();
 
 private:
-    unsigned int spiHandle;
-    unsigned int flags;
-    uint8_t busChannel;
+    int spiHandle;
     bool spiIsInitialized = false;
-    uint32_t spiSpeed;
-    void init();
 };
 
 // pre-instantiated SPI bus object (to use as a convenient default)

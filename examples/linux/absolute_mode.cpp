@@ -38,6 +38,12 @@ void loop()
                   << "\tX: " << (unsigned int)(report.x)
                   << "\tY: " << (unsigned int)(report.y)
                   << "\tZ: " << (unsigned int)(report.z) << std::endl;
+
+        uint8_t* buf = (uint8_t*)(&report);
+        for (uint8_t i = 0; i < sizeof(report); ++i) {
+            std::cout << std::hex << (unsigned int)(buf[i]) << " ";
+        }
+        std::cout << std::dec << std::endl;
     }
 }
 
