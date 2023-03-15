@@ -1,14 +1,15 @@
 #ifndef ARDUINO
-    #include "gpio.h"
     #include <stdlib.h>
     #include <unistd.h>
     #include <fcntl.h>
+    #include <errno.h>
     #include <sys/types.h>
     #include <sys/stat.h>
+    #include "gpio.h"
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-std::map<int, GPIOfdCache_t> GPIOClass::cache;
+std::map<pinnacle_gpio_t, GPIOfdCache_t> GPIOClass::cache;
 
 GPIOClass::GPIOClass()
 {
@@ -40,23 +41,23 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
             throw GPIOException("Can't access GPIO pin direction. Check access rights.");
         }
     }
-    int l = direction ? fprintf(f, "in\n") : fprintf(f, "out\n");
+    int l = direction ? fprintf(f, "out\n") : fprintf(f, "in\n");
     if (!(l == 3 || l == 4)) {
         fclose(f);
         throw GPIOException("Can't set direction of GPIO pin. Check access rights.");
     }
     fclose(f);
 
-    // Caches the GPIO descriptor;
+    // Caches the GPIO descriptor
     sprintf(file, "/sys/class/gpio/gpio%d/value", port);
-    int flags = direction ? O_RDONLY : O_WRONLY;
+    int flags = direction ? O_WRONLY : O_RDONLY;
     int fd = ::open(file, flags);
     if (fd < 0) {
         throw GPIOException("Can't initialize GPIO pin. Check access rights.");
     }
     else {
         cache[port] = fd; // cache the fd;
-        lseek(fd, SEEK_SET, 0);
+        lseek(fd, 0, SEEK_SET);
     }
 }
 
@@ -65,8 +66,8 @@ void GPIOClass::close(pinnacle_gpio_t port)
     std::map<int, GPIOfdCache_t>::iterator i;
     i = cache.find(port);
     if (i != cache.end()) {
-        close(i->second); // close the cached fd
-        cache.erase(i);   // Delete cache entry
+        ::close(i->second); // close the cached fd
+        cache.erase(i);     // Delete cache entry
     }
     // Do unexport
     FILE* f;
@@ -88,12 +89,24 @@ bool GPIOClass::read(pinnacle_gpio_t port)
         fd = i->second;
     }
 
+    if (lseek(fd, 0, SEEK_SET) != 0) {
+        if (errno == EBADF)
+            throw GPIOException("GPIO::read lseek() with an invalid file descriptor.");
+        else if (errno == EINVAL)
+            throw GPIOException("GPIO::read using invalid lseek(..., whence) value.");
+        else if (errno == ENXIO)
+            throw GPIOException("GPIO::read lseek(..., offset, whence) specifies position beyond end-of-file.");
+        else if (errno == EOVERFLOW)
+            throw GPIOException("GPIO::read lseek() resulting offset is out-of-bounds for a signed integer.");
+        else if (errno == ESPIPE)
+            throw GPIOException("GPIO::read lseek() file descriptor is associated with a pipe, socket, or FIFO.");
+    }
     char c;
-    if (lseek(fd, 0, SEEK_SET) == 0 && ::read(fd, &c, 1) == 1) {
+    if (::read(fd, &c, 1) == 1) {
         return (c == '0') ? 0 : 1;
     }
     else {
-        throw GPIOException("Can't access GPIO pin");
+        throw GPIOException("Can't read GPIO pin");
     }
 }
 
@@ -109,11 +122,20 @@ void GPIOClass::write(pinnacle_gpio_t port, const char* value)
     }
 
     if (lseek(fd, 0, SEEK_SET) != 0) {
-        throw GPIOException("Can't access GPIO pin");
+        if (errno == EBADF)
+            throw GPIOException("GPIO::write lseek() with an invalid file descriptor.");
+        else if (errno == EINVAL)
+            throw GPIOException("GPIO::write using invalid lseek(..., whence) value.");
+        else if (errno == ENXIO)
+            throw GPIOException("GPIO::write lseek(..., offset, whence) specifies position beyond end-of-file.");
+        else if (errno == EOVERFLOW)
+            throw GPIOException("GPIO::write lseek() resulting offset is out-of-bounds for a signed integer.");
+        else if (errno == ESPIPE)
+            throw GPIOException("GPIO::write lseek() file descriptor is associated with a pipe, socket, or FIFO.");
     }
     int l = ::write(fd, value, 2);
     if (l != 2) {
-        throw GPIOException("Can't access GPIO pin");
+        throw GPIOException("Can't write to GPIO pin");
     }
 }
 

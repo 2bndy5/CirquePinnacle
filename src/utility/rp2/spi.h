@@ -7,8 +7,9 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-    #define MSBFIRST  SPI_MSB_FIRST
-    #define LSBFIRST  SPI_LSB_FIRST
+    #define MSBFIRST SPI_MSB_FIRST
+    #define LSBFIRST SPI_LSB_FIRST
+
     #define SPI_MODE0 0
     #define SPI_MODE1 1
     #define SPI_MODE2 2

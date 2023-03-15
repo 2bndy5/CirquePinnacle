@@ -10,6 +10,14 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
+    #define MSBFIRST BCM2835_SPI_BIT_ORDER_MSBFIRST
+    #define LSBFIRST BCM2835_SPI_BIT_ORDER_LSBFIRST
+
+    #define SPI_MODE0 BCM2835_SPI_MODE0
+    #define SPI_MODE1 BCM2835_SPI_MODE1
+    #define SPI_MODE2 BCM2835_SPI_MODE2
+    #define SPI_MODE3 BCM2835_SPI_MODE3
+
     #ifndef PINNACLE_SPI_SPEED
         // Default is the maximum supported SPI speed (13 MHz)
         #define PINNACLE_SPI_SPEED 13000000
@@ -20,18 +28,12 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
-    #define MSBFIRST  BCM2835_SPI_BIT_ORDER_MSBFIRST
-    #define LSBFIRST  BCM2835_SPI_BIT_ORDER_LSBFIRST
-    #define SPI_MODE0 BCM2835_SPI_MODE0
-    #define SPI_MODE1 BCM2835_SPI_MODE1
-    #define SPI_MODE2 BCM2835_SPI_MODE2
-    #define SPI_MODE3 BCM2835_SPI_MODE3
-
     // this SPIClass implements beginTransaction() & endTransaction() to
     // configure the SPI bus
     #define SPI_HAS_TRANSACTION 1
 
     #define PINNACLE_SS_CTRL(pin, value)
+    #define PINNACLE_USE_NATIVE_CS
 
     #define PINNACLE_SPI_BUFFER_OPS 1
 

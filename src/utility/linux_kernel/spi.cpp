@@ -12,19 +12,12 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BITS_PER_WORD 8
 
-void debug_printf(uint8_t* buf, uint32_t len)
-{
-    for (uint32_t i = 0; i < len; ++i) {
-        printf(" 0x%02X", (unsigned int)(buf[i]));
-    }
-}
-
 SPIClass::SPIClass()
     : fd(-1), _spi_speed(PINNACLE_SPI_SPEED)
 {
 }
 
-void SPIClass::begin(int busNumber, uint32_t spi_speed)
+void SPIClass::begin(int busNumber, SPISettings settings)
 {
 
     if (spiIsInitialized) {
@@ -49,56 +42,44 @@ void SPIClass::begin(int busNumber, uint32_t spi_speed)
         throw SPIException("can't open device");
     }
     spiIsInitialized = true;
-    init(spi_speed);
-}
-
-void SPIClass::init(uint32_t speed)
-{
-    uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
-    uint8_t mode = SPI_MODE_1;
 
     int ret;
 
-    /*
-     * spi mode
-     */
-    ret = ioctl(fd, SPI_IOC_WR_MODE, &mode);
+    // spi mode
+    ret = ioctl(fd, SPI_IOC_WR_MODE, &settings.mode);
     if (ret == -1) {
-        throw SPIException("can't set WR spi mode");
+        throw SPIException("SPI can't set mode");
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_MODE, &mode);
+    ret = ioctl(fd, SPI_IOC_RD_MODE, &settings.mode);
     if (ret == -1) {
-        throw SPIException("can't set RD spi mode");
+        throw SPIException("SPI can't read mode");
     }
 
-    /*
-     * bits per word
-     */
+    // bits per word
+    uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
     ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
     if (ret == -1) {
-        throw SPIException("can't set WR bits per word");
+        throw SPIException("SPI can't set bits per word");
     }
 
     ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
     if (ret == -1) {
-        throw SPIException("can't set RD bits per word");
+        throw SPIException("SPI can't read bits per word");
     }
 
-    /*
-     * max speed hz
-     */
-    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed);
+    // max speed Hz
+    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.clock);
     if (ret == -1) {
-        throw SPIException("can't WR set max speed hz");
+        throw SPIException("SPI can't set max speed Hz");
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &speed);
+    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.clock);
     if (ret == -1) {
-        throw SPIException("can't RD set max speed hz");
+        throw SPIException("SPI can't read max speed Hz");
     }
 
-    _spi_speed = speed;
+    _spi_speed = settings.clock;
 }
 
 uint8_t SPIClass::transfer(uint8_t tx)
@@ -117,13 +98,8 @@ uint8_t SPIClass::transfer(uint8_t tx)
     int ret;
     ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
     if (ret < 1) {
-        throw SPIException("can't send spi message");
+        throw SPIException("SPI ioctl() transfer failed.");
     }
-    printf("SPI out:");
-    debug_printf(&tx, 1);
-    printf(" in:");
-    debug_printf(&rx, 1);
-    printf("\n");
     return rx;
 }
 
@@ -142,13 +118,8 @@ void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
     int ret;
     ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
     if (ret < 1) {
-        throw SPIException("can't send spi message");
+        throw SPIException("SPI ioctl() transfer failed.");
     }
-    printf("SPI out:");
-    debug_printf((uint8_t*)tx_buf, len);
-    printf(" in:");
-    debug_printf((uint8_t*)rx_buf, len);
-    printf("\n");
 }
 
 void SPIClass::transfer(void* buf, uint32_t len)

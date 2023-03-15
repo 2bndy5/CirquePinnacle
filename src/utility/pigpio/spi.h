@@ -8,6 +8,14 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
+    #define MSBFIRST 0
+    #define LSBFIRST (1 << 14)
+
+    #define SPI_MODE0 0
+    #define SPI_MODE1 1
+    #define SPI_MODE2 2
+    #define SPI_MODE3 3
+
     #ifndef PINNACLE_SPI_SPEED
         // Default is the maximum supported SPI speed (13 MHz)
         #define PINNACLE_SPI_SPEED 13000000
@@ -19,16 +27,9 @@ namespace cirque_pinnacle_arduino_wrappers {
     #endif
 
     #define PINNACLE_SS_CTRL(pin, value)
+    #define PINNACLE_USE_NATIVE_CS
 
     #define PINNACLE_SPI_BUFFER_OPS 1
-
-    #define SPI_MODE0 0
-    #define SPI_MODE1 1
-    #define SPI_MODE2 2
-    #define SPI_MODE3 3
-
-    #define MSBFIRST 0
-    #define LSBFIRST (1 << 14)
 
 /** Specific exception for SPI errors */
 class SPIException : public std::runtime_error

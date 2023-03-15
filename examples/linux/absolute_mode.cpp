@@ -7,7 +7,8 @@
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
 #ifdef PINNACLE_DRIVER_mraa
-    #define DR_PIN 22 // GPIO25
+    #include <mraa/types.hpp>
+    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN25 // GPIO25
 #else
     #define DR_PIN 25
 #endif

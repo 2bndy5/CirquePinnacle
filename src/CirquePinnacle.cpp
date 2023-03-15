@@ -508,8 +508,10 @@ bool PinnacleTouchSPI::begin(_SPI* spi_bus)
 {
     PINNACLE_USE_ARDUINO_API
     spi = spi_bus;
+#ifndef PINNACLE_USE_NATIVE_CS
     pinMode(_slaveSelect, OUTPUT);
     PINNACLE_SS_CTRL(_slaveSelect, HIGH);
+#endif
     return PinnacleTouch::begin();
 }
 

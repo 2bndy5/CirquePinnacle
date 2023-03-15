@@ -64,7 +64,7 @@ public:
 
 private:
     /* cache for mraa::Gpio instances */
-    static std::map<int, mraa::Gpio*> cache;
+    static std::map<pinnacle_gpio_t, mraa::Gpio*> cache;
 };
 
     #define INPUT                    mraa::DIR_IN

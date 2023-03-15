@@ -17,8 +17,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
-    #define MSBFIRST  1
-    #define LSBFIRST  0
+    #define MSBFIRST false
+    #define LSBFIRST true
+
     #define SPI_MODE0 mraa::SPI_MODE0
     #define SPI_MODE1 mraa::SPI_MODE1
     #define SPI_MODE2 mraa::SPI_MODE2
@@ -29,8 +30,19 @@ namespace cirque_pinnacle_arduino_wrappers {
     #define SPI_HAS_TRANSACTION 1
 
     #define PINNACLE_SS_CTRL(pin, value)
+    #define PINNACLE_USE_NATIVE_CS
 
     #define PINNACLE_SPI_BUFFER_OPS 1
+
+/** Specific exception for SPI errors */
+class SPIException : public std::runtime_error
+{
+public:
+    explicit SPIException(const std::string& msg)
+        : std::runtime_error(msg)
+    {
+    }
+};
 
 class SPISettings
 {
@@ -47,11 +59,11 @@ public:
     }
 
     uint32_t clock;
-    uint8_t bitOrder;
+    bool bitOrder;
     mraa::Spi_Mode mode;
 
 private:
-    void init(uint32_t _clock, uint8_t _bitOrder, mraa::Spi_Mode _dataMode)
+    void init(uint32_t _clock, bool _bitOrder, mraa::Spi_Mode _dataMode)
     {
         clock = _clock;
         bitOrder = _bitOrder;
@@ -86,7 +98,7 @@ public:
      * Configure the SPI bus.
      * @param spiSettings A `SPISettings` object that encapsulates SPI bus configuration.
      */
-    void beginTransaction(SPISettings spiSettings);
+    void beginTransaction(SPISettings settings);
 
     /** a non-op to allow using beginTransaction() */
     void endTransaction();
@@ -123,7 +135,7 @@ private:
     mraa::Spi* spi_inst;
 };
 
-// declare a instantiated onject (for use as a convenient default)
+// declare a instantiated object (for use as a convenient default)
 extern SPIClass SPI;
 
 } // namespace cirque_pinnacle_arduino_wrappers

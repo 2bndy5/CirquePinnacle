@@ -89,7 +89,9 @@ size_t TwoWire::write(uint8_t data)
 TwoWire::~TwoWire()
 {
     free(xBuff);
-    i2c_inst->close();
+    if (i2c_inst != nullptr) {
+        i2c_inst->close();
+    }
     delete i2c_inst;
 }
 

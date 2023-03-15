@@ -63,7 +63,7 @@ public:
 
 private:
     /* fd cache */
-    static std::map<int, GPIOfdCache_t> cache;
+    static std::map<pinnacle_gpio_t, GPIOfdCache_t> cache;
 };
 
     #define INPUT                    GPIOClass::DIRECTION_IN

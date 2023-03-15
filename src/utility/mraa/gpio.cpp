@@ -4,7 +4,7 @@
 namespace cirque_pinnacle_arduino_wrappers {
 
 // cache for mraa::Gpio instances
-std::map<int, mraa::Gpio*> GPIOClass::cache;
+std::map<pinnacle_gpio_t, mraa::Gpio*> GPIOClass::cache;
 
 GPIOClass::GPIOClass()
 {

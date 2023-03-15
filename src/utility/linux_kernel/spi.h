@@ -4,8 +4,17 @@
 
     #include <cstdint>
     #include <stdexcept>
+    #include <linux/spi/spidev.h>
 
 namespace cirque_pinnacle_arduino_wrappers {
+
+    #define MSBFIRST 0
+    #define LSBFIRST 1
+
+    #define SPI_MODE0 SPI_MODE_0
+    #define SPI_MODE1 SPI_MODE_1
+    #define SPI_MODE2 SPI_MODE_2
+    #define SPI_MODE3 SPI_MODE_3
 
     #ifndef PINNACLE_SPI_SPEED
         // Default is the maximum supported SPI speed (13 MHz)
@@ -18,6 +27,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     #endif
 
     #define PINNACLE_SS_CTRL(pin, value)
+    #define PINNACLE_USE_NATIVE_CS
 
     #define PINNACLE_SPI_BUFFER_OPS 1
 
@@ -28,6 +38,33 @@ public:
     explicit SPIException(const std::string& msg)
         : std::runtime_error(msg)
     {
+    }
+};
+
+class SPISettings
+{
+
+public:
+    SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
+    {
+        init(clock, bitOrder, dataMode);
+    }
+
+    SPISettings()
+    {
+        init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
+    }
+
+    uint32_t clock;
+    uint8_t bitOrder;
+    uint8_t mode;
+
+private:
+    void init(uint32_t _clock, uint8_t _bitOrder, uint8_t _dataMode)
+    {
+        clock = _clock;
+        bitOrder = _bitOrder;
+        mode = _dataMode;
     }
 };
 
@@ -50,7 +87,7 @@ public:
      * |    1   |     2     |     12      | /dev/spidev1.2 |
      * @param spi_speed The baudrate (aka frequency) to be used on the specified SPI bus.
      */
-    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
+    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
@@ -84,7 +121,6 @@ private:
     int fd;
     uint32_t _spi_speed;
     bool spiIsInitialized = false;
-    void init(uint32_t spi_speed = PINNACLE_SPI_SPEED);
 };
 
 extern SPIClass SPI;
