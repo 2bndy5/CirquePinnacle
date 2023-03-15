@@ -8,7 +8,7 @@
 
 #ifdef PINNACLE_DRIVER_mraa
     #include <mraa/types.hpp>
-    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN25 // GPIO25
+    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN22 // GPIO25
 #else
     #define DR_PIN 25
 #endif

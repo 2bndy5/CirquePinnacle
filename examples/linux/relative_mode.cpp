@@ -8,7 +8,7 @@
 
 #ifdef PINNACLE_DRIVER_mraa
     #include <mraa/types.hpp>
-    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN25 // GPIO25
+    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN22 // GPIO25
 #else
     #define DR_PIN 25
 #endif
@@ -37,12 +37,6 @@ void loop()
                   << "\tdelta X: " << (int)(report.x)
                   << "\tdelta Y: " << (int)(report.y)
                   << "\tdelta Scroll: " << (int)(report.scroll) << std::endl;
-
-        uint8_t* buf = (uint8_t*)(&report);
-        for (uint8_t i = 0; i < sizeof(report); ++i) {
-            std::cout << std::hex << (unsigned int)(buf[i]) << " ";
-        }
-        std::cout << std::dec << std::endl;
     }
 }
 

@@ -6,7 +6,10 @@ See documentation at https://cirquepinnacle.rtfd.io/
 import sys
 from cirque_pinnacle import RelativeReport, PinnacleTouchSPI
 
-trackpad = PinnacleTouchSPI(6, 0)  # DR pin = 6, SS pin = 0 (CE0)
+DR_PIN = 25
+SS_PIN = 0
+
+trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN)
 report = RelativeReport()
 
 
@@ -34,4 +37,8 @@ if __name__ == "__main__":
     if not setup():  # if trackpad.begin() failed
         sys.exit(1)  # fail fast
     while True:  # use ctrl+C to exit
-        loop()
+        try:
+            loop()
+        except KeyboardInterrupt:
+            break
+    trackpad.shutdown = True

@@ -7,12 +7,6 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BITS_PER_WORD 8
 
-void debug_printf(uint8_t* buf, uint32_t len)
-{
-    for (uint32_t i = 0; i < len; ++i)
-        printf(" %02X", (unsigned int)(buf[i]));
-}
-
 SPIClass::SPIClass()
     : spi_inst(nullptr)
 {
@@ -49,11 +43,6 @@ void SPIClass::end()
 void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     mraa::Result result = spi_inst->transfer((uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
-    printf("SPIClass::transfer(tx_buf, rx_buf) out:");
-    debug_printf((uint8_t*)tx_buf, len);
-    printf(" in:");
-    debug_printf((uint8_t*)rx_buf, len);
-    printf("\n");
     if (result != mraa::Result::SUCCESS)
         throw SPIException("mraa::Spi::transfer() failed");
 }
@@ -61,14 +50,8 @@ void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 void SPIClass::transfer(void* buf, uint32_t len)
 {
     uint8_t* rx_buf = (uint8_t*)malloc(len);
-    memset(rx_buf, 0, len);
-    printf("SPIClass::transfer(buf) out:");
-    debug_printf((uint8_t*)buf, len);
-    printf("\n");
+    memset(rx_buf, 0xFB, len);
     transfer(buf, rx_buf, len);
-    printf("SPIClass::transfer(buf) in:");
-    debug_printf(rx_buf, len);
-    printf("\n");
     memcpy(buf, rx_buf, len);
     free(rx_buf);
 }

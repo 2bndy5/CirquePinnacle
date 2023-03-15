@@ -6,7 +6,10 @@ See documentation at https://cirquepinnacle.rtfd.io/
 import sys
 from cirque_pinnacle import AbsoluteReport, PinnacleTouchSPI, PINNACLE_ABSOLUTE
 
-trackpad = PinnacleTouchSPI(6, 0)  # DR pin = 6, SS pin = 0 (CE0)
+DR_PIN = 25
+SS_PIN = 0
+
+trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN)
 report = AbsoluteReport()
 
 
@@ -14,7 +17,7 @@ def setup():
     if not trackpad.begin():
         raise OSError("Cirque Pinnacle not responding!")
     print("found Cirque Pinnacle!")
-    trackpad.data_mode = PINNACLE_ABSOLUTE.value
+    trackpad.data_mode = PINNACLE_ABSOLUTE
     trackpad.absolute_mode_config(1)  # set count of z-idle packets to 1
     return True
 
@@ -36,4 +39,8 @@ if __name__ == "__main__":
     if not setup():  # if trackpad.begin() failed
         sys.exit(1)  # fail fast
     while True:  # use ctrl+C to exit
-        loop()
+        try:
+            loop()
+        except KeyboardInterrupt:
+            break
+    trackpad.shutdown = True
