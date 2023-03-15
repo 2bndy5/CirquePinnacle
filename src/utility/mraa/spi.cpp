@@ -2,7 +2,6 @@
 #ifndef ARDUINO
     #include <cstdio>
     #include "spi.h"
-    #include "mraa.h"
 
 namespace cirque_pinnacle_arduino_wrappers {
 
@@ -19,12 +18,24 @@ SPIClass::SPIClass()
 {
 }
 
-void SPIClass::begin(int busNumber)
+void SPIClass::begin(int busNumber, SPISettings settings)
 {
-    // init mraa spi bus, it will handle chip select internally.
-    int bus = busNumber / 10;
-    int cs = busNumber & 3;
-    spi_inst = new mraa::Spi(bus, cs);
+    // mraa::Spi() uses the default chip select available for the specified bus number on the utilized platform
+    // On RPi, mraa only supports the primary SPI bus 0 & seems to only use CE0 (GPIO8)
+    spi_inst = new mraa::Spi(busNumber / 10); // reduce the busNumber to only the bus ID (excluding CE number)
+    mraa::Result result;
+    result = spi_inst->mode(settings.mode);
+    if (result != mraa::Result::SUCCESS)
+        throw SPIException("mraa::Spi::mode() failed.");
+    result = spi_inst->bitPerWord((unsigned int)PINNACLE_SPI_BITS_PER_WORD);
+    if (result != mraa::Result::SUCCESS)
+        throw SPIException("mraa::Spi::bitPerWord() failed.");
+    result = spi_inst->lsbmode(settings.bitOrder);
+    if (result != mraa::Result::SUCCESS)
+        throw SPIException("mraa::Spi::lsbmode() failed.");
+    result = spi_inst->frequency(settings.clock);
+    if (result != mraa::Result::SUCCESS)
+        throw SPIException("mraa::Spi::frequency() failed.");
 }
 
 void SPIClass::end()
@@ -35,22 +46,10 @@ void SPIClass::end()
     }
 }
 
-void SPIClass::beginTransaction(SPISettings settings)
-{
-    spi_inst->mode(settings.mode);
-    spi_inst->bitPerWord(PINNACLE_SPI_BITS_PER_WORD);
-    spi_inst->lsbmode(settings.bitOrder);
-    spi_inst->frequency(settings.clock);
-}
-
-void SPIClass::endTransaction()
-{
-}
-
 void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 {
     mraa::Result result = spi_inst->transfer((uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
-    printf("SPI out:");
+    printf("SPIClass::transfer(tx_buf, rx_buf) out:");
     debug_printf((uint8_t*)tx_buf, len);
     printf(" in:");
     debug_printf((uint8_t*)rx_buf, len);
@@ -61,7 +60,17 @@ void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
 
 void SPIClass::transfer(void* buf, uint32_t len)
 {
-    transfer(buf, buf, len);
+    uint8_t* rx_buf = (uint8_t*)malloc(len);
+    memset(rx_buf, 0, len);
+    printf("SPIClass::transfer(buf) out:");
+    debug_printf((uint8_t*)buf, len);
+    printf("\n");
+    transfer(buf, rx_buf, len);
+    printf("SPIClass::transfer(buf) in:");
+    debug_printf(rx_buf, len);
+    printf("\n");
+    memcpy(buf, rx_buf, len);
+    free(rx_buf);
 }
 
 uint8_t SPIClass::transfer(uint8_t tx)

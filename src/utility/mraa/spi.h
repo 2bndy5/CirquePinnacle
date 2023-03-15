@@ -2,7 +2,7 @@
 #define CIRQUEPINNACLE_UTILITY_MRAA_SPI_H_
 #ifndef ARDUINO
 
-    #include "mraa.h"
+    #include <stdexcept>
     #include "mraa.hpp"
 
 namespace cirque_pinnacle_arduino_wrappers {
@@ -20,14 +20,10 @@ namespace cirque_pinnacle_arduino_wrappers {
     #define MSBFIRST false
     #define LSBFIRST true
 
-    #define SPI_MODE0 mraa::SPI_MODE0
-    #define SPI_MODE1 mraa::SPI_MODE1
-    #define SPI_MODE2 mraa::SPI_MODE2
-    #define SPI_MODE3 mraa::SPI_MODE3
-
-    // this SPI implements beginTransaction() & endTransaction() to
-    // configure the SPI bus
-    #define SPI_HAS_TRANSACTION 1
+    #define SPI_MODE0 mraa::Spi_Mode::SPI_MODE0
+    #define SPI_MODE1 mraa::Spi_Mode::SPI_MODE1
+    #define SPI_MODE2 mraa::Spi_Mode::SPI_MODE2
+    #define SPI_MODE3 mraa::Spi_Mode::SPI_MODE3
 
     #define PINNACLE_SS_CTRL(pin, value)
     #define PINNACLE_USE_NATIVE_CS
@@ -89,19 +85,10 @@ public:
      * |    1   |     1     |     11      | /dev/spidev1.1 |
      * |    1   |     2     |     12      | /dev/spidev1.2 |
      */
-    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS);
+    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
 
     /** Deinitialize the SPI bus. */
     void end();
-
-    /**
-     * Configure the SPI bus.
-     * @param spiSettings A `SPISettings` object that encapsulates SPI bus configuration.
-     */
-    void beginTransaction(SPISettings settings);
-
-    /** a non-op to allow using beginTransaction() */
-    void endTransaction();
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
