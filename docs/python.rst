@@ -68,7 +68,7 @@ Installing from Github
        python3 examples/cpython/relative_mode.py
 
    .. important::
-       Remember that any driver other than ``linux_kernel`` will require ``sudo`` permission.
+       Remember that the drivers ``pigpio`` and ``bcm2xxx`` will require ``sudo`` permission.
        This *will* cause problems if using ``sudo`` from a python virtual environment because
        ``sudo`` will invoke the system install of the python interpreter (not the virtual
        environment's install of the python interpreter).

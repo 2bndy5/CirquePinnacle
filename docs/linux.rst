@@ -39,7 +39,7 @@ Installing from Source
 
    - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).
    - ``pigpio`` requires the PiGPIO library installed (requires ``sudo`` permission to execute).
-   - ``mraa`` requires the MRAA library installed (requires ``sudo`` permission to execute).
+   - ``mraa`` requires the MRAA library installed.
    - ``linux_kernel`` (default fallback) is recommended for best user experience and
      cross-platform/architecture compatibility.
 
