@@ -81,7 +81,7 @@ the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
     1,SCK,SCK,"SCLK (GPIO11)","SPI clock line"
     2,SO,MISO,"MISO (GPIO9)","SPI Master Input Slave Output"
     3,SS,5,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
-    4,DR,6,GPIO6,"Data Ready interrupt"
+    4,DR,6,GPIO25,"Data Ready interrupt"
     5,SI,MOSI,"MOSI (GPIO10)","SPI Master Output Slave Input"
     6,B2,N/A,N/A,"Hardware input button #2"
     7,B3,N/A,N/A,"Hardware input button #3"
