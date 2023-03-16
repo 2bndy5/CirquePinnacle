@@ -9,7 +9,7 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-std::map<pinnacle_gpio_t, GPIOfdCache_t> GPIOClass::cache;
+std::map<pinnacle_gpio_t, gpio_cache_fd_t> GPIOClass::cache;
 
 GPIOClass::GPIOClass()
 {
@@ -63,7 +63,7 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
 
 void GPIOClass::close(pinnacle_gpio_t port)
 {
-    std::map<int, GPIOfdCache_t>::iterator i;
+    std::map<pinnacle_gpio_t, gpio_cache_fd_t>::iterator i;
     i = cache.find(port);
     if (i != cache.end()) {
         ::close(i->second); // close the cached fd
@@ -81,7 +81,7 @@ void GPIOClass::close(pinnacle_gpio_t port)
 bool GPIOClass::read(pinnacle_gpio_t port)
 {
     int fd;
-    std::map<int, GPIOfdCache_t>::iterator i = cache.find(port);
+    std::map<pinnacle_gpio_t, gpio_cache_fd_t>::iterator i = cache.find(port);
     if (i == cache.end()) {
         throw GPIOException("GPIO pin not initialized.");
     }
@@ -112,8 +112,8 @@ bool GPIOClass::read(pinnacle_gpio_t port)
 
 void GPIOClass::write(pinnacle_gpio_t port, const char* value)
 {
-    GPIOfdCache_t fd;
-    std::map<int, GPIOfdCache_t>::iterator i = cache.find(port);
+    gpio_cache_fd_t fd;
+    std::map<pinnacle_gpio_t, gpio_cache_fd_t>::iterator i = cache.find(port);
     if (i == cache.end()) {
         throw GPIOException("GPIO pin not initialized.");
     }
