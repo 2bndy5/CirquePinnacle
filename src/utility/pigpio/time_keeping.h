@@ -10,17 +10,15 @@ extern "C" {
 
     #include <cstdint>
 
-void __msleep(int milisec);
+void __msleep(int milliseconds);
 
-void __usleep(int milisec);
-
-void __start_timer();
+void __usleep(int microseconds);
 
 uint32_t __millis();
 
-    #define delay(milisec)          __msleep(milisec)
-    #define delayMicroseconds(usec) __usleep(usec)
-    #define millis()                __millis()
+    #define delay(ms)             __msleep(ms)
+    #define delayMicroseconds(us) __usleep(us)
+    #define millis()              __millis()
 
     #ifdef __cplusplus
 }

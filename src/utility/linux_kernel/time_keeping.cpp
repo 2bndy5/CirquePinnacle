@@ -12,7 +12,7 @@ extern "C" {
 
 void __msleep(int milliseconds)
 {
-    struct timespec req; // = {0};
+    struct timespec req;
     req.tv_sec = (time_t)milliseconds / 1000;
     req.tv_nsec = (milliseconds % 1000) * 1000000L;
     //nanosleep(&req, (struct timespec *)NULL);
@@ -21,7 +21,7 @@ void __msleep(int milliseconds)
 
 void __usleep(int microseconds)
 {
-    struct timespec req; // = {0};
+    struct timespec req;
     req.tv_sec = (time_t)microseconds / 1000000;
     req.tv_nsec = (microseconds / 1000000) * 1000;
     //nanosleep(&req, (struct timespec *)NULL);
