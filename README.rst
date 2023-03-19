@@ -125,26 +125,18 @@ TM\ ``yyyxxx``\ -202\ ``i``\ -\ ``cc``\ ``o``
 Sphinx documentation
 -----------------------
 
-Sphinx is used to build the documentation based on XML output from Doxygen. First,
-install dependencies (Python 3 & Python's pip is required):
+Sphinx is used to build the documentation. First, install dependencies (Python 3 & Python's pip
+is required):
 
 .. code-block:: shell
 
     pip3 install -r docs/requirements.txt
 
-`Install Doxygen as instructed <https://www.doxygen.nl/download.html#srcbin>`_ and
-run it from the docs folder:
+Now, run sphinx. The following command is executed from the repository's root folder.
 
 .. code-block:: shell
 
-    cd docs
-    doxygen
-
-Now, run sphinx from the docs folder:
-
-.. code-block:: shell
-
-    sphinx-build -E -W . _build/html
+    sphinx-build -E -W docs docs/_build/html
 
 This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
 view them. It will also (due to ``-W``) error out on any warning. This is a good way to locally verify

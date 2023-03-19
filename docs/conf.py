@@ -188,6 +188,12 @@ cpp_apigen_rst_prolog = """
 .. highlight:: cpp
 """
 
+includes_header = Path(__file__).parent.parent / "src/utility/includes.h"
+includes_header_conf = includes_header.with_name("includes.h.in")
+includes_header.write_text(
+    includes_header_conf.read_text(encoding="utf-8").replace("@PINNACLE_DRIVER@", "template")
+)
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".

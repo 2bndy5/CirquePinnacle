@@ -16,6 +16,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     #define SPI_MODE3 3
 
     #ifndef PINNACLE_SPI_SPEED
+        /// @ingroup pinnacle-touch-api
         // Default is the maximum supported SPI speed (13 MHz)
         #define PINNACLE_SPI_SPEED 13000000
     #endif
