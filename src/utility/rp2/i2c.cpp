@@ -52,8 +52,8 @@ uint8_t TwoWire::endTransmission(uint8_t sendStop)
 size_t TwoWire::write(uint8_t data)
 {
     if (xBuffIndex < PINNACLE_I2C_BUFFER_LENGTH) {
-        xBuff[++xBuffIndex] = data;
-        ++xBuffLen;
+        xBuff[xBuffIndex++] = data;
+        xBuffLen++;
         return 1;
     }
     return 0;
@@ -90,7 +90,7 @@ int TwoWire::available()
 int TwoWire::read()
 {
     if (xBuffIndex < xBuffLen) {
-        return xBuff[++xBuffIndex];
+        return xBuff[xBuffIndex++];
     }
     return -1;
 }

@@ -98,7 +98,7 @@ int TwoWire::available(void)
 
 int TwoWire::read(void)
 {
-    return (int)xBuff[++xBuffIndex];
+    return (int)xBuff[xBuffIndex++];
 }
 
 size_t TwoWire::write(uint8_t data)

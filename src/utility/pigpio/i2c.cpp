@@ -102,14 +102,14 @@ int TwoWire::available(void)
 
 int TwoWire::read(void)
 {
-    return (int)xBuff[++xBuffIndex];
+    return (int)xBuff[xBuffIndex++];
 }
 
 size_t TwoWire::write(uint8_t data)
 {
     if (xBuffIndex < PINNACLE_I2C_BUFFER_LENGTH) {
-        xBuff[++xBuffIndex] = data;
-        ++xBuffLen;
+        xBuff[xBuffIndex++] = data;
+        xBuffLen++;
         return 1;
     }
     return 0;
