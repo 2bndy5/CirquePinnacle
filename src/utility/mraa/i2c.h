@@ -23,7 +23,11 @@ public:
     #ifndef PINNACLE_DEFAULT_I2C_BUS
         // Convenient alias to control which I2C bus is used by default.
         // Via compiler flag: `-D PINNACLE_DEFAULT_I2C_BUS=0` (for oldest RPi1)
-        #define PINNACLE_DEFAULT_I2C_BUS I2C_BUS1
+        //
+        /// @note MRAA lib uses this as an index for the array of the platform's
+        /// supported I2C buses. On RPi, this means `0` uses /dev/i2c1 or /dev/i2c0
+        /// depending on the I2C bus enabled (/dev/i2c0 is for the older RPi 1 model).
+        #define PINNACLE_DEFAULT_I2C_BUS I2C_BUS0 // use whatever the primary bus is
     #endif
 
 class TwoWire

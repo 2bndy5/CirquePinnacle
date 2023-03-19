@@ -4,6 +4,7 @@
 
     #include <cstdint>
     #include <stdexcept>
+    #include "gpio.h"
 
     #define I2C_BUS0 0
     #define I2C_BUS1 1
