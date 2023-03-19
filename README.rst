@@ -23,9 +23,8 @@ Introduction
 
 A driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
 
-.. warning::
-    This is a work in progress... This library has not been tested yet as it is being ported from
-    `CircuitPython_Cirque_Pinnacle  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
+This library was originally ported from
+`CircuitPython_Cirque_Pinnacle  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
 
 Supported Features
 ------------------
@@ -65,6 +64,9 @@ Unsupported Features
 Pinout
 ======
 
+.. warning::
+    The GPIO pins on these trackpads are **not** 5v tolerant. If your microcontroller uses 5v logic
+    (ie Arduino Nano), then you must use a voltage divider circuit for each GPIO pin.
 .. image:: https://github.com/2bndy5/CircuitPython_Cirque_Pinnacle/raw/master/docs/_static/Cirque_GlidePoint-Circle-Trackpad.png
     :target: https://www.mouser.com/new/cirque/glidepoint-circle-trackpads/
 
@@ -81,20 +83,25 @@ the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
     1,SCK,SCK,"SCLK (GPIO11)","SPI clock line"
     2,SO,MISO,"MISO (GPIO9)","SPI Master Input Slave Output"
     3,SS,5,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
-    4,DR,6,GPIO25,"Data Ready interrupt"
+    4,DR,7,GPIO25,"Data Ready interrupt"
     5,SI,MOSI,"MOSI (GPIO10)","SPI Master Output Slave Input"
     6,B2,N/A,N/A,"Hardware input button #2"
     7,B3,N/A,N/A,"Hardware input button #3"
     8,B1,N/A,N/A,"Hardware input button #1"
-    9,SCL,SCL,"SCL (GPIO3)","I2C clock line"
-    10,SDA,SDA,"SDA (GPIO2)","I2C data line"
+    9,SCL,SCL,"SCL (GPIO3)","I2C clock line (no builtin pull-up resistor)"
+    10,SDA,SDA,"SDA (GPIO2)","I2C data line (no builtin pull-up resistor)"
     11,GND,GND,Ground,Ground
     12,VDD,3V,3V3,"3V power supply"
 
-.. tip:: Of course, you can capture button data manually (if your application utilizes more
+.. tip::
+    Of course, you can capture button data manually (if your application utilizes more
     than 3 buttons), but if you connect the pins B1, B2, B3 to momentary push buttons that
     (when pressed) provide a path to ground, the Pinnacle touch controller will report all 3
     buttons' states for each touch (or even button only) events.
+
+.. note::
+    These trackpads have no builtin pull-up resistors on the I2C bus' SDA and SCL lines.
+    Examples were tested with a 10 kohm resistor for each I2C line tied to 3v.
 
 Model Labeling Scheme
 ---------------------

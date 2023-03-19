@@ -615,7 +615,7 @@ void PinnacleTouchI2C::rapWriteBytes(uint8_t registerAddress, uint8_t* registerV
 {
     i2c->beginTransmission(_slaveAddress);
     for (uint8_t i = 0; i < registerCount; ++i) {
-        i2c->write(0x80 | registerAddress);
+        i2c->write(0x80 | (registerAddress + i));
         i2c->write(registerValues[i]);
     }
     i2c->endTransmission(true);
@@ -632,7 +632,7 @@ void PinnacleTouchI2C::rapReadBytes(uint8_t registerAddress, uint8_t* data, uint
     i2c->beginTransmission(_slaveAddress);
     i2c->write(0xA0 | registerAddress);
     i2c->endTransmission(true);
-    i2c->requestFrom((uint8_t)(_slaveAddress | 1), registerCount, (uint8_t) true);
+    i2c->requestFrom(_slaveAddress, registerCount, (uint8_t) true);
     while (i2c->available()) {
         data[i++] = i2c->read();
     }

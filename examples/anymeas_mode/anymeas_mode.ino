@@ -3,12 +3,14 @@
  *
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
-#include "CirquePinnacle.h"
+#include <CirquePinnacle.h>
 
-#define SS_PIN 5
-#define DR_PIN 6
+#define SS_PIN 2
+#define DR_PIN 7
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+// If using I2C, then use the following line (not the line above)
+// PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
 
 typedef struct _MeasureVector {
   unsigned long toggle;
@@ -51,8 +53,9 @@ void setup() {
       // hold program in infinite loop
     }
   }
-  trackpad.setDataMode(PINNACLE_ANYMEAS);
   Serial.println("CirquePinnacle/examples/anymeas_mode");
+  trackpad.setDataMode(PINNACLE_ANYMEAS);
+  trackpad.anymeasModeConfig();
   compensationInit();
 }
 

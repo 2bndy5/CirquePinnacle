@@ -10,6 +10,8 @@ DR_PIN = 25
 SS_PIN = 0
 
 trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN)
+# If using I2C, then use the following line (not the line above)
+# trackpad = PinnacleTouchI2C(DR_PIN);
 
 vector_determinants = [
     # (toggle, polarity)
