@@ -36,9 +36,9 @@ void loop()
 {
     if (trackpad.available()) {
         trackpad.read(&report);
-        printf("Left: %d ", report.buttons & 1);
-        printf("Right: %d ", report.buttons & 2);
-        printf("Middle: %d", report.buttons & 4);
+        printf("button1: %d ", report.buttons & 1);
+        printf("button2: %d ", report.buttons & 2);
+        printf("button3: %d", report.buttons & 4);
         printf("\tX: %d\tY: %d\tZ: %d\n", report.x, report.y, report.z);
     }
 

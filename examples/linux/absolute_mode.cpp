@@ -36,9 +36,9 @@ void loop()
 {
     if (trackpad.available()) {
         trackpad.read(&report);
-        std::cout << "Left: " << (unsigned int)(report.buttons & 1)
-                  << " Right: " << (unsigned int)(report.buttons & 2)
-                  << " Middle: " << (unsigned int)(report.buttons & 4)
+        std::cout << "button1: " << (unsigned int)(report.buttons & 1)
+                  << " button2: " << (unsigned int)(report.buttons & 2)
+                  << " button3: " << (unsigned int)(report.buttons & 4)
                   << "\tX: " << (unsigned int)(report.x)
                   << "\tY: " << (unsigned int)(report.y)
                   << "\tZ: " << (unsigned int)(report.z) << std::endl;

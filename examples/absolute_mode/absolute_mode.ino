@@ -33,11 +33,11 @@ void setup() {
 void loop() {
   if (trackpad.available()) {
     trackpad.read(&report);
-    Serial.print("Left: ");
+    Serial.print("button1: ");
     Serial.print(report.buttons & 1);
-    Serial.print(" Right: ");
+    Serial.print(" button2: ");
     Serial.print(report.buttons & 2);
-    Serial.print(" Middle: ");
+    Serial.print(" button3: ");
     Serial.print(report.buttons & 4);
     Serial.print("\tX: ");
     Serial.print(report.x);

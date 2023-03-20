@@ -4,7 +4,11 @@ This example reads data from the Cirque trackpad in "anymeas mode" and prints th
 See documentation at https://cirquepinnacle.rtfd.io/
 """
 import sys
-from cirque_pinnacle import PinnacleTouchSPI, PINNACLE_ANYMEAS
+from cirque_pinnacle import (
+    PinnacleTouchSPI,
+    PinnacleTouchI2C,  # noqa: imported but unused
+    PINNACLE_ANYMEAS,
+)
 
 DR_PIN = 25
 SS_PIN = 0

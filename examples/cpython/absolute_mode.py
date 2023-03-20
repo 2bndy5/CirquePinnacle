@@ -4,7 +4,12 @@ This example reads data from the Cirque trackpad in "absolute mode" and prints t
 See documentation at https://cirquepinnacle.rtfd.io/
 """
 import sys
-from cirque_pinnacle import AbsoluteReport, PinnacleTouchSPI, PINNACLE_ABSOLUTE
+from cirque_pinnacle import (
+    AbsoluteReport,
+    PinnacleTouchSPI,
+    PinnacleTouchI2C,  # noqa: imported but unused
+    PINNACLE_ABSOLUTE,
+)
 
 DR_PIN = 25
 SS_PIN = 0
@@ -29,9 +34,9 @@ def loop():
     if trackpad.available():
         trackpad.read(report)
         print(
-            f"Left: {report.buttons & 1}",
-            f"Right: {report.buttons & 2}",
-            f"Middle: {report.buttons & 4}",
+            f"button1: {report.buttons & 1}",
+            f"button2: {report.buttons & 2}",
+            f"button3: {report.buttons & 4}",
             f"\tX: {report.x}",
             f"\tY: {report.y}",
             f"\tZ: {report.z}",

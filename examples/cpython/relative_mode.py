@@ -4,7 +4,11 @@ This example reads data from the Cirque trackpad in "relative mode" and prints t
 See documentation at https://cirquepinnacle.rtfd.io/
 """
 import sys
-from cirque_pinnacle import RelativeReport, PinnacleTouchSPI
+from cirque_pinnacle import (
+    RelativeReport,
+    PinnacleTouchSPI,
+    PinnacleTouchI2C,  # noqa: imported but unused
+)
 
 DR_PIN = 25
 SS_PIN = 0

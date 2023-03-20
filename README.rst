@@ -103,6 +103,9 @@ the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
     These trackpads have no builtin pull-up resistors on the I2C bus' SDA and SCL lines.
     Examples were tested with a 10 kohm resistor for each I2C line tied to 3v.
 
+    The Raspberry Pi boards (excluding any RP2040 boards) all have builtin 1.8 kohm pull-up
+    resistors, so the Linux examples were tested with no addition pull-up resistance.
+
 Model Labeling Scheme
 ---------------------
 
