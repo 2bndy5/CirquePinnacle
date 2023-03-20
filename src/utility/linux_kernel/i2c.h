@@ -56,7 +56,7 @@ public:
      * @param sendStop If set to a non-zero value, then a stop condition is sent over the bus.
      * @return The number of bytes sent over the bus.
      */
-    uint8_t endTransmission(uint8_t sendStop = false);
+    uint8_t endTransmission(uint8_t sendStop = 1);
 
     /**
      * Write a single byte to the bus.
@@ -75,7 +75,7 @@ public:
      * after the transaction is completed.
      * @return The number of bytes read into the internal RX buffer.
      */
-    uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop);
+    uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop = 1);
 
     /**
      * Check for remaining bytes in the internal RX buffer.
@@ -94,7 +94,7 @@ public:
     int read();
 
     /** free up the allocated memory for internal buffers */
-    virtual ~TwoWire();
+    ~TwoWire();
 
 private:
     uint8_t slaveAddress;

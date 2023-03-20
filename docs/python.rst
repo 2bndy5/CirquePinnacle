@@ -61,7 +61,8 @@ Installing from Github
 5. Open one of the python examples (located in examples/cpython), change the pin numbers accordingly, and run the example.
 
    .. seealso::
-       Review how to specify the :ref:`slaveSelectPin` for Linux platforms.
+       The ``PinnacleTouchSPI::begin(_SPI*)`` function is not exposed in the python binding.
+       Please review how to specify the :ref:`slaveSelectPin` for Linux platforms.
 
    .. code-block:: shell
 

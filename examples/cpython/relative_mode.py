@@ -30,14 +30,7 @@ def setup():
 def loop():
     if trackpad.available():
         trackpad.read(report)
-        print(
-            f"Left: {report.buttons & 1}",
-            f"Right: {report.buttons & 2}",
-            f"Middle: {report.buttons & 4}",
-            f"\tdelta X: {report.x}",
-            f"\tdelta Y: {report.y}",
-            f"\tdelta Scroll: {report.scroll}",
-        )
+        print(report)
 
 
 if __name__ == "__main__":

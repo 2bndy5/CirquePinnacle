@@ -97,7 +97,7 @@ A list of properties and their exposed C++ equivalent setters/getters:
 .. [note]
     .. failure:: Missing
 
-        One exception to this is there is no function in the python binding for
+        One exception to this is that there is no function in the python binding for
         `PinnacleTouch::shutdown()` and `PinnacleTouch::isShutdown()`.
         Due to a naming conflict, these methods are only exposed via the
         ``PinnacleTouch.shutdown`` property.
@@ -121,17 +121,155 @@ Each integer must still fit within 2 bytes (signed).
     # is equivalent to
     values = trackpad.getCalibrationMatrix()
 
-Overloaded ``read()``
-----------------------
+``RelativeReport.buffer``
+-------------------------
 
-There is an added ``read()`` overload method in the python binding to expedite the formation of
-a python buffer (:py:class:`bytearray`) from the data reported by the Pinnacle ASIC.
-This is helpful when using relative mode data as a mouse HID report buffer.
-
-.. note::
-    This overloaded method only applies to `PINNACLE_ABSOLUTE` or `PINNACLE_RELATIVE` modes.
-    It returns an empty buffer if the data mode is set to `PINNACLE_ANYMEAS` mode.
+There is an added read-only property, named ``buffer``, in the :cpp:class:`RelativeReport` class.
+This is done in the python binding to expedite the formation of an immutable python buffer
+(:py:class:`bytes`). This is helpful when using relative mode data as a mouse HID report buffer.
 
 .. code-block:: python
 
-    report: bytearray = touchpad.read()
+    report = RelativeReport()
+    touchpad.read(report)  # relative mode data saved to `report` object.
+    # optionally manipulate the reported data (eg. apply acceleration or axis inversion)
+    buf: bytes = report.buffer  # can be used as a mouse HID report
+
+.. hint::
+    Both :cpp:class:`RelativeReport` and :cpp:class:`AbsoluteReport` classes in the python
+    binding have customized ``__repr__()`` functions to quickly show the data structures' values.
+
+    .. code-block:: python
+
+        >>> report = AbsoluteReport()
+        >>> report.x = 64
+        >>> report.y = 128
+        >>> report.z = 32
+        >>> print(report)
+        <AbsoluteReport Button1: 0 Button2: 0 Button3: 0 X: 64 Y: 128 Z: 32>
+
+Exposed I2C implementation
+--------------------------
+
+Since multiple buses are supported by this library, the underlying class ``TwoWire`` is exposed
+that implements the I2C protocol similar to `the Arduino API
+<https://www.arduino.cc/reference/en/language/functions/communication/wire/>`_. Typical
+applications shouldn't need to use this as most Linux-based SoC boards only have 1 I2C bus exposed
+in the GPIO pins.
+
+The I2C bus number can be different depending on how the manufacturer routed the I2C bus
+from the SoC. Thus, the ``PinnacleTouchI2C::begin(_I2C*)`` method is exposed, so users can specify
+an I2C bus number that may differ from the default value used (which is :cpp:`1`). The first
+Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to ``/dev/i2c-1``.
+
+.. code-block:: python
+    :caption: Using the ``/dev/i2c-0`` bus
+
+    from cirque_pinnacle import PinnacleTouchI2C, TwoWire
+
+    i2c_bus = TwoWire()
+    i2c_bus.begin(0)  # specify the bus number here
+    trackpad = PinnacleTouchI2C(DR_PIN)
+    ok = trackpad.begin(i2c_bus)  # feed the custom I2C bus obj here
+    if not ok:
+        raise OSError("failed to find the trackpad")
+
+.. py:module:: cirque_pinnacle
+
+.. |stop_param_ignored| replace:: This parameter's value is ignored because repeated stop conditions and
+    behaving like a I2C slave device is not supported in this implementation. A stop
+    condition is always sent after
+
+.. py:class:: TwoWire
+
+    The actual implementation of this class depends on what ``PINNACLE_DRIVER`` was specified when
+    the python binding was installed. By default, the python binding uses ``linux_kernel``. Review
+    the :doc:`Python binding install instructions <../python>` for how to specify the
+    ``PINNACLE_DRIVER`` to use.
+
+    .. failure:: Missing
+
+        Interrupt Service Routines (ISR), acting as a slave device, and timeouts are not supported
+        in this implementation.
+
+    .. py:method:: begin(busNumber: int = 1) -> None
+
+        Specify the ``busNumber`` as indicated in the ``/dev/i2c-<x>``.
+
+        :param busNumber: The I2C bus number as identified by the directory listing in
+            ``/dev/i2c-*``. For ``/dev/i2c-1``, this parameter's value should :python:`1`.
+
+            .. note::
+                If using the ``mraa`` driver, then this number is not guaranteed to coincide with the
+                actual I2C bus number (``/dev/i2c-<x>``). See the `MRAA source code
+                <https://github.com/eclipse/mraa/tree/master/src>`_ for your platform to determine
+                what number to use for which I2C bus.
+
+                For compatibility reasons, this parameter defaults to :python:`0` when using the
+                ``mraa`` driver.
+
+    .. py:method:: end()
+
+        Release the specified I2C bus.
+
+    .. py:method:: beginTransmission(address: int) -> None
+
+        Begin preparing for a buffered write operation to the specified I2C device's address.
+
+        :param address: The I2C slave device's address.
+
+    .. py:method:: write(data: int) -> int
+
+        Add data to the buffer for a write operation.
+
+        .. note:: Data is not actually sent until :py:meth:`endTransmission()` is called.
+        .. warning::
+            This implementation uses an internal buffer that allocates 32 bytes. If more than 32
+            bytes are added to the internal buffer, then all bytes in excess are dropped.
+
+        :param data: A single byte to add to the internal buffer.
+
+        :returns: The amount of data (in bytes) added. This should always be 1.
+
+    .. py:method:: endTransmission(sendStop: int = 1) -> int
+
+        Perform a buffered write operation over the I2C bus.
+
+        :param sendStop: |stop_param_ignored| the buffered data is written.
+
+        :returns: The amount of data (in bytes) written.
+
+    .. py:method:: requestFrom(address: int, quantity: int, sendStop: int = 1) -> int
+
+        Read a number of bytes from the specified I2C address.
+
+        :param address: The I2C slave device's address.
+        :param quantity: The number of bytes to read.
+        :param sendStop: |stop_param_ignored| the received data is stored in the internal buffer.
+
+        :returns: The amount of data (in bytes) read. This should always be the ``quantity``
+          specified.
+
+    .. py:method:: available() -> int
+
+        Get the number of bytes ready to read.
+
+        .. warning::
+            This should only be used after calling :py:meth:`requestFrom()`. Otherwise, the data
+            returned may be about the data passed to :py:meth:`write()` (which uses the
+            same internal buffer).
+
+        :returns: The amount of data (in bytes) ready read to read from the internal buffer.
+
+    .. py:method:: read() -> int
+
+        Read a byte of data from the internal buffer.
+
+        .. warning:: Use :py:meth:`available()` to determine if there is more data to read.
+        .. error::
+            Make sure to call :py:meth:`requestFrom()` before using this function. Otherwise,
+            the data returned may be from the data passed to :py:meth:`write()` (which uses the
+            same internal buffer).
+
+        :returns: A single byte. If there is no more data to read, then the value
+            :python:`-1` is returned.

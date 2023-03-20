@@ -5,6 +5,8 @@
     #include "CirquePinnacle.h"
 
 namespace py = pybind11;
+namespace arduino = cirque_pinnacle_arduino_wrappers;
+
 /**
  * PinnacleTouch has pure virtual functions used to abstract SPI & I2C interfaces.
  * To extend this functionality to python, we must create a wrapping class that
@@ -66,48 +68,11 @@ void setCalibrationMatrix_wrapper(PinnacleTouch* self, py::list& matrix)
     delete buff;
 };
 
-py::bytearray read_wrapper(PinnacleTouch* self)
-{
-    if (self->getDataMode() == PINNACLE_ABSOLUTE) {
-        AbsoluteReport report;
-        self->read(&report);
-        return py::bytearray(reinterpret_cast<const char*>(&report), sizeof(report));
-    }
-    if (self->getDataMode() == PINNACLE_RELATIVE) {
-        RelativeReport report;
-        self->read(&report);
-        return py::bytearray(reinterpret_cast<const char*>(&report), sizeof(report));
-    }
-    return py::bytearray();
-}
 /**
  * All of CirquePinnacle.h will be exposed in 1 python module named :py:mod:`cirque_pinnacle`.
  */
 PYBIND11_MODULE(cirque_pinnacle, m)
 {
-    /**
-     * Expose constants used for interfacing with the Pinnacle ASIC's registers.
-     * The idea here is to allow users to implement their own SPI or I2C functionality in python.
-     * TODO: We need a way for users to override the register read/write operations in python.
-    m.attr("PINNACLE_FIRMWARE_ID") = PINNACLE_FIRMWARE_ID;
-    m.attr("PINNACLE_STATUS") = PINNACLE_STATUS;
-    m.attr("PINNACLE_SYS_CONFIG") = PINNACLE_SYS_CONFIG;
-    m.attr("PINNACLE_FEED_CONFIG_1") = PINNACLE_FEED_CONFIG_1;
-    m.attr("PINNACLE_FEED_CONFIG_2") = PINNACLE_FEED_CONFIG_2;
-    m.attr("PINNACLE_FEED_CONFIG_3") = PINNACLE_FEED_CONFIG_3;
-    m.attr("PINNACLE_CAL_CONFIG") = PINNACLE_CAL_CONFIG;
-    m.attr("PINNACLE_SAMPLE_RATE") = PINNACLE_SAMPLE_RATE;
-    m.attr("PINNACLE_Z_IDLE") = PINNACLE_Z_IDLE;
-    m.attr("PINNACLE_Z_SCALER") = PINNACLE_Z_SCALER;
-    m.attr("PINNACLE_SLEEP_INTERVAL") = PINNACLE_SLEEP_INTERVAL;
-    m.attr("PINNACLE_SLEEP_TIMER") = PINNACLE_SLEEP_TIMER;
-    m.attr("PINNACLE_PACKET_BYTE_0") = PINNACLE_PACKET_BYTE_0;
-    m.attr("PINNACLE_PACKET_BYTE_1") = PINNACLE_PACKET_BYTE_1;
-    m.attr("PINNACLE_ERA_VALUE") = PINNACLE_ERA_VALUE;
-    m.attr("PINNACLE_ERA_ADDR") = PINNACLE_ERA_ADDR;
-    m.attr("PINNACLE_ERA_CONTROL") = PINNACLE_ERA_CONTROL;
-    m.attr("PINNACLE_HCO_ID") = PINNACLE_HCO_ID;
-     */
 
     // ******************** expose PinnacleDataMode
     py::enum_<PinnacleDataMode> dataMode(m, "PinnacleDataMode");
@@ -163,6 +128,31 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     relativeReports.def_readwrite("x", &RelativeReport::x);
     relativeReports.def_readwrite("y", &RelativeReport::y);
     relativeReports.def_readwrite("scroll", &RelativeReport::scroll);
+    relativeReports.def("__repr__", [](const RelativeReport &obj) {
+        char* buf = new char[73];
+        uint8_t used = sprintf(
+            buf, "<RelativeReport Left: %d Right: %d Middle: %d X: %d Y: %d Scroll: %d>",
+            obj.buttons & 1,
+            obj.buttons & 2,
+            obj.buttons & 4,
+            obj.x,
+            obj.y,
+            obj.scroll);
+        buf[used] = 0;
+        std::string ret = std::string(buf);
+        delete[] buf;
+        return ret;
+    });
+    relativeReports.def_property_readonly("buffer", [](const RelativeReport &obj){
+        uint8_t* buf = new uint8_t[4];
+        buf[0] = obj.buttons;
+        buf[1] = obj.x;
+        buf[2] = obj.y;
+        buf[3] = obj.scroll;
+        py::bytes ret = py::bytes(reinterpret_cast<char*>(buf), 4);
+        delete[] buf;
+        return ret;
+    });
 
     // ******************** bindings for AbsoluteReports
     py::class_<AbsoluteReport> absoluteReports(m, "AbsoluteReport");
@@ -171,6 +161,22 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     absoluteReports.def_readwrite("x", &AbsoluteReport::x);
     absoluteReports.def_readwrite("y", &AbsoluteReport::y);
     absoluteReports.def_readwrite("z", &AbsoluteReport::z);
+    absoluteReports.def("__repr__", [](const AbsoluteReport &obj) {
+        char* buf = new char[78];
+        uint8_t used = sprintf(
+            buf, "<AbsoluteReport Button1: %d Button2: %d Button3: %d X: %d Y: %d Z: %d>",
+            obj.buttons & 1,
+            obj.buttons & 2,
+            obj.buttons & 4,
+            obj.x,
+            obj.y,
+            obj.z);
+        buf[used] = 0;
+        buf[used] = 0;
+        std::string ret = std::string(buf);
+        delete[] buf;
+        return ret;
+    });
 
     // ******************** bindings for PinnacleTouch
     py::class_<PinnacleTouch, PyPinnacleTouch> pinnacleTouch(m, "PinnacleTouch");
@@ -196,7 +202,6 @@ PYBIND11_MODULE(cirque_pinnacle, m)
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"));
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"));
-    pinnacleTouch.def("read", &read_wrapper);
     pinnacleTouch.def("clear_status_flags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def("clearStatusFlags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def_property("allow_sleep", &PinnacleTouch::isAllowSleep, &PinnacleTouch::allowSleep);
@@ -244,15 +249,26 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     py::class_<PinnacleTouchSPI> pinnacleTouchSPI(m, "PinnacleTouchSPI", pinnacleTouch);
     pinnacleTouchSPI.def(py::init<pinnacle_gpio_t, pinnacle_gpio_t, uint32_t>(), py::arg("dataReadyPin"), py::arg("slaveSelectPin"), py::arg("spiSpeed") = PINNACLE_SPI_SPEED);
     pinnacleTouchSPI.def("begin", static_cast<bool (PinnacleTouchSPI::*)(void)>(&PinnacleTouchSPI::begin));
-    // The overloaded begin(_SPI*) is not exposed since it would require binding driver-specific implementation (a lot of work).
-    // Additionally, begin(_SPI*) is meant for boards that naturally expose more than 1 SPI bus (RPi defaults don't provide this).
+    // The overloaded begin(_SPI*) is not exposed since it would require binding the driver-specific implementation (a lot of work).
+    // Additionally, begin(_SPI*) isn't needed on Linux because the SS_PIN param to the c'tor specifies both bus and CEx numbers.
+
+    // ******************* bindings for TwoWire
+    py::class_<arduino::TwoWire> twoWire(m, "TwoWire");
+    twoWire.def(py::init<>());
+    twoWire.def("begin", &arduino::TwoWire::begin, py::arg("busNumber") = 1);
+    twoWire.def("end", &arduino::TwoWire::end);
+    twoWire.def("beginTransmission", &arduino::TwoWire::beginTransmission, py::arg("address"));
+    twoWire.def("endTransmission", &arduino::TwoWire::endTransmission, py::arg("sendStop") = true);
+    twoWire.def("write", &arduino::TwoWire::write, py::arg("data"));
+    twoWire.def("requestFrom", &arduino::TwoWire::requestFrom, py::arg("address"), py::arg("quantity"), py::arg("sendStop") = true);
+    twoWire.def("available", &arduino::TwoWire::available);
+    twoWire.def("read", &arduino::TwoWire::read);
 
     // ******************** bindings for PinnacleTouchI2C
     py::class_<PinnacleTouchI2C> pinnacleTouchI2C(m, "PinnacleTouchI2C", pinnacleTouch);
     pinnacleTouchI2C.def(py::init<pinnacle_gpio_t, uint8_t>(), py::arg("dataReadyPin"), py::arg("slaveAddress") = 0x2A);
     pinnacleTouchI2C.def("begin", static_cast<bool (PinnacleTouchI2C::*)(void)>(&PinnacleTouchI2C::begin));
-    // The overloaded begin(_I2C*) is not exposed since it would require binding driver-specific implementation (a lot of work).
-    // Additionally, begin(_I2C*) is meant for boards that naturally expose more than 1 I2C bus (RPi has only 1 I2C bus).
+    pinnacleTouchI2C.def("begin", static_cast<bool (PinnacleTouchI2C::*)(arduino::TwoWire*)>(&PinnacleTouchI2C::begin), py::arg("i2c_bus"));
 }
 
 #endif // !defined(ARDUINO)
