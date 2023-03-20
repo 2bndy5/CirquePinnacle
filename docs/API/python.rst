@@ -57,9 +57,9 @@ Some C++ getter and setter functions are expose as python properties.
 
 .. code-block:: python
 
-    trackpad.data_mode = PINNACLE_ABSOLUTE.value
+    trackpad.data_mode = PINNACLE_ABSOLUTE
     # is equivalent to
-    trackpad.setDataMode(PINNACLE_ABSOLUTE.value)
+    trackpad.setDataMode(PINNACLE_ABSOLUTE)
 
     mode = trackpad.data_mode
     # is equivalent to
