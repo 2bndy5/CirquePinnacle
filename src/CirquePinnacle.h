@@ -1,19 +1,20 @@
-/**
- *  @file CirquePinnacle.h
- *  A library to interface (via I2C or SPI protocol) with Cirque's Glidepoint circle
- *  trackpads that employ Cirque's Pinnacle ASIC touch controller (1CA027).
+/*
+ * Copyright (c) 2023 Brendan Doherty (2bndy5)
  *
- *  Store links (where to buy):
- *  - [Individual trackpads](https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=118816186)
- *  - [developer kits](https://www.mouser.com/Search/Refine?Ntk=P_MarCom&Ntt=183712866)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  Written by Brendan Doherty to include all functionality demonstrated by
- *  the official Cirque github repository based on the teensy3.2 and the
- *  Cirque Glidepoint circle trackpad developer kit.
- *  - [Cirque example repository](https://github.com/cirque-corp/Cirque_Pinnacle_1CA027)
- *
- *  License and copyright information is located at this repository's root
- *  directory under LICENSE
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 #ifndef _CIRQUEPINNACLE_H_
 #define _CIRQUEPINNACLE_H_
