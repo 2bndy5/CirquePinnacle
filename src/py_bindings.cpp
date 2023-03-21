@@ -148,7 +148,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     relativeReports.def_readwrite("x", &RelativeReport::x);
     relativeReports.def_readwrite("y", &RelativeReport::y);
     relativeReports.def_readwrite("scroll", &RelativeReport::scroll);
-    relativeReports.def("__repr__", [](const RelativeReport &obj) {
+    relativeReports.def("__repr__", [](const RelativeReport& obj) {
         char* buf = new char[73];
         uint8_t used = sprintf(
             buf, "<RelativeReport Left: %d Right: %d Middle: %d X: %d Y: %d Scroll: %d>",
@@ -163,7 +163,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
         delete[] buf;
         return ret;
     });
-    relativeReports.def_property_readonly("buffer", [](const RelativeReport &obj){
+    relativeReports.def_property_readonly("buffer", [](const RelativeReport& obj) {
         uint8_t* buf = new uint8_t[4];
         buf[0] = obj.buttons;
         buf[1] = obj.x;
@@ -181,7 +181,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     absoluteReports.def_readwrite("x", &AbsoluteReport::x);
     absoluteReports.def_readwrite("y", &AbsoluteReport::y);
     absoluteReports.def_readwrite("z", &AbsoluteReport::z);
-    absoluteReports.def("__repr__", [](const AbsoluteReport &obj) {
+    absoluteReports.def("__repr__", [](const AbsoluteReport& obj) {
         char* buf = new char[78];
         uint8_t used = sprintf(
             buf, "<AbsoluteReport Button1: %d Button2: %d Button3: %d X: %d Y: %d Z: %d>",
