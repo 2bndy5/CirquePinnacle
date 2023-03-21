@@ -25,7 +25,9 @@
 PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
 {
     PINNACLE_USE_ARDUINO_API
-    pinMode(_dataReady, INPUT);
+    if (_dataReady != PINNACLE_SW_DR) {
+        pinMode(_dataReady, INPUT);
+    }
 }
 
 bool PinnacleTouch::begin()
@@ -59,7 +61,7 @@ void PinnacleTouch::feedEnabled(bool isEnabled)
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
-        if ((bool)(temp & 1) != isEnabled)
+        if (static_cast<bool>(temp & 1) != isEnabled)
             rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0xfe) | isEnabled);
     }
 }
@@ -69,17 +71,17 @@ bool PinnacleTouch::isFeedEnabled()
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
-        return (bool)(temp & 1);
+        return static_cast<bool>(temp & 1);
     }
-    /*  AnyMeas mode: "feed" is instigated by measureADC()
-    & x,y tracking measurements are already disabled*/
+    /* AnyMeas mode: "feed" is instigated by measureADC()
+       & x,y tracking measurements are already disabled */
     return false;
 }
 
 void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 {
     PINNACLE_USE_ARDUINO_API
-    if (mode <= 2) {
+    if (mode <= PINNACLE_ABSOLUTE) {
         uint8_t sysConfig = 0;
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
         sysConfig &= 0xE7;
@@ -104,7 +106,7 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 #if PINNACLE_ANYMEAS_SUPPORT
             }
         }
-        else if (mode == PINNACLE_ANYMEAS) {
+        else if (mode == PINNACLE_ANYMEAS && _dataReady != PINNACLE_SW_DR) { // DR_PIN is required for anymeas mode
             // disable tracking computations for AnyMeas mode
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
             delay(10); // wait 10 ms for tracking measurements to expire
@@ -134,6 +136,11 @@ bool PinnacleTouch::isHardConfigured()
 bool PinnacleTouch::available()
 {
     PINNACLE_USE_ARDUINO_API
+    if (_dataReady == PINNACLE_SW_DR) {
+        uint8_t tmp = 0;
+        rapRead(PINNACLE_STATUS, &tmp);
+        return (tmp & 4) == 4;
+    }
     return digitalRead(_dataReady);
 }
 
@@ -346,8 +353,7 @@ void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWide
 
 void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint32_t apertureWidth, uint8_t controlPowerCount)
 {
-    if (_dataMode == PINNACLE_ANYMEAS)
-    {
+    if (_dataMode == PINNACLE_ANYMEAS) {
         uint8_t togPol[8] = {0};
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
         uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
@@ -366,7 +372,7 @@ void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t 
 int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
 {
     startMeasureAdc(bitsToToggle, togglePolarity);
-    while (!available()) {
+    while (!available() && _dataReady != PINNACLE_SW_DR) {
         // wait till measurements are complete
     }
     return getMeasureAdc();

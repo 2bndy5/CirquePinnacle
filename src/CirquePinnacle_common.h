@@ -55,13 +55,16 @@
     #define _I2C TwoWire
 
     #ifdef NUM_DIGITAL_PINS
-        #if NUM_DIGITAL_PINS < 256
+        #if NUM_DIGITAL_PINS < 255
 typedef uint8_t pinnacle_gpio_t;
+            #define PINNACLE_SW_DR 0xFF
         #else
 typedef uint16_t pinnacle_gpio_t;
+            #define PINNACLE_SW_DR 0xFFFF
         #endif
     #else
 typedef uint16_t pinnacle_gpio_t;
+        #define PINNACLE_SW_DR 0xFFFF
     #endif
 
     #define PINNACLE_SS_CTRL(pin, value) digitalWrite(pin, value)

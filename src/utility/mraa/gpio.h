@@ -25,6 +25,7 @@
     #include "mraa.hpp"
 
 typedef int pinnacle_gpio_t;
+    #define PINNACLE_SW_DR 0xFFFFFFFF
 
 namespace cirque_pinnacle_arduino_wrappers {
 

@@ -16,7 +16,7 @@
 # SOFTWARE.
 from typing import List, overload
 
-# TODO: We need a way for users to override the register read/write operations in python.
+PINNACLE_SW_DR: int = 0xFFFF
 # PINNACLE_FIRMWARE_ID: int = 0x00
 # PINNACLE_STATUS: int = 0x02
 # PINNACLE_SYS_CONFIG: int = 0x03

@@ -291,8 +291,10 @@ public:
      * Create an instance to use as an interface with the Pinnacle ASIC
      * touch controller.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's
-     *     "Data Ready" pin.
+     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
+     *     To use the Pinnacle's Software Data Ready flag instead, set this to ``PINNACLE_SW_DR``.
+     *     BEWARE, the Hardware Data Ready pin is required for anymeas mode. In general, it
+     *     recommended to use the Hardware Data Ready pin for speed and efficient bus activity.
      */
     PinnacleTouch(pinnacle_gpio_t dataReadyPin);
     /**
