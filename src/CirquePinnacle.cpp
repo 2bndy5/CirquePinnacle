@@ -511,7 +511,7 @@ PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t
 {
 }
 
-bool PinnacleTouchSPI::begin(_SPI* spi_bus)
+bool PinnacleTouchSPI::begin(pinnacle_spi_t* spi_bus)
 {
     PINNACLE_USE_ARDUINO_API
     spi = spi_bus;
@@ -596,7 +596,7 @@ PinnacleTouchI2C::PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAd
 {
 }
 
-bool PinnacleTouchI2C::begin(_I2C* i2c_bus)
+bool PinnacleTouchI2C::begin(pinnacle_i2c_t* i2c_bus)
 {
     i2c = i2c_bus;
     return PinnacleTouch::begin();

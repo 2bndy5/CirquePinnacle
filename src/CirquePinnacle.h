@@ -829,9 +829,9 @@ public:
      *
      * @returns The same value as `PinnacleTouch::begin()`.
      *
-     * @id _SPI
+     * @id pinnacle_spi_t
      */
-    bool begin(_SPI* spi_bus);
+    bool begin(pinnacle_spi_t* spi_bus);
 
 private:
     void rapWrite(uint8_t, uint8_t);
@@ -840,7 +840,7 @@ private:
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     const pinnacle_gpio_t _slaveSelect;
     const uint32_t _spiSpeed;
-    _SPI* spi;
+    pinnacle_spi_t* spi;
 };
 
 /**
@@ -880,9 +880,9 @@ public:
      *
      * @returns The same value as `PinnacleTouch::begin()`.
      *
-     * @id _I2C
+     * @id pinnacle_i2c_t
      */
-    bool begin(_I2C* i2c_bus);
+    bool begin(pinnacle_i2c_t* i2c_bus);
 
 private:
     void rapWrite(uint8_t, uint8_t);
@@ -890,7 +890,7 @@ private:
     void rapRead(uint8_t, uint8_t*);
     void rapReadBytes(uint8_t, uint8_t*, uint8_t);
     const uint8_t _slaveAddress;
-    _I2C* i2c;
+    pinnacle_i2c_t* i2c;
 };
 
 #endif // _CIRQUEPINNACLE_H_

@@ -49,10 +49,10 @@
         #define PINNACLE_SPI_SPEED 13000000
     #endif
 
-    // alias for SPI bus implementation
-    #define _SPI SPIClass
-    // alias for I2C bus implementation
-    #define _I2C TwoWire
+// alias for SPI bus implementation
+typedef SPIClass pinnacle_spi_t;
+// alias for I2C bus implementation
+typedef TwoWire pinnacle_i2c_t;
 
     #ifdef NUM_DIGITAL_PINS
         #if NUM_DIGITAL_PINS < 255

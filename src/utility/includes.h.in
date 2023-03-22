@@ -30,9 +30,9 @@
 // clang-format on
 
 // alias for SPI bus implementation
-#define _SPI cirque_pinnacle_arduino_wrappers::SPIClass
+typedef cirque_pinnacle_arduino_wrappers::SPIClass pinnacle_spi_t;
 // alias for I2C bus implementation
-#define _I2C cirque_pinnacle_arduino_wrappers::TwoWire
+typedef cirque_pinnacle_arduino_wrappers::TwoWire pinnacle_i2c_t;
 
 #define PINNACLE_USE_ARDUINO_API using namespace cirque_pinnacle_arduino_wrappers;
 
