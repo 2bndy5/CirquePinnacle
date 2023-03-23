@@ -72,8 +72,8 @@ Pinout
 
 The above picture is a example of the Cirque GlidePoint circle trackpad. This picture
 is chosen as the test pads (larger copper circular pads) are clearly labeled. The test pads
-are extended to the `12-pin FFC/FPC cable <https://www.mouser.com/c/connectors/ffc-fpc/ffc-fpc-jumper-cables/
-?number%20of%20conductors=12~~12%20Conductor&pitch=0.5%20mm&rp=connectors%2Fffc-fpc%2Fffc-fpc-jumper-cables%7C~Number%20of%20Conductors>`_
+are extended to the `12-pin FFC/FPC cable
+<https://www.mouser.com/c/connectors/ffc-fpc/ffc-fpc-jumper-cables/?number%20of%20conductors=12%20Conductor&pitch=0.5%20mm>`_
 connector (the white block near the bottom). The following table shows how the pins are connected in
 the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
 
@@ -105,6 +105,8 @@ the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
 
     The Raspberry Pi boards (excluding any RP2040 boards) all have builtin 1.8 kohm pull-up
     resistors, so the Linux examples were tested with no addition pull-up resistance.
+
+.. _HCO:
 
 Model Labeling Scheme
 ---------------------

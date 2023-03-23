@@ -83,6 +83,7 @@ html_theme_options = {
     "features": [
         "search.share",
         "navigation.top",
+        "content.tabs.link",
     ],
     # Set the color and the accent color
     "palette": [
@@ -152,6 +153,12 @@ sphinx_immaterial_custom_admonitions = [
         "icon": "material/school",
         "override": True,
     },
+    {
+        "name": "anymeas-limits",
+        "title": "Limits of anymeas mode",
+        "color": (164, 25, 25),
+        "icon": "fontawesome/solid/bug",
+    },
 ]
 
 cpp_src_dir = str(Path(__file__).parent.parent / "src")
@@ -183,7 +190,6 @@ rst_prolog = """
 """
 
 cpp_apigen_rst_prolog = """
-.. default-role:: cpp:expr
 .. default-literal-role:: cpp
 .. highlight:: cpp
 """

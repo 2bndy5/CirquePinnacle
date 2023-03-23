@@ -158,9 +158,10 @@ applications shouldn't need to use this as most Linux-based SoC boards only have
 in the GPIO pins.
 
 The I2C bus number can be different depending on how the manufacturer routed the I2C bus
-from the SoC. Thus, the ``PinnacleTouchI2C::begin(_I2C*)`` method is exposed, so users can specify
-an I2C bus number that may differ from the default value used (which is :cpp:`1`). The first
-Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to ``/dev/i2c-1``.
+from the SoC. Thus, the :cpp:expr:`PinnacleTouchI2C::begin(_I2C*)` method is exposed, so users can
+specify an I2C bus number that may differ from the default value used (which is :cpp:`1`). The
+first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to
+``/dev/i2c-1``.
 
 .. code-block:: python
     :caption: Using the ``/dev/i2c-0`` bus
@@ -199,7 +200,9 @@ Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to 
         :param busNumber: The I2C bus number as identified by the directory listing in
             ``/dev/i2c-*``. For ``/dev/i2c-1``, this parameter's value should :python:`1`.
 
-            .. note::
+            .. info:: Difference with ``mraa`` driver
+                :collapsible:
+
                 If using the ``mraa`` driver, then this number is not guaranteed to coincide with the
                 actual I2C bus number (``/dev/i2c-<x>``). See the `MRAA source code
                 <https://github.com/eclipse/mraa/tree/master/src>`_ for your platform to determine
@@ -220,9 +223,9 @@ Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to 
 
     .. py:method:: write(data: int) -> int
 
-        Add data to the buffer for a write operation.
+        Add data to the buffer for a write operation. Data is not actually sent until
+        :py:meth:`endTransmission()` is called.
 
-        .. note:: Data is not actually sent until :py:meth:`endTransmission()` is called.
         .. warning::
             This implementation uses an internal buffer that allocates 32 bytes. If more than 32
             bytes are added to the internal buffer, then all bytes in excess are dropped.
@@ -265,11 +268,12 @@ Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to 
 
         Read a byte of data from the internal buffer.
 
-        .. warning:: Use :py:meth:`available()` to determine if there is more data to read.
         .. error::
             Make sure to call :py:meth:`requestFrom()` before using this function. Otherwise,
             the data returned may be from the data passed to :py:meth:`write()` (which uses the
             same internal buffer).
 
-        :returns: A single byte. If there is no more data to read, then the value
-            :python:`-1` is returned.
+        :returns: A single byte. If there is no more data to read, then the value :python:`-1`
+            is returned.
+
+            .. hint:: Use :py:meth:`available()` to determine if there is more data to read.

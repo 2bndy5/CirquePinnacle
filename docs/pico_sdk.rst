@@ -49,7 +49,8 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
        mkdir build
        cd build
 
-2. Configure CMake for your desired build type and specific RP2040-based board
+2. Configure CMake for your desired build type and specific a RP2040-based board. This step uses the CMakeLists.txt file located in the
+   CirquePinnacle/examples/pico_sdk directory.
 
    .. code-block:: shell
        :caption: on Linux
@@ -69,8 +70,34 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
 
    If the ``-DPICO_BOARD`` option is not specified, then the Pico SDK will default to building for
    the Raspberry Pi Pico board.
-3. Build the examples using the CMakeLists.txt file located in the
-   CirquePinnacle/examples/pico_sdk directory.
+
+   .. tip::
+       :title: Optional arguments
+       :collapsible:
+
+       ``-DUSE_I2C=ON``
+           If using the I2C interface (`PinnacleTouchI2C`), then you can enable this for the examples with
+           ``-DUSE_I2C=ON``. The anymeas_mode example is automatically excluded from the build targets since
+           it does not work with the I2C interface.
+
+       ``-DUSE_SW_DR=ON``
+           If not using a physical GPIO pin for the Data Ready pin, then you can use ``-DUSE_SW_DR=ON`` which
+           will automatically make the examples use ``PINNACLE_SW_DR`` value for the ``dataReadyPin`` parameters to
+           the `~PinnacleTouchSPI::PinnacleTouchSPI()` and `~PinnacleTouchI2C::PinnacleTouchI2C()` constructors.
+           The anymeas_mode example is automatically excluded from the build targets since it requires a hardware
+           Data Ready pin.
+
+       ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           when the application won't use the Pinnacle's anymeas mode. This option is not specific to the examples,
+           rather it can be specified in any Pico-SDK project that uses the CirquePinnacle library.
+
+       ``-DPINNACLE_SPI_SPEED=13000000``
+           The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
+           the SPI bus. Default value is the maximum 13 MHz. This option is not specific to the examples,
+           rather it can be specified in any Pico-SDK project that uses the CirquePinnacle library.
+
+3. Build the examples.
 
    .. code-block:: shell
 
@@ -93,7 +120,7 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
 Incorporating CirquePinnacle library into your project
 ******************************************************
 
-In order to use the CirquePinnacle libraries in your RP2040 based project:
+In order to use the CirquePinnacle library in your RP2040 based project:
 
 1. Make a copy of the CirquePinnacle library in a "lib" directory located in your project's root directory.
 
@@ -106,7 +133,7 @@ In order to use the CirquePinnacle libraries in your RP2040 based project:
                CMakeLists.txt
                ...
 
-   Alternatively you can add the CirquePinnacle repositories as
+   Alternatively, you can add the CirquePinnacle repository as
    `git submodules <https://git-scm.com/book/en/v2/Git-Tools-Submodules>`_.
 2. Include the root CMakeLists.txt file from the CirquePinnacle library in your project's top-level
    CMakeLists.txt file (usually located in the "src" directory). The following snippet
@@ -147,128 +174,212 @@ In order to use the CirquePinnacle libraries in your RP2040 based project:
 Using different pins for the SPI or I2C bus
 *******************************************
 
-Initially (without modification), the SPI bus uses the default pins defined in the
+Initially (without modification), the SPI and I2C bus uses the default pins defined in the
 Pico SDK repository's `pico-sdk/src/boards/include/boards/\<board_name>.h files
 <https://github.com/raspberrypi/pico-sdk/tree/master/src/boards/include/boards>`_.
-However, there may be some boards that do not define the necessary pins to use as defaults. This can
-be rememdied using either project source code or build-time configuration.
+However, there may be some boards that do not define the necessary pins to use as defaults.
+This can be remedied using either the :ref:`pico-sdk-src-opt` or the :ref:`pico-sdk-cfg-opt`.
 
 .. warning::
-    There is no support for software driven SPI on RP2040 based boards at this time.
+    There is no support for software-driven (AKA bit-banged) SPI on RP2040 based boards at this time.
     If someone is so inclined to implement this using the Pico SDK's PIO (Programable Input
     Output) feature, please submit an issue or pull request to the
-    `CirquePinnacle repository <http://github.com/nCirquePinnacle/CirquePinnacle>`_.
+    `CirquePinnacle repository <http://github.com/2bndy5/CirquePinnacle>`_.
 
 .. note::
     Before deciding what pins to use for the SPI bus, review the
     `GPIO pins' "Function Select Table" in the Pico SDK documentation
-    <https://raspberrypi.github.io/pico-sdk-doxygen/group__hardware__gpio.html#details>`_.
+    <https://www.raspberrypi.com/documentation/pico-sdk/hardware.html#autotoc_md0>`_.
     There are essentially 2 SPI buses with multiple pin options for each.
+
+.. _pico-sdk-src-opt:
 
 Project Source code option
 --------------------------
 
-This option is the most reliable and flexible. It involves calling ``SPI.begin()`` and
-then passing the ``SPI`` object to ``PinnacleTouchSPI::begin(_SPI *spi_bus)``.
+.. md-tab-set::
 
-.. code-block:: cpp
+    .. md-tab-item:: SPI
 
-    #include <CirquePinnacle.h>
-    CirquePinnacle trackpad(7, 8); // pin numbers connected to the trackpad's DR and SS pins (respectively)
-    int main()
-    {
-        // first pull in the namespace for the pre-instantiated `SPI` object
-        using namespace cirque_pinnacle_arduino_wrappers;
+        This option is the most reliable and flexible. It involves calling ``SPI.begin()`` and
+        then passing the ``SPI`` object to
+        :cpp:expr:`PinnacleTouchSPI::begin(pinnacle_spi_t *spi_bus)`.
 
-        // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
-        SPI.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
-        if (!trackpad.begin(&spi)) {
-            printf("Radio hardware is not responding!\n");
-        }
-        // continue with program as normal ...
-    }
+        .. code-block:: cpp
+
+            #include <CirquePinnacle.h>
+            PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+            int main()
+            {
+                // using the namespace for the pre-instantiated `SPI` object
+                namespace arduino = cirque_pinnacle_arduino_wrappers;
+
+                // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
+                arduino::SPI.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
+                if (!trackpad.begin(&arduino::SPI)) {
+                    printf("Cirque Pinnacle not responding!\n");
+                }
+                // continue with program as normal ...
+            }
+
+    .. md-tab-item:: I2C
+
+        This option is the most reliable and flexible. It involves calling ``Wire.begin()`` and
+        then passing the ``Wire`` object to
+        :cpp:expr:`PinnacleTouchI2C::begin(pinnacle_i2c_t *i2c_bus)`.
+
+        .. code-block:: cpp
+
+            #include <CirquePinnacle.h>
+            PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+            int main()
+            {
+                // using the namespace for the pre-instantiated `Wire` object
+                namespace arduino = cirque_pinnacle_arduino_wrappers;
+
+                // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
+                arduino::Wire.begin(i2c0, 4, 5); // i2c0 or i2c1 bus, SDA, SCL
+                if (!trackpad.begin(&arduino::Wire)) {
+                    printf("Cirque Pinnacle not responding!\n");
+                }
+                // continue with program as normal ...
+            }
+
+.. _pico-sdk-cfg-opt:
 
 Build-time configuration option
 -------------------------------
 
-To specify the default SPI or I2C pins used at build time, you can use either:
+To specify the default SPI or I2C pins used at build time, you can declare them in the CMakeLists.txt file.
 
-1. Declare these pins in the CMakeLists.txt file
+.. md-tab-set::
 
-   .. code-block:: cmake
+    .. md-tab-item:: SPI
 
-       target_compile_definitions(${CMAKE_PROJECT_NAME}
-           PUBLIC PICO_DEFAULT_SPI=0 # can only be 0 or 1 (as in `spi0` or `spi1`)
-           PUBLIC PICO_DEFAULT_SPI_SCK_PIN=2 # depends on which SPI bus (0 or 1) is being used
-           PUBLIC PICO_DEFAULT_SPI_TX_PIN=3  # depends on which SPI bus (0 or 1) is being used
-           PUBLIC PICO_DEFAULT_SPI_RX_PIN=4  # depends on which SPI bus (0 or 1) is being used
-           PUBLIC PICO_DEFAULT_I2C=0 # can only be 0 or 1 (as in `i2c0` or `i2c1`)
-           PUBLIC PICO_DEFAULT_I2C_SCL_PIN=7 # depends on which I2C bus (0 or 1) is being used
-           PUBLIC PICO_DEFAULT_I2C_SDA_PIN=8 # depends on which I2C bus (0 or 1) is being used
-       )
+        .. code-block:: cmake
 
-2. additional command line arguments
+            target_compile_definitions(${CMAKE_PROJECT_NAME}
+                PUBLIC PICO_DEFAULT_SPI=0 # can only be 0 or 1 (as in `spi0` or `spi1`)
+                PUBLIC PICO_DEFAULT_SPI_SCK_PIN=2 # depends on which SPI bus (0 or 1) is being used
+                PUBLIC PICO_DEFAULT_SPI_TX_PIN=3  # depends on which SPI bus (0 or 1) is being used
+                PUBLIC PICO_DEFAULT_SPI_RX_PIN=4  # depends on which SPI bus (0 or 1) is being used
+            )
 
-   .. code-block:: shell
+    .. md-tab-item:: I2C
 
-       cmake --build . --config Release \
-       -DPICO_DEFAULT_SPI=0 \
-       -DPICO_DEFAULT_SPI_SCK_PIN=2 \
-       -DPICO_DEFAULT_SPI_TX_PIN=3 \
-       -DPICO_DEFAULT_SPI_RX_PIN=4 \
-       -DPICO_DEFAULT_I2C=0 \
-       -DPICO_DEFAULT_I2C_SCL_PIN=7 \
-       -DPICO_DEFAULT_I2C_SDA_PIN=8
+        .. code-block:: cmake
+
+            target_compile_definitions(${CMAKE_PROJECT_NAME}
+                PUBLIC PICO_DEFAULT_I2C=0 # can only be 0 or 1 (as in `i2c0` or `i2c1`)
+                PUBLIC PICO_DEFAULT_I2C_SCL_PIN=2 # depends on which I2C bus (0 or 1) is being used
+                PUBLIC PICO_DEFAULT_I2C_SDA_PIN=3 # depends on which I2C bus (0 or 1) is being used
+            )
 
 Using Multiple Cirque Pinnacle Trackpads
 ****************************************
 
 It is possible to drive multiple Cirque Pinnacle Trackpads on a single board.
-To do this each trackpad needs dedicated digital output pins for the DR and SS pins.
+To do this, each trackpad needs dedicated digital output pins for the DR pin (and SS pin for SPI).
 
-If you want to drive each trackpad with a separate SPI bus, then the following example will
+If you want to drive each trackpad with a separate SPI or I2C bus, then the following example will
 demonstrate how to do that.
 
-.. code-block:: cpp
+.. md-tab-set::
 
-    #include <CirquePinnacle.h>
+    .. md-tab-item:: SPI
 
-    // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
-    CirquePinnacle trackpad0(8, 5);   // first trackpad object
-    CirquePinnacle trackpad1(14, 13); // second trackpad object
+        .. code-block:: cpp
 
-    // By default, one SPI bus instance is created by the CirquePinnacle lib. We'll use this
-    // default instance of the `spi0` interface for our first trackpad, but we want a
-    // different SPI bus for the second trackpad.
-    //
-    // So, here we declare a second SPI bus instance:
-    cirque_pinnacle_arduino_wrappers::SPIClass my_spi; // we specify the `spi1` bus interface below
+            #include <CirquePinnacle.h>
 
-    bool setupTrackpads()
-    {
-        // Initialize the first trackpad using the default SPI instance
-        if (!trackpad0.begin()) {
-            printf("Trackpad0 hardware is not responding!\n");
-            return false;
-        }
-        // first trackpad object initialized successfully
+            // using the namespace for the wrapped arduino-like API
+            namespace arduino = cirque_pinnacle_arduino_wrappers;
 
-        // specify the the second SPI bus interface and corresponding GPIO pins
-        my_spi.begin(spi1, 10, 11, 12); // spi1 bus, SCK, TX, RX
-        if (!trackpad1.begin(&my_spi)) {
-            printf("Trackpad1 hardware is not responding!\n");
-            return false;
-        }
-        // second trackpad object initialized successfully
-        return true;
-    }
+            // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
+            PinnacleTouchSPI trackpad0 = PinnacleTouchSPI(DR_PIN_0, SS_PIN_0); // first trackpad object
+            PinnacleTouchSPI trackpad1 = PinnacleTouchSPI(DR_PIN_1, SS_PIN_1); // second trackpad object
 
-    int main()
-    {
-        stdio_init_all(); // init necessary IO for the RP2040
-        while (!setupTrackpads()) { // if either trackpadX.begin() failed
-            sleep_ms(1000); // add 1 second delay for console readability
-            // hold program in infinite attempts to initialize the trackpads
-        }
-        // continue with program as normal ...
-    }
+            // By default, one SPI bus instance is created by the CirquePinnacle lib. We'll use this
+            // default instance of the `spi0` interface for our first trackpad, but we want a
+            // different SPI bus for the second trackpad.
+            //
+            // So, here we declare a second SPI bus instance:
+            arduino::SPIClass my_spi = arduino::SPIClass(); // we specify the `spi1` bus interface below
+
+            bool setupTrackpads()
+            {
+                // Initialize the first trackpad using the default SPI instance
+                if (!trackpad0.begin()) {
+                    printf("trackpad0 hardware is not responding!\n");
+                    return false;
+                }
+                // first trackpad object initialized successfully
+
+                // specify the the second SPI bus interface and corresponding GPIO pins
+                my_spi.begin(spi1, 26, 27, 28); // spi1 bus, SCK, TX, RX
+                if (!trackpad1.begin(&my_spi)) {
+                    printf("trackpad1 hardware is not responding!\n");
+                    return false;
+                }
+                // second trackpad object initialized successfully
+                return true;
+            }
+
+            int main()
+            {
+                stdio_init_all(); // init necessary IO for the RP2040
+                while (!setupTrackpads()) { // if either trackpadX.begin() failed
+                    sleep_ms(1000); // add 1 second delay for console readability
+                    // hold program in infinite attempts to initialize the trackpads
+                }
+                // continue with program as normal ...
+            }
+
+    .. md-tab-item:: I2C
+
+        .. code-block:: cpp
+
+            #include <CirquePinnacle.h>
+
+            // using the namespace for the wrapped arduino-like API
+            namespace arduino = cirque_pinnacle_arduino_wrappers;
+
+            // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
+            PinnacleTouchI2C trackpad0 = PinnacleTouchI2C(DR_PIN_0); // first trackpad object
+            PinnacleTouchI2C trackpad1 = PinnacleTouchI2C(DR_PIN_1); // second trackpad object
+
+            // By default, one I2C bus instance is created by the CirquePinnacle lib. We'll use this
+            // default instance of the `i2c0` interface for our first trackpad, but we want a
+            // different I2C bus for the second trackpad.
+            //
+            // So, here we declare a second I2C bus instance:
+            arduino::TwoWire my_i2c = arduino::TwoWire(); // we specify the `i2c1` bus interface below
+
+            bool setupTrackpads()
+            {
+                // Initialize the first trackpad using the default I2C instance
+                if (!trackpad0.begin()) {
+                    printf("trackpad0 hardware is not responding!\n");
+                    return false;
+                }
+                // first trackpad object initialized successfully
+
+                // specify the the second I2C bus interface and corresponding GPIO pins
+                my_i2c.begin(i2c1, 2, 3); // i2c1 bus, SDA, SCL
+                if (!trackpad1.begin(&my_i2c)) {
+                    printf("trackpad1 hardware is not responding!\n");
+                    return false;
+                }
+                // second trackpad object initialized successfully
+                return true;
+            }
+
+            int main()
+            {
+                stdio_init_all(); // init necessary IO for the RP2040
+                while (!setupTrackpads()) { // if either trackpadX.begin() failed
+                    sleep_ms(1000); // add 1 second delay for console readability
+                    // hold program in infinite attempts to initialize the trackpads
+                }
+                // continue with program as normal ...
+            }

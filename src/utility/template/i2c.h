@@ -25,6 +25,16 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
+    #ifndef PINNACLE_DEFAULT_I2C_BUS
+        /**
+         * Convenient alias to control which I2C bus (on Linux) is used by default.
+         * Use Cmake option: `-D PINNACLE_DEFAULT_I2C_BUS=0` (for oldest RPi1)
+         *
+         * @ingroup cmake-options
+         */
+        #define PINNACLE_DEFAULT_I2C_BUS 1
+    #endif
+
 /** Specific exception for I2C errors */
 class I2CException : public std::runtime_error
 {

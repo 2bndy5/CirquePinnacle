@@ -22,11 +22,14 @@
 #ifndef PINNACLE_NO_ANYMEAS_SUPPORT
     /**
      * This will enable library support of the Pinnacle ASIC's anymeas mode (advanced usage).
-     * @note @parblock Arduino users need to comment out this line to save space on memory.
      *
-     * All other builds using CMake (including the python bindings) can simply define
-     * `-D PINNACLE_NO_ANYMEAS_SUPPORT` as a CMake option.
-     * @endparblock
+     * @note
+     *     Arduino users need to comment out this line to save space on memory.
+     *
+     *     All other builds using CMake (including the python bindings) can simply define
+     *     ``-D PINNACLE_ANYMEAS_SUPPORT=OFF`` as a CMake option.
+     *
+     * @ingroup cmake-options
      */
     #define PINNACLE_ANYMEAS_SUPPORT
 #endif

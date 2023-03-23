@@ -28,7 +28,7 @@ Installing from Github
    .. code-block:: shell
        :caption: from the repository's root folder
 
-       git submodule update src/pybind11
+       git submodule update --init src/pybind11
 
 3. Navigate into the repository folder.
 
@@ -45,23 +45,33 @@ Installing from Github
    The optional ``-v`` will use ``pip``\ 's verbosity to show that the process isn't frozen. Otherwise, the
    step labeled "building wheel" may look like it isn't doing anything for a few minutes.
 
-   You can customize the build further using an environment variable named ``CMAKE_ARGS``. Supported options
-   include:
+   .. tip::
+       :title: Optional ``CMAKE_ARGS`` environment variable
+       :collapsible:
 
-   - ``PINNACLE_SPI_SPEED`` can be set to lower the baudrate used on the SPI bus. Default value is the maximum
-     13 MHz.
-   - ``PINNACLE_DRIVER`` can be used to change the underlying implementation used for the I2C and SPI busses.
-     Supported options include:
+       You can customize the build further using an environment variable named ``CMAKE_ARGS`` set to a string of
+       space-separated options that get passed to CMake. Supported options include:
 
-     - ``linux_kernel`` (default) is recommended for best user experience and cross-platform/architecture compatibility.
-     - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).
-     - ``mraa`` requires the MRAA library installed (requires ``sudo`` permission to execute).
-     - ``pigpio`` requires the PiGPIO library installed (requires ``sudo`` permission to execute).
+       ``-DPINNACLE_SPI_SPEED=13000000``
+           The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
+           the SPI bus. Default value is the maximum 13 MHz.
+
+       ``-DPINNACLE_DRIVER=<utility-folder-name>``
+           Use this to change the underlying implementation used for the I2C and SPI busses. Supported options include:
+
+           - ``linux_kernel`` (default) is recommended for best user experience and cross-platform/architecture compatibility.
+           - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).
+           - ``mraa`` requires the MRAA library installed.
+           - ``pigpio`` requires the PiGPIO library installed (requires ``sudo`` permission to execute).
+
+       ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           when the application won't use the Pinnacle's anymeas mode.
 
 5. Open one of the python examples (located in examples/cpython), change the pin numbers accordingly, and run the example.
 
    .. seealso::
-       The ``PinnacleTouchSPI::begin(_SPI*)`` function is not exposed in the python binding.
+       The :cpp:expr:`PinnacleTouchSPI::begin(pinnacle_spi_t*)` function is not exposed in the python binding.
        Please review how to specify the :ref:`slaveSelectPin` for Linux platforms.
 
    .. code-block:: shell

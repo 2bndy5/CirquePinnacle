@@ -43,8 +43,17 @@ Installing from Source
    - ``linux_kernel`` (default fallback) is recommended for best user experience and
      cross-platform/architecture compatibility.
 
-   Additionally, ``-D PINNACLE_SPI_SPEED=13000000`` can be set to lower the baudrate used on the SPI bus.
-   Default value is the maximum 13 MHz.
+   .. tip::
+       :title: Optional arguments
+       :collapsible:
+
+       ``-DPINNACLE_SPI_SPEED=13000000``
+           The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
+           the SPI bus. Default value is the maximum 13 MHz.
+
+       ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
+           when the application won't use the Pinnacle's anymeas mode.
 5. Build and install the library:
 
    .. code-block:: shell
@@ -73,7 +82,23 @@ repository's root folder (as created in step 3 above).
        cmake ../examples/linux -D PINNACLE_DRIVER=linux_kernel
 
    Again, specify the driver used to build the library (see step 4 above) is recommended because
-   some drivers require the built applications to be linked to ``pthread``.
+   some drivers require the built applications to be linked to pre-installed libraries.
+
+   .. tip::
+       :title: Optional arguments
+       :collapsible:
+
+       ``-DUSE_I2C=ON``
+           If using the I2C interface (`PinnacleTouchI2C`), then you can enable this for the examples with
+           ``-DUSE_I2C=ON``. The anymeas_mode example is automatically excluded from the build targets since
+           it does not work with the I2C interface.
+
+       ``-DUSE_SW_DR=ON``
+           If not using a physical GPIO pin for the Data Ready pin, then you can use ``-DUSE_SW_DR=ON`` which
+           will automatically make the examples use ``PINNACLE_SW_DR`` value for the ``dataReadyPin`` parameters to
+           the `~PinnacleTouchSPI::PinnacleTouchSPI()` and `~PinnacleTouchI2C::PinnacleTouchI2C()` constructors.
+           The anymeas_mode example is automatically excluded from the build targets since it requires a hardware
+           Data Ready pin.
 3. Build the examples:
 
    .. code-block:: shell
@@ -94,15 +119,21 @@ SlaveSelect pin
 
 Using the SPI bus' SS pin (Slave Select, aka Chip Select) on a Linux platform is a bit different
 from the Arduino platform because the Linux kernel controls the pin during bus transactions.
-Therefore, the pin number passed to the `PinnacleTouchSPI` constructor should follow the form
+Therefore, the pin number passed to the `~PinnacleTouchSPI::PinnacleTouchSPI()` constructor should follow the form
 ``ab`` where ``a`` is the SPI bus number and ``b`` is the specified bus' SS pin (often labeled
 ``CE<b>`` on Raspberry Pi pinout diagrams).
 
 .. csv-table::
     :header: "bus ID","CE number","constructor's ``slaveSelectPin`` value","spidev adapter"
+    :widths: 2, 4, 8, 6
 
     0,0,0,``/dev/spidev0.0``
     0,1,1,``/dev/spidev0.1``
     1,0,10,``/dev/spidev1.0``
     1,1,11,``/dev/spidev1.1``
     1,2,12,``/dev/spidev1.2``
+
+.. note::
+    Support for the auxiliary (AKA secondary) SPI bus (``/dev/spidev1.x``) is only well supported in
+    the ``linux_kernel`` driver. Other drivers have their own set of limitations when it comes to
+    using ``/dev/spidev1.x``.

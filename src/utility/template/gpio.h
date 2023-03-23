@@ -68,10 +68,10 @@ public:
     static int read(pinnacle_gpio_t port);
 
     /**
-    * Similar to Arduino digitalWrite(pin, level);
-    * @param port
-    * @param value
-    */
+     * Similar to Arduino digitalWrite(pin, level);
+     * @param port
+     * @param value
+     */
     static void write(pinnacle_gpio_t port, int value);
 
     virtual ~GPIOClass();
