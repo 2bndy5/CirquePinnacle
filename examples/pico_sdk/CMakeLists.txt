@@ -71,3 +71,5 @@ foreach(example ${EXAMPLES_LIST})
     # create map/bin/hex file etc.
     pico_add_extra_outputs(${example})
 endforeach()
+
+add_subdirectory(usb_mouse)
