@@ -391,10 +391,10 @@ public:
      * only applies to `PINNACLE_RELATIVE` mode, otherwise if `setDataMode()` is given
      * `PINNACLE_ANYMEAS` or `PINNACLE_ABSOLUTE`, then this function does nothing.
      *
-     * @param rotate90 Specifies if the axis data is altered for 90 degree rotation before
-     *     reporting it (essentially swaps the axis data). Default is ``false``.
      * @param allTaps Specifies if all taps should be reported (``true``) or not
      *     (``false``). Default is ``true``. This affects ``secondaryTap`` option as well.
+     * @param rotate90 Specifies if the axis data is altered for 90 degree rotation before
+     *     reporting it (essentially swaps the axis data). Default is ``false``.
      * @param secondaryTap Specifies if tapping in the top-left corner (depending on
      *     orientation) triggers the secondary button data. Defaults to ``true``. This feature is
      *     always disabled if `isHardConfigured()` is ``true``.
@@ -405,8 +405,8 @@ public:
      *     Default is ``false``. This feature is always disabled if `isHardConfigured()`
      *     is ``true``.
      */
-    void relativeModeConfig(bool rotate90 = false,
-                            bool allTaps = true,
+    void relativeModeConfig(bool allTaps = true,
+                            bool rotate90 = false,
                             bool secondaryTap = true,
                             bool glideExtend = false,
                             bool intellimouse = false);
@@ -555,8 +555,12 @@ public:
      *     parameter has something to do with palm detection/compensation.
      * @param background Enable dynamic background compensation? Default is
      *     ``true``.
+     * @returns If calibration is not ``run``, then this arbitrarily returns ``true``.
+     *     If calibration is ``run``, then this can return ``false`` if the calibration
+     *     failed (after a 100 millisecond timeout) or ``true`` if the calibration
+     *     completed correctly.
      */
-    void calibrate(bool run,
+    bool calibrate(bool run,
                    bool tap = true,
                    bool trackError = true,
                    bool nerd = true,

@@ -128,16 +128,16 @@ class PinnacleTouch:
     ) -> None: ...
     def relative_mode_config(
         self,
-        rotate90: bool = False,
         all_taps: bool = True,
+        rotate90: bool = False,
         secondary_tap: bool = True,
         glide_extend: bool = False,
         intellimouse: bool = False,
     ) -> None: ...
     def relativeModeConfig(
         self,
-        rotate90: bool = False,
         all_taps: bool = True,
+        rotate90: bool = False,
         secondary_tap: bool = True,
         glide_extend: bool = False,
         intellimouse: bool = False,
@@ -183,7 +183,7 @@ class PinnacleTouch:
         track_error: bool = True,
         nerd: bool = True,
         background: bool = True,
-    ) -> None: ...
+    ) -> bool: ...
     @property
     def calibration_matrix(self) -> List[int]: ...
     @calibration_matrix.setter

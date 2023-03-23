@@ -215,10 +215,10 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("absoluteModeConfig", &PinnacleTouch::absoluteModeConfig,
                       py::arg("z_idle_count") = 30, py::arg("invert_x") = false, py::arg("invert_x") = false);
     pinnacleTouch.def("relative_mode_configure", &PinnacleTouch::relativeModeConfig,
-                      py::arg("rotate90") = false, py::arg("all_taps") = true, py::arg("secondary_tap") = true,
+                      py::arg("all_taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
     pinnacleTouch.def("relativeModeConfig", &PinnacleTouch::relativeModeConfig,
-                      py::arg("rotate90") = false, py::arg("all_taps") = true, py::arg("secondary_tap") = true,
+                      py::arg("all_taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"));
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"));

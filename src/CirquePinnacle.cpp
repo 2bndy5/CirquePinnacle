@@ -48,8 +48,7 @@ bool PinnacleTouch::begin()
         // configs[1] => set relative mode & enable feed
         // configs[2] => enables all taps in Relative mode
         rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
-        calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
-        return true;
+        return calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
     } // hardware check passed
 
     _dataMode = static_cast<uint8_t>(0xFF); // prevent operations if hardware check failed
@@ -139,7 +138,7 @@ bool PinnacleTouch::available()
     if (_dataReady == PINNACLE_SW_DR) {
         uint8_t tmp = 0;
         rapRead(PINNACLE_STATUS, &tmp);
-        return (tmp & 4) == 4;
+        return (bool)(tmp & 0x0C);
     }
     return digitalRead(_dataReady);
 }
@@ -154,7 +153,7 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
     }
 }
 
-void PinnacleTouch::relativeModeConfig(bool rotate90, bool allTaps, bool secondaryTap, bool glideExtend, bool intellimouse)
+void PinnacleTouch::relativeModeConfig(bool allTaps, bool rotate90, bool secondaryTap, bool glideExtend, bool intellimouse)
 {
     if (_dataMode == PINNACLE_RELATIVE) {
         uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!allTaps << 1) | intellimouse;
@@ -168,7 +167,8 @@ void PinnacleTouch::read(RelativeReport* report)
         uint8_t temp[4] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 4);
         clearStatusFlags();
-        report->buttons = temp[0] & 7;
+        report->buttons &= 0xF8;
+        report->buttons |= temp[0] & 7;
         report->x = (int8_t)temp[1];
         report->y = (int8_t)temp[2];
         report->scroll = (int8_t)temp[3];
@@ -181,7 +181,8 @@ void PinnacleTouch::read(AbsoluteReport* report)
         uint8_t temp[6] = {};
         rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 6);
         clearStatusFlags();
-        report->buttons = temp[0] & 0x3F;
+        report->buttons &= 0xF8;
+        report->buttons |= temp[0] & 0x3F;
         report->x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
         report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
         report->z = (uint8_t)(temp[5] & 0x1F);
@@ -282,19 +283,22 @@ void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uin
     }
 }
 
-void PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bool background)
+bool PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bool background)
 {
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
         uint8_t cal_config = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
         rapWrite(PINNACLE_CAL_CONFIG, cal_config | run);
         if (run) {
-            while (!available()) {
-                // calibration is running
+            bool done = false;
+            uint32_t timeout = millis() + 100;
+            while (!done && millis() < timeout) { // calibration is running
+                done = available();
             }
-
             clearStatusFlags(); // now that calibration is done
+            return done;
         }
     }
+    return true;
 }
 
 void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
