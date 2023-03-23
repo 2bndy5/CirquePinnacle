@@ -55,7 +55,7 @@ void TwoWire::beginTransmission(uint8_t address)
 
 uint8_t TwoWire::endTransmission(uint8_t sendStop)
 {
-    int result = i2c_write_timeout_us(hw_id, slaveAddress, xBuff, xBuffLen, !sendStop, 1000);
+    int result = i2c_write_blocking(hw_id, slaveAddress, xBuff, xBuffLen, !sendStop);
     if (result == PICO_ERROR_GENERIC) {
         // no I2C slave device present at specified address.
         return 0;
@@ -82,7 +82,7 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop
     if (quantity > PINNACLE_I2C_BUFFER_LENGTH)
         quantity = PINNACLE_I2C_BUFFER_LENGTH;
 
-    int result = i2c_read_timeout_us(hw_id, address, xBuff, quantity, !sendStop, 1000);
+    int result = i2c_read_blocking(hw_id, address, xBuff, quantity, !sendStop);
     xBuffIndex = 0;
     xBuffLen = 0;
     if (result == PICO_ERROR_GENERIC) {

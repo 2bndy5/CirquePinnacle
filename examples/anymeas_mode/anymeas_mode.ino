@@ -9,6 +9,8 @@
 #define DR_PIN 7
 
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+// If using I2C, then use the following line (not the line above)
+// PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
 
 typedef struct _MeasureVector {
   unsigned long toggle;

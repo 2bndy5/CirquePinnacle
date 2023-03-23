@@ -14,7 +14,11 @@
 #endif
 #define SS_PIN 0
 
+#ifndef USE_I2C
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+#else // If using I2C, then use the following line (not the line above)
+PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+#endif
 
 typedef struct _MeasureVector
 {

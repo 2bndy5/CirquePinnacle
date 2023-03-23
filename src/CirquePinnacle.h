@@ -60,11 +60,10 @@ enum PinnacleDataMode : uint8_t
      *
      * .. anymeas-limits::
      *
-     *     1. Anymeas mode does not work with the I2C interface.
-     *        Only use `PinnacleTouchSPI` for anymeas mode.
-     *     2. Anymeas mode requires the use of a physical Data Ready pin.
-     *        Do not use ``PINNACLE_SW_DR`` as the value for the ``dataReadyPin`` parameter to
-     *        `~PinnacleTouchSPI::PinnacleTouchSPI()` constructor.
+     *     Anymeas mode requires the use of a Hardware Data Ready pin.
+     *     Do not use ``PINNACLE_SW_DR`` as the value for the ``dataReadyPin`` parameter to
+     *     `~PinnacleTouchSPI::PinnacleTouchSPI()` or `~PinnacleTouchI2C::PinnacleTouchI2C()`
+     *     constructors.
      */
     PINNACLE_ANYMEAS = 0x01,
 #endif
@@ -850,10 +849,6 @@ private:
 /**
  * Derived class for interfacing with the Pinnacle ASIC via the I2C protocol.
  *
- * .. anymeas-limits::
- *
- *     The anymeas mode does not work with the I2C interface.
- *
  * @ingroup pinnacle-touch-api
  */
 class PinnacleTouchI2C : public PinnacleTouch
@@ -866,6 +861,10 @@ public:
      *     To use the Pinnacle's Software Data Ready flag instead, set this to ``PINNACLE_SW_DR``.
      *     In general, it recommended to use the Hardware Data Ready pin for speed and efficient
      *     bus activity.
+     *
+     *     .. anymeas-limits::
+     *
+     *         A Hardware Data Ready pin is required for anymeas mode.
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
      */
     PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress = 0x2A);

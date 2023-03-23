@@ -15,12 +15,12 @@ add_library(CirquePinnacle INTERFACE)
 
 if(NOT PINNACLE_ANYMEAS_SUPPORT)
     message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
-    target_compile_definitions(CirquePinnacle PUBLIC PINNACLE_ANYMEAS_SUPPORT=0)
+    target_compile_definitions(CirquePinnacle INTERFACE PINNACLE_ANYMEAS_SUPPORT=0)
 endif()
 
 if(PINNACLE_DEV_HW_DEBUG)
     message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
-    target_compile_definitions(CirquePinnacle PUBLIC PINNACLE_DEV_HW_DEBUG=1)
+    target_compile_definitions(CirquePinnacle INTERFACE PINNACLE_DEV_HW_DEBUG=1)
 endif()
 
 # generate the lib-specific includes.h for the Pico SDK
