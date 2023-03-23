@@ -25,48 +25,29 @@ jobs:
   build:
     needs: check_formatting
     runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
-
       matrix:
         fqbn:
-          # - "arduino:avr:yun"
           - "arduino:avr:uno"
-          # - "arduino:avr:diecimila"
           - "arduino:avr:mega"
-          # - "arduino:avr:megaADK"
           - "arduino:avr:leonardo"
           - "arduino:avr:micro"
-          # - "arduino:avr:esplora"
           - "arduino:avr:mini"
-          # - "arduino:avr:ethernet"
-          # - "arduino:avr:fio"
-          # - "arduino:avr:bt"
-          # - "arduino:avr:LilyPadUSB"
           - "arduino:avr:pro"
           - "arduino:avr:atmegang"
-          # - "arduino:avr:robotControl"
-          # - "arduino:avr:circuitplay32u4cat"
-          # - "arduino:avr:yunmini"
-          # - "arduino:avr:chiwawa"
-          # - "arduino:avr:one"
           - "arduino:avr:unowifi"
+          - "arduino:megaavr:uno2018"
           - "arduino:mbed:nano33ble"
           - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"
           - "arduino:samd:adafruit_circuitplayground_m0"
-          # - "arduino:samd:mzero_pro_bl"
-          # - "arduino:samd:mzero_bl"
           # - "arduino:samd:tian"
-          - "arduino:megaavr:uno2018"
         # By default, don't generate size deltas data.
         enable-deltas-report:
           - false
         # Generate size deltas data for these boards
         include:
-          - fqbn: arduino:avr:nano
-            enable-deltas-report: true
           - fqbn: arduino:samd:mkrzero
             enable-deltas-report: true
 
@@ -80,6 +61,10 @@ jobs:
           fqbn: ${{ matrix.fqbn }}
           enable-deltas-report: ${{ matrix.enable-deltas-report }}
           sketches-report-path: ${{ env.SKETCH_REPORTS_PATH }}
+          sketch-paths: |
+            - examples/absolute_mode
+            - examples/anymeas_mode
+            - examples/relative_mode
 
       # This step is needed to pass the size data to the report job
       - name: Upload sketches report to workflow artifact
