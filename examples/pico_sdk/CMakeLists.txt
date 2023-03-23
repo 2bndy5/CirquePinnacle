@@ -57,7 +57,7 @@ foreach(example ${EXAMPLES_LIST})
         target_compile_definitions(${example} PUBLIC USE_SW_DR=1)
     endif()
 
-    if (not PINNACLE_ANYMEAS_SUPPORT)
+    if (NOT PINNACLE_ANYMEAS_SUPPORT)
         message(STATUS "excluding anymeas mode support in the CirquePinnacle library.")
         target_compile_definitions(${example} PUBLIC PINNACLE_ANYMEAS_SUPPORT=0)
     endif()

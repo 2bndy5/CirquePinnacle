@@ -285,6 +285,7 @@ void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uin
 
 bool PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bool background)
 {
+    PINNACLE_USE_ARDUINO_API
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
         uint8_t cal_config = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
         rapWrite(PINNACLE_CAL_CONFIG, cal_config | run);
