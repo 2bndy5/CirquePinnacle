@@ -19,7 +19,7 @@
 #ifndef CIRQUEPINNACLE_ARCH_COMMON_H_
 #define CIRQUEPINNACLE_ARCH_COMMON_H_
 
-#ifndef PINNACLE_NO_ANYMEAS_SUPPORT
+#ifndef PINNACLE_ANYMEAS_SUPPORT
     /**
      * This will enable library support of the Pinnacle ASIC's anymeas mode (advanced usage).
      *
@@ -31,8 +31,8 @@
      *
      * @ingroup cmake-options
      */
-    #define PINNACLE_ANYMEAS_SUPPORT
-#endif
+    #define PINNACLE_ANYMEAS_SUPPORT true
+#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
 #ifndef PINNACLE_DEV_HW_DEBUG
     // a switch to expose a convenient function for HW debugging.

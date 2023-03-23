@@ -6,17 +6,22 @@
 #include <iostream>                        // cout, endl
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#ifdef PINNACLE_DRIVER_mraa
+#ifdef USE_SW_DR // if using PINNACLE_SW_DR
+    #define DR_PIN PINNACLE_SW_DR
+#endif
+#if defined(PINNACLE_DRIVER_mraa) && !defined(DR_PIN)
     #include <mraa/types.hpp>
     #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN22 // GPIO25
-#else
+#elif !defined(DR_PIN)
     #define DR_PIN 25
 #endif
 #define SS_PIN 0
 
+#ifndef USE_I2C
 PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
-// If using I2C, then use the following line (not the line above)
-// PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+#else // If using I2C, then use the following line (not the line above)
+PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+#endif
 
 RelativeReport report;
 

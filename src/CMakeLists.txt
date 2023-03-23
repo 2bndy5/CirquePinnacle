@@ -12,7 +12,9 @@ cmake_minimum_required(VERSION 3.15)
 project(cirque_pinnacle C CXX)
 
 # optionally enable building the python binding
-option(PINNACLE_PY_BINDING OFF) # enabled via setup.py
+option(PINNACLE_PY_BINDING "Only build python binding" OFF) # enabled via setup.py
+option(PINNACLE_ANYMEAS_SUPPORT "Enable anymeas mode support" ON)
+option(PINNACLE_DEV_HW_DEBUG "Expose register read function" OFF)
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/StandardProjectSettings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/PreventInSourceBuilds.cmake)
@@ -107,12 +109,12 @@ if(NOT PINNACLE_PY_BINDING)
         )
     endif()
 
-    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+    if(NOT PINNACLE_ANYMEAS_SUPPORT)
         message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
-        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_ANYMEAS_SUPPORT=0)
     endif()
 
-    if(DEFINED PINNACLE_DEV_HW_DEBUG)
+    if(PINNACLE_DEV_HW_DEBUG)
         message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
         target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_DEV_HW_DEBUG=1)
     endif()
@@ -161,7 +163,7 @@ if(NOT PINNACLE_PY_BINDING)
         install(CODE "message(STATUS \"Updating ldconfig\")")
         install(CODE "execute_process(COMMAND ldconfig)")
     endif()
-else()
+else() # if(${PINNACLE_PY_BINDING})
     add_subdirectory(pybind11)
     pybind11_add_module(cirque_pinnacle
         py_bindings.cpp
@@ -179,9 +181,9 @@ else()
         )
     endif()
 
-    if(DEFINED PINNACLE_NO_ANYMEAS_SUPPORT)
+    if(NOT PINNACLE_ANYMEAS_SUPPORT)
         message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
-        target_compile_definitions(cirque_pinnacle PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
+        target_compile_definitions(cirque_pinnacle PUBLIC PINNACLE_ANYMEAS_SUPPORT=0)
     endif()
 
     target_include_directories(cirque_pinnacle PUBLIC ${CMAKE_CURRENT_LIST_DIR})

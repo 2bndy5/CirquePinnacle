@@ -72,7 +72,7 @@ enum PinnacleDataMode : uint8_t
     PINNACLE_ABSOLUTE = 0x02,
 };
 
-#ifdef PINNACLE_ANYMEAS_SUPPORT
+#if PINNACLE_ANYMEAS_SUPPORT
 
 /**
  * Allowed ADC gain configurations of AnyMeas mode.
@@ -178,7 +178,7 @@ enum PinnacleAnyMeasCtrl : uint8_t
     PINNACLE_CRTL_PWR_IDLE = 0x40,
 };
 
-#endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
+#endif // PINNACLE_ANYMEAS_SUPPORT == false
 
 /**
  * This data structure is used for returning data reports in relative mode using
@@ -629,7 +629,7 @@ public:
      * YOUR OWN RISK!
      */
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin = 4, uint8_t yAxisWideZMin = 3);
-#ifndef PINNACLE_NO_ANYMEAS_SUPPORT
+#if PINNACLE_ANYMEAS_SUPPORT
     /**
      * This function configures the Pinnacle ASIC for taking raw ADC
      * measurements. Be sure that `setDataMode()` is given
@@ -756,7 +756,7 @@ public:
      *       returns ``false``.
      */
     int16_t getMeasureAdc();
-#endif // !defined(PINNACLE_NO_ANYMEAS_SUPPORT)
+#endif // PINNACLE_ANYMEAS_SUPPORT == true
 
 #if PINNACLE_DEV_HW_DEBUG
     // A handy function to get a register dump from the sensor.

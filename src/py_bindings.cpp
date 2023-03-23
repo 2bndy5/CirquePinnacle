@@ -247,7 +247,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("set_adc_gain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
     pinnacleTouch.def("setAdcGain", &PinnacleTouch::setAdcGain, py::arg("sensitivity"));
 
-    #ifdef PINNACLE_ANYMEAS_SUPPORT
+    #if PINNACLE_ANYMEAS_SUPPORT
 
     pinnacleTouch.def("anymeas_mode_config", &PinnacleTouch::anymeasModeConfig,
                       py::arg("gain") = PINNACLE_GAIN_200, py::arg("frequency") = PINNACLE_FREQ_0, py::arg("sample_length") = 512,
@@ -262,7 +262,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("startMeasureAdc", &PinnacleTouch::startMeasureAdc, py::arg("bits_to_toggle"), py::arg("toggle_polarity"));
     pinnacleTouch.def("getMeasureAdc", &PinnacleTouch::getMeasureAdc);
 
-    #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
+    #endif // PINNACLE_ANYMEAS_SUPPORT == true
 
     // ******************** bindings for PinnacleTouchSPI
     py::class_<PinnacleTouchSPI> pinnacleTouchSPI(m, "PinnacleTouchSPI", pinnacleTouch);
