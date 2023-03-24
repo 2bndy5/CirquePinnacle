@@ -29,9 +29,10 @@ on:
 
 jobs:
   check_source:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Python
+        id: python-setup
         uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -47,6 +48,12 @@ jobs:
 
       - name: Install pre-commit, twine, and lib stubs
         run: pip install pre-commit twine .
+
+      - name: Cache pre-commit venv
+        uses: actions/cache@v3
+        with:
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: '~/.cache/pre-commit'
 
       - name: run pre-commit on all files
         run: pre-commit run --all-files

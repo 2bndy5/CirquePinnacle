@@ -3,8 +3,9 @@ This example reads data from the Cirque trackpad in "anymeas mode" and prints th
 
 See documentation at https://cirquepinnacle.rtfd.io/
 """
-import sys
 import argparse
+import sys
+from typing import Union
 from cirque_pinnacle import (
     PinnacleTouchSPI,
     PinnacleTouchI2C,  # noqa: imported but unused
@@ -29,6 +30,7 @@ class TouchController:
     def __init__(self, use_i2c: bool = False):
         dr_pin = 25  # GPIO25
 
+        self.trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
         if not use_i2c:
             ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
             self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)

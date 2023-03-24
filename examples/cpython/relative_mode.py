@@ -3,8 +3,9 @@ This example reads data from the Cirque trackpad in "relative mode" and prints t
 
 See documentation at https://cirquepinnacle.rtfd.io/
 """
-import sys
 import argparse
+import sys
+from typing import Union
 from cirque_pinnacle import (
     RelativeReport,
     PinnacleTouchSPI,
@@ -32,6 +33,7 @@ class TouchController:
         if not use_sw_dr:
             dr_pin = PINNACLE_SW_DR  # uses internal DR flag
 
+        self.trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
         if not use_i2c:
             ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
             self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
