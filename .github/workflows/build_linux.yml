@@ -61,18 +61,10 @@ jobs:
             usr_dir: "arm-linux-gnueabihf"
           - compiler: "arm64"
             usr_dir: "aarch64-linux-gnu"
-          # - compiler: "x86_64"
-          #   usr_dir: "x86_64-linux-gnux32"
-          # - compiler: "i686"
-          #   usr_dir: "i686-linux-gnu"
           - compiler: "default" # github runner is hosted on a "amd64"
             usr_dir: "local" # using this toolchain to test python wrapper
-        # exclude:
-        #   # mraa is not compatible with i686 arch
-        #   - driver: "mraa"
-        #     toolchain:
-        #       compiler: "i686"
-        #       usr_dir: "i686-linux-gnu"
+        i2c-bus: [-DUSE_I2C=ON, -DUSE_I2C=OFF]
+        dr-pin: [-DUSE_SW_DR=ON, -DUSE_SW_DR=OFF]
         include:
           - driver: "pigpio"
             toolchain:
@@ -83,17 +75,6 @@ jobs:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Release
     steps:
-      # - name: provide toolchain (for x86_64)
-      #   if: ${{ matrix.toolchain.compiler == 'x86_64' }}
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install gcc-x86-64-linux-gnux32 g++-x86-64-linux-gnux32
-
-      # - name: provide toolchain (for i686)
-      #   if: ${{ matrix.toolchain.compiler == 'i686' }}
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install gcc-i686-linux-gnu g++-i686-linux-gnu
 
       - name: provide toolchain (for arm64)
         if: ${{ matrix.toolchain.compiler == 'arm64' }}
@@ -161,10 +142,12 @@ jobs:
         run: sudo cmake --install .
 
       - name: package lib
+        if: endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF')
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
         run: sudo cpack
 
       - name: Save artifact
+        if: endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF')
         uses: actions/upload-artifact@v3
         with:
           name: pkg_${{ steps.lib-info.outputs.name }}
@@ -173,7 +156,7 @@ jobs:
             ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/pkgs/*.rpm
 
       - name: Upload Release assets
-        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') && (matrix.driver =='bcm2xxx' || matrix.driver =='linux_kernel')
+        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') && (matrix.driver =='bcm2xxx' || matrix.driver =='linux_kernel') && (endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF'))
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -210,7 +193,8 @@ jobs:
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
         run: |
           cmake ../examples/linux \
-          -D CMAKE_TOOLCHAIN_FILE=../src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
+          -D CMAKE_TOOLCHAIN_FILE=../src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake \
+          ${{ matrix.i2c-bus }} ${{ matrix.dr-pin }}
 
       - name: build examples
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build

@@ -58,8 +58,6 @@ foreach(example ${EXAMPLES_LIST})
         target_compile_definitions(${example} PUBLIC USE_SW_DR=1)
     endif()
 
-    target_compile_definitions(${example} PUBLIC PICO_DEFAULT_I2C=1)
-
     # specify USB port as default serial communication's interface (not UART RX/TX pins)
     pico_enable_stdio_usb(${example} 1)
     pico_enable_stdio_uart(${example} 0)

@@ -39,11 +39,12 @@ jobs:
           - "sparkfun_micromod" # examples require PicoSDK v1.2.0
           - "sparkfun_promicro" # examples require PicoSDK v1.2.0
           - "sparkfun_thingplus" # examples require PicoSDK v1.2.0
-          # - "vgaboard" # examples require PicoSDK v1.2.0 (this can be enabled on request)
           - "arduino_nano_rp2040_connect" # requires PicoSDK v1.2.0
           - "pimoroni_picolipo_4mb" # requires PicoSDK v1.2.0
           - "pimoroni_picolipo_16mb" # requires PicoSDK v1.2.0
           - "pimoroni_pga2040" # requires PicoSDK v1.2.0
+        i2c-bus: [USE_I2C=ON, USE_I2C=OFF]
+        dr-pin: [USE_SW_DR=ON, USE_SW_DR=OFF]
     env:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Release
@@ -81,7 +82,7 @@ jobs:
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
         env:
           PICO_SDK_PATH: ${{ github.workspace }}/pico-sdk
-        run: cmake ../examples/pico_sdk -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPICO_BOARD=${{ matrix.board }}
+        run: cmake ../examples/pico_sdk -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPICO_BOARD=${{ matrix.board }} -D${{ matrix.i2c-bus }} -D${{ matrix.dr-pin }}
 
       - name: Build
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
@@ -91,9 +92,9 @@ jobs:
       - name: Save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: examples_pico_${{ matrix.board }}
+          name: examples_pico_${{ matrix.board }}_${{ matrix.i2c-bus }}_${{ matrix.dr-pin }}
           path: |
             ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/*.uf2
-            ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/*.elf
+          # ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/*.elf
           # ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/*.hex
           # ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/*.bin
