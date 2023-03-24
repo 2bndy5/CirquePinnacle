@@ -26,7 +26,7 @@
     #include <pigpio.h>
 
 typedef int pinnacle_gpio_t;
-    #define PINNACLE_SW_DR 0xFFFFFFFF
+const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 

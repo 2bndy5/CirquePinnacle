@@ -55,16 +55,16 @@ typedef SPIClass pinnacle_spi_t;
 typedef TwoWire pinnacle_i2c_t;
 
     #ifdef NUM_DIGITAL_PINS
-        #if NUM_DIGITAL_PINS < 255
+        #if NUM_DIGITAL_PINS < 0xFF
 typedef uint8_t pinnacle_gpio_t;
-            #define PINNACLE_SW_DR 0xFF
+const pinnacle_gpio_t PINNACLE_SW_DR = 0xFF;
         #else
 typedef uint16_t pinnacle_gpio_t;
-            #define PINNACLE_SW_DR 0xFFFF
+const pinnacle_gpio_t PINNACLE_SW_DR = 0xFFFF;
         #endif
     #else
 typedef uint16_t pinnacle_gpio_t;
-        #define PINNACLE_SW_DR 0xFFFF
+const pinnacle_gpio_t PINNACLE_SW_DR = 0xFFFF;
     #endif
 
     #define PINNACLE_SS_CTRL(pin, value) digitalWrite(pin, value)
