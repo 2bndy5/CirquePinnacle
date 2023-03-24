@@ -57,7 +57,8 @@ Installing from Github
            the SPI bus. Default value is the maximum 13 MHz.
 
        ``-DPINNACLE_DRIVER=<utility-folder-name>``
-           Use this to change the underlying implementation used for the I2C and SPI busses. Supported options include:
+           Use this to change the underlying implementation used for the I2C and SPI busses (and GPIO pins).
+           Supported options include:
 
            - ``linux_kernel`` (default) is recommended for best user experience and cross-platform/architecture compatibility.
            - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).

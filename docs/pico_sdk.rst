@@ -77,8 +77,7 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
 
        ``-DUSE_I2C=ON``
            If using the I2C interface (`PinnacleTouchI2C`), then you can enable this for the examples with
-           ``-DUSE_I2C=ON``. The anymeas_mode example is automatically excluded from the build targets since
-           it does not work with the I2C interface.
+           ``-DUSE_I2C=ON``.
 
        ``-DUSE_SW_DR=ON``
            If not using a physical GPIO pin for the Data Ready pin, then you can use ``-DUSE_SW_DR=ON`` which
