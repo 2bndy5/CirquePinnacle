@@ -58,9 +58,4 @@ foreach(example ${EXAMPLES_LIST})
         target_compile_definitions(${example} PUBLIC USE_SW_DR=1)
     endif()
 
-    if(NOT PINNACLE_NO_ANYMEAS_SUPPORT)
-        message(STATUS "Excluding code related to the Pinnacle's anymeas mode.")
-        target_compile_definitions(${example} PUBLIC PINNACLE_NO_ANYMEAS_SUPPORT=1)
-    endif()
-
 endforeach()
