@@ -68,7 +68,7 @@ py::list getCalibrationMatrix_wrapper(PinnacleTouch* self)
 {
     int16_t* buff = new int16_t[46];
     self->getCalibrationMatrix(buff);
-    py::list matrix = py::list(46);
+    py::list matrix = py::list(0);
     for (uint8_t i = 0; i < 46; ++i) {
         matrix.append(py::int_(buff[i]));
     }

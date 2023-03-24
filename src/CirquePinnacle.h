@@ -554,10 +554,14 @@ public:
      *     parameter has something to do with palm detection/compensation.
      * @param background Enable dynamic background compensation? Default is
      *     ``true``.
-     * @returns If calibration is not ``run``, then this arbitrarily returns ``true``.
-     *     If calibration is ``run``, then this can return ``false`` if the calibration
-     *     failed (after a 100 millisecond timeout) or ``true`` if the calibration
-     *     completed correctly.
+     * @returns
+     *     ``false``
+     *         - If `setDataMode()` is not set to `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE`.
+     *         - If the calibration ``run`` timed out after 100 milliseconds.
+     *     ``true``
+     *         - If `setDataMode()` is not given `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE` and the
+     *           calibration is not ``run``.
+     *         - If the calibration ``run`` successfully finishes.
      */
     bool calibrate(bool run,
                    bool tap = true,

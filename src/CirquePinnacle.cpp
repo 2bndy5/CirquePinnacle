@@ -49,8 +49,8 @@ bool PinnacleTouch::begin()
         // configs[2] => enables all taps in Relative mode
         rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
         return calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
-    } // hardware check passed
-
+    }
+    // else if hardware check failed
     _dataMode = static_cast<uint8_t>(0xFF); // prevent operations if hardware check failed
     return false;
 }
@@ -295,11 +295,13 @@ bool PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
             while (!done && millis() < timeout) { // calibration is running
                 done = available();
             }
-            clearStatusFlags(); // now that calibration is done
+            if (done)
+                clearStatusFlags(); // now that calibration is done
             return done;
         }
+        return true;
     }
-    return true;
+    return false;
 }
 
 void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
@@ -329,7 +331,7 @@ void PinnacleTouch::getCalibrationMatrix(int16_t* matrix)
         uint8_t data[92] = {};
         eraReadBytes(0x01DF, data, 92);
         for (uint8_t i = 0; i < 92; i += 2) {
-            matrix[i / 2] = (int16_t)data[i] << 8;
+            matrix[i / 2] = ((int16_t)data[i]) << 8;
             matrix[i / 2] |= (int16_t)(data[i + 1]);
         }
     }
@@ -458,22 +460,19 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
 void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
 {
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState)
-    {
+    if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
     uint8_t temp = 1;
-    while (temp)
-    {
+    while (temp) {
         rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
     }
     rapRead(PINNACLE_ERA_VALUE, data); // get data
     clearStatusFlags();                // clear Command Complete flag in Status register
-    if (prevFeedState)
-    {
+    if (prevFeedState) {
         feedEnabled(prevFeedState); // resume previous feed state
     }
 }
@@ -481,25 +480,21 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
 void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_t registerCount)
 {
     bool prevFeedState = isFeedEnabled();
-    if (prevFeedState)
-    {
+    if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
     uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
     uint8_t temp = 1;
-    for (uint8_t i = 0; i < registerCount; i++)
-    {
-        while (temp)
-        {
+    for (uint8_t i = 0; i < registerCount; ++i) {
+        rapWrite(PINNACLE_ERA_CONTROL, 5); // indicate reading sequential bytes
+        while (temp) {
             rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
         }
-        rapRead(PINNACLE_ERA_VALUE, &data[i]); // get value
+        rapRead(PINNACLE_ERA_VALUE, data + i); // get value
         clearStatusFlags();                    // clear Command Complete flag in Status register
     }
-    if (prevFeedState)
-    {
+    if (prevFeedState) {
         feedEnabled(prevFeedState); // resume previous feed state
     }
 }
