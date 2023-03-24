@@ -28,14 +28,16 @@ vector_determinants = [
 
 class TouchController:
     def __init__(self, use_i2c: bool = False):
-        dr_pin = 25  # GPIO25
+        dr_pin = 25  # GPIO25 (pin 22 if using MRAA driver)
 
         self.trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
         if not use_i2c:
+            print("Using SPI interface")
             ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
             self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
         else:  # If using I2C, then use the following line (not the line above)
             self.trackpad = PinnacleTouchI2C(dr_pin)
+            print("Using I2C interface")
 
         # a list of compensations to use with measured `vector_determinants`
         self.compensation = [0] * len(vector_determinants)

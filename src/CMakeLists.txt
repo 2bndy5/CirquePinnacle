@@ -189,7 +189,6 @@ else() # if(${PINNACLE_PY_BINDING})
     target_include_directories(cirque_pinnacle PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
     if(NOT "${CIRQUE_PINNACLE_LINKED_DRIVER}" STREQUAL "") # linking to a pre-compiled utility driver
-        target_link_libraries(cirque_pinnacle STATIC ${CIRQUE_PINNACLE_LINKED_DRIVER}
-        )
+        target_link_libraries(cirque_pinnacle PUBLIC ${CIRQUE_PINNACLE_LINKED_DRIVER})
     endif()
 endif()

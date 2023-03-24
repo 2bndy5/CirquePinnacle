@@ -10,8 +10,7 @@
     #define DR_PIN PINNACLE_SW_DR
 #endif
 #if defined(PINNACLE_DRIVER_mraa) && !defined(DR_PIN)
-    #include <mraa/types.hpp>
-    #define DR_PIN mraa::RaspberryWiring::RASPBERRY_WIRING_PIN22 // GPIO25
+    #define DR_PIN 22 // GPIO25
 #elif !defined(DR_PIN)
     #define DR_PIN 25
 #endif

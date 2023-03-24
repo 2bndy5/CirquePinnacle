@@ -29,16 +29,19 @@ report = RelativeReport()
 
 class TouchController:
     def __init__(self, use_i2c: bool = False, use_sw_dr: bool = False):
-        dr_pin = 25  # GPIO25
-        if not use_sw_dr:
+        dr_pin = 25  # GPIO25 (pin 22 if using MRAA driver)
+        if use_sw_dr:
+            print("Using Software Data Ready flag")
             dr_pin = PINNACLE_SW_DR  # uses internal DR flag
 
         self.trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
         if not use_i2c:
+            print("Using SPI interface")
             ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
             self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
         else:  # If using I2C, then use the following line (not the line above)
             self.trackpad = PinnacleTouchI2C(dr_pin)
+            print("Using I2C interface")
 
     def setup(self):
         if not self.trackpad.begin():
