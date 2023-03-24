@@ -92,3 +92,10 @@ Installing from Github
            :caption: given that the virtual environment is located in ``~/venv``
 
            sudo ~/venv/bin/python examples/cpython/relative_mode.py
+
+    Lastly, each example is written like a CLI program. You can find the CLI arguments descriptions
+    using the ``--help`` (or ``-h``) option.
+
+    .. code-block:: shell
+
+        python3 examples/cpython/relative_mode.py --help

@@ -4,19 +4,18 @@ This example reads data from the Cirque trackpad in "anymeas mode" and prints th
 See documentation at https://cirquepinnacle.rtfd.io/
 """
 import sys
+import argparse
 from cirque_pinnacle import (
     PinnacleTouchSPI,
     PinnacleTouchI2C,  # noqa: imported but unused
     PINNACLE_ANYMEAS,
 )
 
-DR_PIN = 25
-SS_PIN = 0
+# some CLI convenience (for testing)
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("-i", "--use_i2c", action="store_true", help="Use I2C instead of SPI")
 
-trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN)
-# If using I2C, then use the following line (not the line above)
-# trackpad = PinnacleTouchI2C(DR_PIN);
-
+# we'll use this list of tuples as args to PinnacleTouch.measure_adc()
 vector_determinants = [
     # (toggle, polarity)
     (0x0000FFFF, 0x00000000),  # toggle all x-axis bits negatively (to 0)
@@ -26,27 +25,50 @@ vector_determinants = [
 ]
 
 
-def setup():
-    if not trackpad.begin():
-        raise OSError("Cirque Pinnacle not responding!")
-    print("found Cirque Pinnacle!")
-    trackpad.data_mode = PINNACLE_ANYMEAS
-    return True
+class TouchController:
+    def __init__(self, use_i2c: bool = False):
+        dr_pin = 25  # GPIO25
 
+        if not use_i2c:
+            ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
+            self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
+        else:  # If using I2C, then use the following line (not the line above)
+            self.trackpad = PinnacleTouchI2C(dr_pin)
 
-def loop():
-    for i, (toggle, polarity) in enumerate(vector_determinants):
-        measurement = trackpad.measure_adc(toggle, polarity)
-        print(f"meas{i}:", measurement, end="\t")
-    print()  # end line
+        # a list of compensations to use with measured `vector_determinants`
+        self.compensation = [0] * len(vector_determinants)
+
+    def compensate(self):
+        sweep = 5
+        for i, (toggle, polarity) in enumerate(vector_determinants):
+            value = 0
+            for _ in range(sweep):
+                value += self.trackpad.measure_adc(toggle, polarity)
+            self.compensation[i] = int(value / sweep)
+
+    def setup(self):
+        if not self.trackpad.begin():
+            raise OSError("Cirque Pinnacle not responding!")
+        print("CirquePinnacle/examples/cpython/anymeas_mode")
+        self.trackpad.data_mode = PINNACLE_ANYMEAS
+        self.compensate()
+        return True
+
+    def loop(self):
+        for i, (toggle, polarity) in enumerate(vector_determinants):
+            measurement = self.trackpad.measure_adc(toggle, polarity)
+            measurement -= self.compensation[i]
+            print(f"meas{i}:", measurement, end="\t")
+        print()  # end line
 
 
 if __name__ == "__main__":
-    if not setup():  # if trackpad.begin() failed
+    args = parser.parse_args()
+    controller = TouchController(args.use_i2c)
+    if not controller.setup():  # if trackpad.begin() failed
         sys.exit(1)  # fail fast
     while True:  # use ctrl+C to exit
         try:
-            loop()
+            controller.loop()
         except KeyboardInterrupt:
             break
-    trackpad.shutdown = True
