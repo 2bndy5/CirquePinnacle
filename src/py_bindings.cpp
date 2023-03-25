@@ -101,6 +101,7 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     dataMode.value("PINNACLE_ANYMEAS", PINNACLE_ANYMEAS);
     #endif
     dataMode.value("PINNACLE_ABSOLUTE", PINNACLE_ABSOLUTE);
+    dataMode.value("PINNACLE_ERROR", PINNACLE_ERROR);
     dataMode.export_values();
 
     #ifdef PINNACLE_ANYMEAS_SUPPORT

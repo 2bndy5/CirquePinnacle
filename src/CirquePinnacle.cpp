@@ -37,7 +37,7 @@ bool PinnacleTouch::begin()
     uint8_t firmware[2] = {};
     rapReadBytes(PINNACLE_FIRMWARE_ID, firmware, 2);
     if (firmware[0] == 7 || firmware[1] == 0x3A) {
-        _dataMode = static_cast<uint8_t>(0);
+        _dataMode = PINNACLE_RELATIVE;
         clearStatusFlags();
         detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
@@ -51,7 +51,7 @@ bool PinnacleTouch::begin()
         return calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
     }
     // else if hardware check failed
-    _dataMode = static_cast<uint8_t>(0xFF); // prevent operations if hardware check failed
+    _dataMode = PINNACLE_ERROR; // prevent operations if hardware check failed
     return false;
 }
 
@@ -80,7 +80,7 @@ bool PinnacleTouch::isFeedEnabled()
 void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 {
     PINNACLE_USE_ARDUINO_API
-    if (mode <= PINNACLE_ABSOLUTE) {
+    if (mode <= PINNACLE_ABSOLUTE && _dataMode != PINNACLE_ERROR) {
         uint8_t sysConfig = 0;
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
         sysConfig &= 0xE7;
@@ -117,7 +117,7 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
     }
 }
 
-uint8_t PinnacleTouch::getDataMode()
+PinnacleDataMode PinnacleTouch::getDataMode()
 {
     return _dataMode;
 }
@@ -153,10 +153,10 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
     }
 }
 
-void PinnacleTouch::relativeModeConfig(bool allTaps, bool rotate90, bool secondaryTap, bool glideExtend, bool intellimouse)
+void PinnacleTouch::relativeModeConfig(bool taps, bool rotate90, bool secondaryTap, bool glideExtend, bool intellimouse)
 {
     if (_dataMode == PINNACLE_RELATIVE) {
-        uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!allTaps << 1) | intellimouse;
+        uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!taps << 1) | intellimouse;
         rapWrite(PINNACLE_FEED_CONFIG_2, config2);
     }
 }
@@ -425,9 +425,9 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 2); // indicate writing only 1 byte
     uint8_t temp = 1;
-    while (temp) {
-        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
-    }
+    do {
+        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
+    } while (temp);
     clearStatusFlags(); // clear Command Complete flag in Status register
     if (prevFeedState) {
         feedEnabled(prevFeedState); // resume previous feed state
@@ -447,9 +447,9 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
     rapWrite(PINNACLE_ERA_CONTROL, 0x0A); // indicate writing sequential bytes
     uint8_t temp = 1;
     for (uint8_t i = 0; i < repeat; i++) {
-        while (temp) {
-            rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerValue == 0
-        }
+        do {
+            rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
+        } while (temp);
         clearStatusFlags(); // clear Command Complete flag in Status register
     }
     if (prevFeedState) {
@@ -467,9 +467,9 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
     rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
     uint8_t temp = 1;
-    while (temp) {
+    do {
         rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-    }
+    } while (temp);
     rapRead(PINNACLE_ERA_VALUE, data); // get data
     clearStatusFlags();                // clear Command Complete flag in Status register
     if (prevFeedState) {
@@ -488,9 +488,9 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_
     uint8_t temp = 1;
     for (uint8_t i = 0; i < registerCount; ++i) {
         rapWrite(PINNACLE_ERA_CONTROL, 5); // indicate reading sequential bytes
-        while (temp) {
+        do {
             rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-        }
+        } while (temp);
         rapRead(PINNACLE_ERA_VALUE, data + i); // get value
         clearStatusFlags();                    // clear Command Complete flag in Status register
     }

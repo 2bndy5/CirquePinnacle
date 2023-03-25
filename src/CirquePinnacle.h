@@ -69,6 +69,8 @@ enum PinnacleDataMode : uint8_t
 #endif
     /** Alias symbol for specifying Absolute mode (axis positions) */
     PINNACLE_ABSOLUTE = 0x02,
+    /** Alias for value used to prevent operations when `~PinnacleTouch::begin()` fails. */
+    PINNACLE_ERROR = 0xFF,
 };
 
 #if PINNACLE_ANYMEAS_SUPPORT
@@ -344,7 +346,7 @@ public:
      *       positions)
      *     - ``255`` if `begin()` returns ``false`` (failed to initialize the trackpad)
      */
-    uint8_t getDataMode();
+    PinnacleDataMode getDataMode();
     /**
      * This function can be used to inform applications about the factory
      * customized hardware configuration.
@@ -404,10 +406,10 @@ public:
      *     Default is ``false``. This feature is always disabled if `isHardConfigured()`
      *     is ``true``.
      */
-    void relativeModeConfig(bool allTaps = true,
+    void relativeModeConfig(bool taps = true,
                             bool rotate90 = false,
                             bool secondaryTap = true,
-                            bool glideExtend = false,
+                            bool glideExtend = true,
                             bool intellimouse = false);
     /**
      * This function will fetch touch (and button) event data from the
@@ -777,7 +779,7 @@ private:
     void eraWriteBytes(uint16_t, uint8_t, uint8_t);
     void eraRead(uint16_t, uint8_t*);
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
-    uint8_t _dataMode;
+    PinnacleDataMode _dataMode;
     const pinnacle_gpio_t _dataReady;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
     virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;

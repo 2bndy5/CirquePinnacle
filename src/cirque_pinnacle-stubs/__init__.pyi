@@ -25,6 +25,7 @@ class PinnacleDataMode:
 PINNACLE_RELATIVE: PinnacleDataMode
 PINNACLE_ANYMEAS: PinnacleDataMode
 PINNACLE_ABSOLUTE: PinnacleDataMode
+PINNACLE_ERROR: PinnacleDataMode
 
 class PinnacleAnyMeasGain:
     @property
@@ -106,18 +107,18 @@ class PinnacleTouch:
     ) -> None: ...
     def relative_mode_config(
         self,
-        all_taps: bool = True,
+        taps: bool = True,
         rotate90: bool = False,
         secondary_tap: bool = True,
-        glide_extend: bool = False,
+        glide_extend: bool = True,
         intellimouse: bool = False,
     ) -> None: ...
     def relativeModeConfig(
         self,
-        all_taps: bool = True,
+        taps: bool = True,
         rotate90: bool = False,
         secondary_tap: bool = True,
-        glide_extend: bool = False,
+        glide_extend: bool = True,
         intellimouse: bool = False,
     ) -> None: ...
     @overload
