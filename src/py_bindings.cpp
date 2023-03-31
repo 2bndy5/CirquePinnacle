@@ -183,16 +183,15 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     absoluteReports.def_readwrite("y", &AbsoluteReport::y);
     absoluteReports.def_readwrite("z", &AbsoluteReport::z);
     absoluteReports.def("__repr__", [](const AbsoluteReport& obj) {
-        char* buf = new char[78];
+        char* buf = new char[57];
         uint8_t used = sprintf(
-            buf, "<AbsoluteReport Button1: %d Button2: %d Button3: %d X: %d Y: %d Z: %d>",
+            buf, "<AbsoluteReport B1: %d B2: %d B3: %d X: %d Y: %d Z: %d>",
             obj.buttons & 1,
             obj.buttons & 2,
             obj.buttons & 4,
             obj.x,
             obj.y,
             obj.z);
-        buf[used] = 0;
         buf[used] = 0;
         std::string ret = std::string(buf);
         delete[] buf;
@@ -216,10 +215,10 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("absoluteModeConfig", &PinnacleTouch::absoluteModeConfig,
                       py::arg("z_idle_count") = 30, py::arg("invert_x") = false, py::arg("invert_x") = false);
     pinnacleTouch.def("relative_mode_configure", &PinnacleTouch::relativeModeConfig,
-                      py::arg("all_taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
+                      py::arg("taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
     pinnacleTouch.def("relativeModeConfig", &PinnacleTouch::relativeModeConfig,
-                      py::arg("all_taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
+                      py::arg("taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"));
     pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"));

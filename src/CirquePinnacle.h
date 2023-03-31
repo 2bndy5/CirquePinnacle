@@ -111,21 +111,21 @@ enum PinnacleAnyMeasGain : uint8_t
  */
 enum PinnacleAnyMeasFreq : uint8_t
 {
-    /** frequency around 500,000Hz */
+    /** frequency around 500,000 Hz */
     PINNACLE_FREQ_0 = 0x02,
-    /** frequency around 444,444Hz */
+    /** frequency around 444,444 Hz */
     PINNACLE_FREQ_1 = 0x03,
-    /** frequency around 400,000Hz */
+    /** frequency around 400,000 Hz */
     PINNACLE_FREQ_2 = 0x04,
-    /** frequency around 363,636Hz */
+    /** frequency around 363,636 Hz */
     PINNACLE_FREQ_3 = 0x05,
-    /** frequency around 333,333Hz */
+    /** frequency around 333,333 Hz */
     PINNACLE_FREQ_4 = 0x06,
-    /** frequency around 307,692Hz */
+    /** frequency around 307,692 Hz */
     PINNACLE_FREQ_5 = 0x07,
-    /** frequency around 267,000Hz */
+    /** frequency around 267,000 Hz */
     PINNACLE_FREQ_6 = 0x09,
-    /** frequency around 235,000Hz */
+    /** frequency around 235,000 Hz */
     PINNACLE_FREQ_7 = 0x0B,
 };
 
@@ -392,7 +392,7 @@ public:
      * only applies to `PINNACLE_RELATIVE` mode, otherwise if `setDataMode()` is given
      * `PINNACLE_ANYMEAS` or `PINNACLE_ABSOLUTE`, then this function does nothing.
      *
-     * @param allTaps Specifies if all taps should be reported (``true``) or not
+     * @param taps Specifies if all taps should be reported (``true``) or not
      *     (``false``). Default is ``true``. This affects ``secondaryTap`` option as well.
      * @param rotate90 Specifies if the axis data is altered for 90 degree rotation before
      *     reporting it (essentially swaps the axis data). Default is ``false``.
@@ -409,7 +409,7 @@ public:
     void relativeModeConfig(bool taps = true,
                             bool rotate90 = false,
                             bool secondaryTap = true,
-                            bool glideExtend = true,
+                            bool glideExtend = false,
                             bool intellimouse = false);
     /**
      * This function will fetch touch (and button) event data from the
@@ -565,7 +565,7 @@ public:
      *           calibration is not ``run``.
      *         - If the calibration ``run`` successfully finishes.
      */
-    bool calibrate(bool run,
+    bool calibrate(bool run = true,
                    bool tap = true,
                    bool trackError = true,
                    bool nerd = true,
