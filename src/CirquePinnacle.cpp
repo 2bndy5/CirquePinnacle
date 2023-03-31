@@ -311,7 +311,7 @@ void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
         if (prevFeedState)
             feedEnabled(false); // this will save time on subsequent eraWrite calls
 
-        for (uint8_t i = 0; i < 46; i++) { // truncate malformed matrices
+        for (uint8_t i = 0; i < 46; i++) {
             if (i < len) {
                 eraWrite(0x01DF + i * 2, (uint8_t)(matrix[i] >> 8));
                 eraWrite(0x01E0 + i * 2, (uint8_t)(matrix[i] & 0xFF));
@@ -328,11 +328,11 @@ void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
 void PinnacleTouch::getCalibrationMatrix(int16_t* matrix)
 {
     if (_dataMode <= PINNACLE_ABSOLUTE) {
-        uint8_t data[92] = {};
-        eraReadBytes(0x01DF, data, 92);
-        for (uint8_t i = 0; i < 92; i += 2) {
-            matrix[i / 2] = ((int16_t)data[i]) << 8;
-            matrix[i / 2] |= (int16_t)(data[i + 1]);
+        // must use sequential read of 92 bytes; individual reads return inaccurate data
+        eraReadBytes(0x01DF, reinterpret_cast<uint8_t*>(matrix), 92);
+        for (uint8_t i = 0; i < 46; ++i) {
+            // reverse the endianess that was read from the registers
+            matrix[i] = (matrix[i] << 8) | (matrix[i] >> 8);
         }
     }
 }
