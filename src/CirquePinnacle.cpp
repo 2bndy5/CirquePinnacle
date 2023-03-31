@@ -253,7 +253,7 @@ void PinnacleTouch::setSampleRate(uint16_t value)
             eraWriteBytes(0x019E, 0x13, 2);
         }
         // bad input values interpreted as 100 by Pinnacle
-        rapWrite(PINNACLE_SAMPLE_RATE, value);
+        rapWrite(PINNACLE_SAMPLE_RATE, (uint8_t)value);
     }
 }
 
@@ -266,8 +266,10 @@ uint16_t PinnacleTouch::getSampleRate()
             eraRead(0x019E, &temp);
             return temp == 6 ? 300 : 200;
         }
-        else
-            return temp;
+        else if (temp != 10 || temp != 20 || temp != 40 || temp != 60 || temp != 80 || temp != 100) {
+            return 100; // using default for unsupported input values
+        }
+        return temp;
     }
     return 0; // "sample rate" = frequent calling of measureADC()
 }
