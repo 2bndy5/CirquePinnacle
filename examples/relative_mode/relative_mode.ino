@@ -8,40 +8,44 @@
 #define SS_PIN 2
 #define DR_PIN 7
 
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // If using I2C, then use the following line (not the line above)
-// PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+// PinnacleTouchI2C trackpad(DR_PIN);
 
-RelativeReport report;
+// an object to hold data reported by the Cirque trackpad
+RelativeReport data;
 
 void setup() {
-  while (!Serial) {
-    delay(1);  // some boards need this to access USB Serial
-  }
   Serial.begin(115200);
+  while (!Serial) {
+    // wait till Serial monitor is opened
+  }
   if (!trackpad.begin()) {
-    Serial.println("Cirque Pinnacle not responding!");
+    Serial.println(F("Cirque Pinnacle not responding!"));
     while (true) {
       // hold program in infinite loop
     }
   }
-  Serial.println("CirquePinnacle/examples/relative_mode");
+  Serial.println(F("CirquePinnacle/examples/relative_mode"));
+  trackpad.setDataMode(PINNACLE_RELATIVE);
+  trackpad.relativeModeConfig(); // uses default config
+  Serial.println(F("Touch the trackpad to see the data."));
 }
 
 void loop() {
   if (trackpad.available()) {
-    trackpad.read(&report);
-    Serial.print("Left: ");
-    Serial.print(report.buttons & 1);
-    Serial.print(" Right: ");
-    Serial.print(report.buttons & 2);
-    Serial.print(" Middle: ");
-    Serial.print(report.buttons & 4);
-    Serial.print("\tdelta X: ");
-    Serial.print(report.x);
-    Serial.print("\tdelta Y: ");
-    Serial.print(report.y);
-    Serial.print("\tdelta Scroll: ");
-    Serial.println(report.scroll);
+    trackpad.read(&data);
+    Serial.print(F("Left:"));
+    Serial.print(data.buttons & 1);
+    Serial.print(F(" Right:"));
+    Serial.print(data.buttons & 2);
+    Serial.print(F(" Middle:"));
+    Serial.print(data.buttons & 4);
+    Serial.print(F("\tX:"));
+    Serial.print(data.x);
+    Serial.print(F("\tY:"));
+    Serial.print(data.y);
+    Serial.print(F("\tScroll:"));
+    Serial.println(data.scroll);
   }
 }

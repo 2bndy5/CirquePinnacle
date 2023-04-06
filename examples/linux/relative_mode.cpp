@@ -17,12 +17,13 @@
 #define SS_PIN 0
 
 #ifndef USE_I2C
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 #else // If using I2C, then use the following line (not the line above)
-PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
-RelativeReport report;
+// an object to hold data reported by the Cirque trackpad
+RelativeReport data;
 
 bool setup()
 {
@@ -30,20 +31,29 @@ bool setup()
         std::cout << "Cirque Pinnacle not responding!" << std::endl;
         return false;
     }
-    std::cout << "CirquePinnacle/examples/linux/relative_mode" << std::endl;
+    std::cout << "CirquePinnacle/examples/linux/relative_mode\n" << std::endl;
+#ifndef USE_SW_DR // if using PINNACLE_SW_DR
+    std::cout << "-- Using HW DataReady pin." << std::endl;
+#endif
+#ifndef USE_I2C
+    std::cout << "-- Using SPI interface." << std::endl;
+#else
+    std::cout << "-- Using I2C interface." << std::endl;
+#endif
+    std::cout << "\nTouch the trackpad to see the data" << std::endl;
     return true;
 }
 
 void loop()
 {
     if (trackpad.available()) {
-        trackpad.read(&report);
-        std::cout << "Left: " << (unsigned int)(report.buttons & 1)
-                  << " Right: " << (unsigned int)(report.buttons & 2)
-                  << " Middle: " << (unsigned int)(report.buttons & 4)
-                  << "\tdelta X: " << (int)(report.x)
-                  << "\tdelta Y: " << (int)(report.y)
-                  << "\tdelta Scroll: " << (int)(report.scroll) << std::endl;
+        trackpad.read(&data);
+        std::cout << "Left:" << (unsigned int)(data.buttons & 1)
+                  << " Right:" << (unsigned int)(data.buttons & 2)
+                  << " Middle:" << (unsigned int)(data.buttons & 4)
+                  << "\tX:" << (int)(data.x)
+                  << "\tY:" << (int)(data.y)
+                  << "\tScroll:" << (int)(data.scroll) << std::endl;
     }
 }
 

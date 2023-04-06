@@ -146,7 +146,7 @@ This is done in the python binding to expedite the formation of an immutable pyt
         >>> report.y = 128
         >>> report.z = 32
         >>> print(report)
-        <AbsoluteReport Button1: 0 Button2: 0 Button3: 0 X: 64 Y: 128 Z: 32>
+        <AbsoluteReport B1: 0 B2: 0 B3: 0 X: 64 Y: 128 Z: 32>
 
 Exposed I2C implementation
 --------------------------
@@ -158,9 +158,9 @@ applications shouldn't need to use this as most Linux-based SoC boards only have
 in the GPIO pins.
 
 The I2C bus number can be different depending on how the manufacturer routed the I2C bus
-from the SoC. Thus, the :cpp:expr:`PinnacleTouchI2C::begin(_I2C*)` method is exposed, so users can
-specify an I2C bus number that may differ from the default value used (which is :cpp:`1`). The
-first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to
+from the SoC. Thus, the :cpp:expr:`PinnacleTouchI2C::begin(pinnacle_i2c_t*)` method is exposed,
+so users can specify an I2C bus number that may differ from the default value used (which is :cpp:`1`).
+The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed this to
 ``/dev/i2c-1``.
 
 .. code-block:: python
@@ -188,7 +188,7 @@ first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed th
     the :doc:`Python binding install instructions <../python>` for how to specify the
     ``PINNACLE_DRIVER`` to use.
 
-    .. failure:: Missing
+    .. failure:: Missing features
 
         Interrupt Service Routines (ISR), acting as a slave device, and timeouts are not supported
         in this implementation.
@@ -198,7 +198,7 @@ first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed th
         Specify the ``busNumber`` as indicated in the ``/dev/i2c-<x>``.
 
         :param busNumber: The I2C bus number as identified by the directory listing in
-            ``/dev/i2c-*``. For ``/dev/i2c-1``, this parameter's value should :python:`1`.
+            ``/dev/i2c-*``. For ``/dev/i2c-1``, this parameter's value should be :python:`1`.
 
             .. info:: Difference with ``mraa`` driver
                 :collapsible:
@@ -248,6 +248,10 @@ first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations changed th
 
         :param address: The I2C slave device's address.
         :param quantity: The number of bytes to read.
+
+            .. warning::
+                This implementation uses an internal buffer that allocates 32 bytes. If more than 32
+                bytes are requested, then only 32 bytes are read.
         :param sendStop: |stop_param_ignored| the received data is stored in the internal buffer.
 
         :returns: The amount of data (in bytes) read. This should always be the ``quantity``

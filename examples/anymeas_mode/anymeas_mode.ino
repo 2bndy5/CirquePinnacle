@@ -8,13 +8,13 @@
 #define SS_PIN 2
 #define DR_PIN 7
 
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // If using I2C, then use the following line (not the line above)
-// PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+// PinnacleTouchI2C trackpad(DR_PIN);
 
 typedef struct _MeasureVector {
-  unsigned long toggle;
-  unsigned long polarity;
+  uint32_t toggle;
+  uint32_t polarity;
 } measureVector;
 
 measureVector vectorDeterminants[] = {
@@ -28,48 +28,55 @@ measureVector vectorDeterminants[] = {
 const uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
 int16_t compensations[variousVectors_size];
 
-void compensationInit() {
-  uint8_t sweep;
+void compensate() {
   int16_t value;
-  signed long accumulatedValue;
-  for (uint8_t x = 0; x < variousVectors_size; ++x) {
-    sweep = 0;
+  int32_t accumulatedValue;
+  for (uint8_t i = 0; i < variousVectors_size; ++i) {
+    uint8_t sweep = 0;
     accumulatedValue = 0;
-    while (sweep < 5)  //take 5 measurements and average them for a bit lower noise compensation value
+    while (sweep < 5)  // take 5 measurements and average them for a bit lower noise compensation value
     {
-      value = trackpad.measureAdc(vectorDeterminants[x].toggle, vectorDeterminants[x].polarity);
+      value = trackpad.measureAdc(vectorDeterminants[i].toggle, vectorDeterminants[i].polarity);
       sweep++;
       accumulatedValue += value;
     }
-    compensations[x] = accumulatedValue / 5;
+    compensations[i] = accumulatedValue / 5;
+    Serial.print(F("compensate "));
+    Serial.print(i);
+    Serial.print(F(": "));
+    Serial.println(compensations[i]);
   }
 }
 
 void setup() {
   Serial.begin(115200);
+  while (!Serial) {
+    // wait till Serial monitor is opened
+  }
   if (!trackpad.begin()) {
-    Serial.println("Cirque Pinnacle not responding!");
+    Serial.println(F("Cirque Pinnacle not responding!"));
     while (true) {
       // hold program in infinite loop
     }
   }
-  Serial.println("CirquePinnacle/examples/anymeas_mode");
+  Serial.println(F("CirquePinnacle/examples/anymeas_mode"));
   trackpad.setDataMode(PINNACLE_ANYMEAS);
   trackpad.anymeasModeConfig();
-  compensationInit();
+  compensate();
+  Serial.println(F("starting in 5 seconds..."));
+  delay(5000);
 }
 
 void loop() {
   for (uint8_t i = 0; i < variousVectors_size; i++) {
-    int16_t measurement = trackpad.measureAdc(
-      vectorDeterminants[i].toggle,
-      vectorDeterminants[i].polarity);
+    int16_t measurement = trackpad.measureAdc(vectorDeterminants[i].toggle,
+                                              vectorDeterminants[i].polarity);
     measurement -= compensations[i];
-    Serial.print("meas");
+    Serial.print(F("meas"));
     Serial.print(i);
-    Serial.print(": ");
+    Serial.print(F(":"));
     Serial.print(measurement);
-    Serial.print("\t");
+    Serial.print(F("  \t"));
   }
   Serial.println();
 }

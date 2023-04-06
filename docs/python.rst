@@ -52,9 +52,9 @@ Installing from Github
        You can customize the build further using an environment variable named ``CMAKE_ARGS`` set to a string of
        space-separated options that get passed to CMake. Supported options include:
 
-       ``-DPINNACLE_SPI_SPEED=13000000``
+       ``-DPINNACLE_SPI_SPEED=6000000``
            The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
-           the SPI bus. Default value is the maximum 13 MHz.
+           the SPI bus. Default value is the officially recommended 6 MHz; maximum supported is 13 MHz.
 
        ``-DPINNACLE_DRIVER=<utility-folder-name>``
            Use this to change the underlying implementation used for the I2C and SPI busses (and GPIO pins).
@@ -92,10 +92,3 @@ Installing from Github
            :caption: given that the virtual environment is located in ``~/venv``
 
            sudo ~/venv/bin/python examples/cpython/relative_mode.py
-
-    Lastly, each example is written like a CLI program. You can find the CLI arguments descriptions
-    using the ``--help`` (or ``-h``) option.
-
-    .. code-block:: shell
-
-        python3 examples/cpython/relative_mode.py --help

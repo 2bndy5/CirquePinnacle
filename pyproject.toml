@@ -58,9 +58,3 @@ files = [
 ]
 exclude = "setup.py"
 check_untyped_defs = true
-
-[tool.ruff]
-line-length = 100
-
-[tool.black]
-line-length = 100

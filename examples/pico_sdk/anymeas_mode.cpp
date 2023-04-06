@@ -10,9 +10,9 @@
 #include "defaultPins.h"    // board presumptive default pin numbers for SS_PIN and DR_PIN
 
 #ifndef USE_I2C
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 #else // If using I2C, then use the following line (not the line above)
-PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
 typedef struct _MeasureVector
@@ -32,21 +32,20 @@ measureVector vectorDeterminants[] = {
 const uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
 int16_t compensations[variousVectors_size];
 
-void compensationInit()
+void compensate()
 {
-    uint8_t sweep;
-    int16_t value;
-    signed long accumulatedValue;
-    for (uint8_t x = 0; x < variousVectors_size; ++x) {
-        sweep = 0;
+    int32_t accumulatedValue;
+    for (uint8_t i = 0; i < variousVectors_size; ++i) {
+        uint8_t sweep = 0;
         accumulatedValue = 0;
-        while (sweep < 5) //take 5 measurements and average them for a bit lower noise compensation value
+        while (sweep < 5) // take 5 measurements and average them for a bit lower noise compensation value
         {
-            value = trackpad.measureAdc(vectorDeterminants[x].toggle, vectorDeterminants[x].polarity);
+            int16_t value = trackpad.measureAdc(vectorDeterminants[i].toggle, vectorDeterminants[i].polarity);
             sweep++;
             accumulatedValue += value;
         }
-        compensations[x] = accumulatedValue / 5;
+        compensations[i] = accumulatedValue / 5;
+        printf("compensation %d: %d\n", i, compensations[i]);
     }
 }
 
@@ -63,7 +62,18 @@ bool setup()
     }
     printf("CirquePinnacle/examples/pico_sdk/anymeas_mode\n");
     trackpad.setDataMode(PINNACLE_ANYMEAS);
-    compensationInit();
+
+#ifndef USE_I2C
+    printf("-- Using SPI interface\n");
+#else
+    printf("-- Using I2C interface\n");
+#endif
+    printf("\n*** Enter 'B' to reset to bootloader.\n");
+    compensate();
+    for (uint8_t i = 5; i; --i) {
+        printf("starting in %d second%c\r", i, i > 1 ? 's' : ' ');
+        sleep_ms(1000);
+    }
     return true;
 }
 

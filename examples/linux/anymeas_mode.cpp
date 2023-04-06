@@ -4,6 +4,7 @@
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
 #include <iostream>                        // cout, endl
+#include <unistd.h>                        // sleep()
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
 #ifdef PINNACLE_DRIVER_mraa
@@ -14,9 +15,9 @@
 #define SS_PIN 0
 
 #ifndef USE_I2C
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 #else // If using I2C, then use the following line (not the line above)
-PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
 typedef struct _MeasureVector
@@ -36,21 +37,20 @@ measureVector vectorDeterminants[] = {
 const uint8_t variousVectors_size = sizeof(vectorDeterminants) / sizeof(measureVector);
 int16_t compensations[variousVectors_size];
 
-void compensationInit()
+void compensate()
 {
-    uint8_t sweep;
-    int16_t value;
     signed long accumulatedValue;
-    for (uint8_t x = 0; x < variousVectors_size; ++x) {
-        sweep = 0;
+    for (uint8_t i = 0; i < variousVectors_size; ++i) {
+        uint8_t sweep = 0;
         accumulatedValue = 0;
-        while (sweep < 5) //take 5 measurements and average them for a bit lower noise compensation value
+        while (sweep < 5) // take 5 measurements and average them for a bit lower noise compensation value
         {
-            value = trackpad.measureAdc(vectorDeterminants[x].toggle, vectorDeterminants[x].polarity);
+            int16_t value = trackpad.measureAdc(vectorDeterminants[i].toggle, vectorDeterminants[i].polarity);
             sweep++;
             accumulatedValue += value;
         }
-        compensations[x] = accumulatedValue / 5;
+        compensations[i] = accumulatedValue / 5;
+        std::cout << "compensation " << (unsigned int)i << ": " << compensations[i] << std::endl;
     }
 }
 
@@ -63,7 +63,21 @@ bool setup()
     std::cout << "CirquePinnacle/examples/linux/anymeas_mode" << std::endl;
     trackpad.setDataMode(PINNACLE_ANYMEAS);
     trackpad.anymeasModeConfig();
-    compensationInit();
+#ifndef USE_SW_DR // if using PINNACLE_SW_DR
+    std::cout << "-- Using HW DataReady pin." << std::endl;
+#endif
+#ifndef USE_I2C
+    std::cout << "-- Using SPI interface." << std::endl;
+#else
+    std::cout << "-- Using I2C interface." << std::endl;
+#endif
+    compensate();
+
+    for (uint8_t i = 5; i; --i) {
+        std::cout << "starting in " << (unsigned int)i << "second" << (i < 1 ? 's' : ' ') << '\r';
+        sleep(1);
+    }
+    std::cout << std::endl;
     return true;
 }
 

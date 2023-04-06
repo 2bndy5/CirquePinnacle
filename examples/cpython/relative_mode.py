@@ -1,10 +1,10 @@
 """
-This example reads data from the Cirque trackpad in "relative mode" and prints the values.
+This example reads data from the Cirque trackpad in "relative mode" and
+prints the values.
 
 See documentation at https://cirquepinnacle.rtfd.io/
 """
-import argparse
-import sys
+import time
 from typing import Union
 from cirque_pinnacle import (
     RelativeReport,
@@ -13,55 +13,71 @@ from cirque_pinnacle import (
     PINNACLE_SW_DR,
 )
 
-# some CLI convenience (for testing)
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("-i", "--use_i2c", action="store_true", help="Use I2C instead of SPI")
-parser.add_argument(
-    "-d",
-    "--use_sw_dr",
-    action="store_true",
-    help="Use software Data Ready flag instead of hardware DR pin",
-)
+print("CirquePinnacle/examples/cpython/relative_mode\n")
+
+# a HW ``dr_pin`` is more efficient, but not required for Absolute or Relative modes
+dr_pin = PINNACLE_SW_DR  # uses internal DR flag
+if not input("Use SW Data Ready? [y/N] ").lower().startswith("y"):
+    print("-- Using HW Data Ready pin.")
+    dr_pin = 25  # GPIO25 (pin 22 if using MRAA driver)
+
+trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
+if not input("Is the trackpad configured for I2C? [y/N] ").lower().startswith("y"):
+    print("-- Using SPI interface.")
+    ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
+    trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
+else:
+    print("-- Using I2C interface")
+    trackpad = PinnacleTouchI2C(dr_pin)
+
+if not trackpad.begin():
+    raise OSError("Cirque Pinnacle not responding!")
 
 # an object to hold data reported by the Cirque trackpad
-report = RelativeReport()
+data = RelativeReport()
 
 
-class TouchController:
-    def __init__(self, use_i2c: bool = False, use_sw_dr: bool = False):
-        dr_pin = 25  # GPIO25 (pin 22 if using MRAA driver)
-        if use_sw_dr:
-            print("Using Software Data Ready flag")
-            dr_pin = PINNACLE_SW_DR  # uses internal DR flag
+def print_data(timeout=6):
+    """Print available data reports from the Pinnacle touch controller
+    until there's no input for a period of ``timeout`` seconds."""
+    print(
+        "Touch the sensor to see the data. Exits after",
+        timeout,
+        "seconds of inactivity.",
+    )
+    start = time.monotonic()
+    while time.monotonic() - start < timeout:
+        while trackpad.available():  # is there new data?
+            trackpad.read(data)
+            print(data)
+            start = time.monotonic()
 
-        self.trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
-        if not use_i2c:
-            print("Using SPI interface")
-            ss_pin = 0  # uses /dev/spidev0.0 (CE0 or GPIO8)
-            self.trackpad = PinnacleTouchSPI(dr_pin, ss_pin)
-        else:  # If using I2C, then use the following line (not the line above)
-            self.trackpad = PinnacleTouchI2C(dr_pin)
-            print("Using I2C interface")
 
-    def setup(self):
-        if not self.trackpad.begin():
-            raise OSError("Cirque Pinnacle not responding!")
-        print("CirquePinnacle/examples/cpython/relative_mode")
+def set_role():
+    """Set the role using stdin stream. Arguments for functions can be
+    specified using a space delimiter (e.g. 'M 10' calls `print_data(10)`)
+    """
+    user_input = (
+        input(
+            "\n*** Enter 'M' to measure and print data."
+            "\n*** Enter 'Q' to quit example.\n"
+        )
+        or "?"
+    ).split()
+    if user_input[0].upper().startswith("M"):
+        print_data(*[int(x) for x in user_input[1:2]])
         return True
-
-    def loop(self):
-        if self.trackpad.available():
-            self.trackpad.read(report)
-            print(report)
+    if user_input[0].upper().startswith("Q"):
+        return False
+    print(user_input[0], "is an unrecognized input. Please try again.")
+    return set_role()
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    controller = TouchController(args.use_i2c, args.use_sw_dr)
-    if not controller.setup():  # if trackpad.begin() failed
-        sys.exit(1)  # fail fast
-    while True:  # use ctrl+C to exit
-        try:
-            controller.loop()
-        except KeyboardInterrupt:
-            break
+    try:
+        while set_role():
+            pass  # continue example until 'Q' is entered
+    except KeyboardInterrupt:
+        print(" Keyboard Interrupt detected.")
+else:
+    print("\nRun print_data() to read and print data.")

@@ -8,9 +8,9 @@
 
 #if defined(ADAFRUIT_QTPY_RP2040)
     // for this board, you can still use the Stemma QT connector as a separate I2C bus (`i2c1`)
-    #define SS_PIN PICO_DEFAULT_UART_TX_PIN // the pin labeled TX (GPIO20)
+    #define SS_PIN PICO_DEFAULT_UART_RX_PIN // the pin labeled RX (GPIO5)
     #ifndef DR_PIN // if not using PINNACLE_SW_DR
-        #define DR_PIN PICO_DEFAULT_UART_RX_PIN // the pin labeled RX (GPIO5)
+        #define DR_PIN PICO_DEFAULT_UART_TX_PIN // the pin labeled TX (GPIO20)
     #endif
 
 #elif defined(PIMORONI_TINY2040)
@@ -25,12 +25,18 @@
         #define DR_PIN 6 // the pin labeled SDA
     #endif
 
-#else
-    // pins available on (ADAFRUIT_ITSYBITSY_RP2040 || ADAFRUIT_FEATHER_RP2040 || Pico_board || Sparkfun_ProMicro || SparkFun MicroMod)
-
-    #define SS_PIN 8
+#elif defined(ADAFRUIT_ITSYBITSY_RP2040)
+    #define SS_PIN 12 // the pin labeled 2
     #ifndef DR_PIN // if not using PINNACLE_SW_DR
-        #define DR_PIN 6
+        #define DR_PIN 6 // the pin labeled 7
+    #endif
+
+#else
+    // pins available on (ADAFRUIT_FEATHER_RP2040 || Pico_board || Sparkfun_ProMicro || SparkFun MicroMod)
+
+    #define SS_PIN 6
+    #ifndef DR_PIN // if not using PINNACLE_SW_DR
+        #define DR_PIN 8
     #endif
 #endif // board detection macro defs
 

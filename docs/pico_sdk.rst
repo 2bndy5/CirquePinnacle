@@ -230,7 +230,7 @@ Project Source code option
         .. code-block:: cpp
 
             #include <CirquePinnacle.h>
-            PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+            PinnacleTouchI2C trackpad(DR_PIN);
             int main()
             {
                 // using the namespace for the pre-instantiated `Wire` object

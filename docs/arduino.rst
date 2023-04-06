@@ -33,9 +33,9 @@ Using a non-default SPI or I2C bus
             #define SS_PIN 2
             #define DR_PIN 7
 
-            SPIClass my_spi_obj = SPIClass();
+            SPIClass my_spi_obj;
 
-            PinnacleTouch trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+            PinnacleTouch trackpad(DR_PIN, SS_PIN);
 
             void begin()
             {
@@ -77,9 +77,9 @@ Using a non-default SPI or I2C bus
 
             #define DR_PIN 7
 
-            TwoWire my_i2c_obj = TwoWire();
+            TwoWire my_i2c_obj;
 
-            PinnacleTouch trackpad = PinnacleTouchI2C(DR_PIN);
+            PinnacleTouch trackpad(DR_PIN);
 
             void begin()
             {

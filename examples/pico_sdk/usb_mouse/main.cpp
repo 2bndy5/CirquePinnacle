@@ -38,11 +38,12 @@
 #include "../defaultPins.h" // board presumptive default pin numbers for SS_PIN and DR_PIN
 
 #ifndef USE_I2C
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 #else // If using I2C, then use the following line (not the line above)
-PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
+// an object to hold data reported by the Cirque trackpad
 RelativeReport trackpadData;
 
 //--------------------------------------------------------------------+
@@ -75,6 +76,11 @@ int main(void)
     if (!trackpad.begin()) {
         return 0;
     }
+
+    trackpad.setDataMode(PINNACLE_RELATIVE); // ensure mouse mode is enabled
+    // tell the Pinnacle ASIC to rotate the orientation of the axis data by +90 degrees
+    trackpad.relativeModeConfig(true, true); // (enable taps, rotate90)
+    trackpad.allowSleep(true); // let power consumption drop if inactive for 5 seconds
 
     while (1)
     {

@@ -10,12 +10,13 @@
 #include "defaultPins.h"    // board presumptive default pin numbers for SS_PIN and DR_PIN
 
 #ifndef USE_I2C
-PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 #else // If using I2C, then use the following line (not the line above)
-PinnacleTouchI2C trackpad = PinnacleTouchI2C(DR_PIN);
+PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
-RelativeReport report;
+// an object to hold data reported by the Cirque trackpad
+RelativeReport data;
 
 bool setup()
 {
@@ -29,19 +30,28 @@ bool setup()
         return false;
     }
     printf("CirquePinnacle/examples/pico_sdk/relative_mode\n");
+
+#ifndef USE_SW_DR
+    printf("-- Using HW Data Ready pin\n");
+#endif
+#ifndef USE_I2C
+    printf("-- Using SPI interface\n");
+#else
+    printf("-- Using I2C interface\n");
+#endif
+    printf("\n*** Enter 'B' to reset to bootloader.\n");
+    printf("\nTouch the trackpad to see the data\n");
     return true;
 }
 
 void loop()
 {
     if (trackpad.available()) {
-        trackpad.read(&report);
-        printf("Left: %d ", report.buttons & 1);
-        printf("Right: %d ", report.buttons & 2);
-        printf("Middle: %d", report.buttons & 4);
-        printf("\tdelta X: %d", report.x);
-        printf("\tdelta Y: %d", report.y);
-        printf("\tdelta Scroll: %d\n", report.scroll);
+        trackpad.read(&data);
+        printf("Left:%d ", data.buttons & 1);
+        printf("Right:%d ", data.buttons & 2);
+        printf("Middle:%d", data.buttons & 4);
+        printf("\tX: %d\tY: %d\tScroll: %d\n", data.x, data.y, data.scroll);
     }
 
     char input = getchar_timeout_us(0); // get char from buffer for user input
