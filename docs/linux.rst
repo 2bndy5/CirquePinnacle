@@ -47,9 +47,9 @@ Installing from Source
        :title: Optional arguments
        :collapsible:
 
-       ``-DPINNACLE_SPI_SPEED=13000000``
+       ``-DPINNACLE_SPI_SPEED=6000000``
            The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
-           the SPI bus. Default value is the maximum 13 MHz.
+           the SPI bus. Default value is the officially recommended 6 MHz; maximum supported is 13 MHz.
 
        ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
            To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``

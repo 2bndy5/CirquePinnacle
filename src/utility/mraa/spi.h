@@ -26,8 +26,8 @@
 namespace cirque_pinnacle_arduino_wrappers {
 
     #ifndef PINNACLE_SPI_SPEED
-        // Default is the maximum supported SPI speed (13 MHz)
-        #define PINNACLE_SPI_SPEED 13000000
+        // Default is the recommended 6 MHz (maximum supported SPI speed is 13 MHz)
+        #define PINNACLE_SPI_SPEED 6000000
     #endif
 
     #ifndef PINNACLE_DEFAULT_SPI_BUS

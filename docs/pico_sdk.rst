@@ -91,10 +91,11 @@ and I2C pins (SDA & SCL) come from the Pico SDK repository's
            when the application won't use the Pinnacle's anymeas mode. This option is not specific to the examples,
            rather it can be specified in any Pico-SDK project that uses the CirquePinnacle library.
 
-       ``-DPINNACLE_SPI_SPEED=13000000``
+       ``-DPINNACLE_SPI_SPEED=6000000``
            The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
-           the SPI bus. Default value is the maximum 13 MHz. This option is not specific to the examples,
-           rather it can be specified in any Pico-SDK project that uses the CirquePinnacle library.
+           the SPI bus. Default value is the officially recommended 6 MHz; maximum supported is 13 MHz. This option
+           is not specific to the examples, rather it can be specified in any Pico-SDK project that uses the
+           CirquePinnacle library.
 
 3. Build the examples.
 
