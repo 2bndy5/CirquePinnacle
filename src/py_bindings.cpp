@@ -220,8 +220,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("relativeModeConfig", &PinnacleTouch::relativeModeConfig,
                       py::arg("taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
-    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
-    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
+    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*, bool)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
+    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*, bool)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
     pinnacleTouch.def("clear_status_flags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def("clearStatusFlags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def_property("allow_sleep", &PinnacleTouch::isAllowSleep, &PinnacleTouch::allowSleep);

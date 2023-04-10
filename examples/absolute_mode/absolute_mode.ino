@@ -3,7 +3,7 @@
  *
  * See documentation at https://cirquepinnacle.rtfd.io/
  */
-#include <cmath>  // sqrt(), pow(), atan2()
+#include <math.h>  // sqrt(), pow(), atan2()
 #include <CirquePinnacle.h>
 
 #define SS_PIN 2
@@ -43,7 +43,9 @@ raw data (false) or trigonometry data (true)
 */
 bool onlyShowTrigVals = false;
 
-#ifndef PI
+#ifndef M_PI
+#define PI M_PI
+#else
 #define PI 3.14159
 #endif
 
