@@ -221,11 +221,11 @@ struct RelativeReport
      *       - Button 3 (thought of as Middle mouse or scroll wheel button)
      *       -
      */
-    uint8_t buttons;
+    uint8_t buttons = 0;
     /** This will always be in range ``-128 <= x <= 127`` */
-    int8_t x;
+    int8_t x = 0;
     /** This will always be in range ``-128 <= y <= 127`` */
-    int8_t y;
+    int8_t y = 0;
     /**
      * This will always be in range ``-128 <= scroll <= 127``
      *
@@ -234,7 +234,7 @@ struct RelativeReport
      *     `PinnacleTouch::relativeModeConfig()`. Otherwise this is an empty byte as
      *     the `RelativeReport` follows the buffer structure of a mouse HID report.
      */
-    int8_t scroll;
+    int8_t scroll = 0;
 };
 
 /**
@@ -258,26 +258,26 @@ struct AbsoluteReport
      *     1, "Button 2"
      *     2, "Button 3"
      */
-    uint8_t buttons;
+    uint8_t buttons = 0;
     /**
      * This will always be in range ``0 <= x <= 2047``
      *
      * The datasheet recommends this value should be
      * clamped to range ``128 <= x <= 1920`` for reliability.
      */
-    uint16_t x;
+    uint16_t x = 0;
     /**
      * This will always be in range ``0 <= y <= 1535``
      *
      * The datasheet recommends this value should be
      * clamped to range ``64 <= y <= 1472`` for reliability.
      */
-    uint16_t y;
+    uint16_t y = 0;
     /**
      * This will always be in range ``0 <= z <= 31``. The maximum
      * value will depend on sensitivity.
      */
-    uint8_t z;
+    uint8_t z = 0;
 };
 
 /**

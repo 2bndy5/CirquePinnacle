@@ -34,24 +34,27 @@ bool PinnacleTouch::begin()
 {
     PINNACLE_USE_ARDUINO_API
     delay(100);
-    uint8_t firmware[2] = {};
-    rapReadBytes(PINNACLE_FIRMWARE_ID, firmware, 2);
-    if (firmware[0] == 7 || firmware[1] == 0x3A) {
+    uint8_t buffer[3] = {0}; // index 2 is relative mode defaults
+    rapReadBytes(PINNACLE_FIRMWARE_ID, buffer, 2);
+    if (buffer[0] == 7 || buffer[1] == 0x3A) {
         _dataMode = PINNACLE_RELATIVE;
-        clearStatusFlags();
+        buffer[0] = 0; // config power (defaults) and disable anymeas flags
+        buffer[1] = 0; // config absolute mode defaults and disable feed
+        rapWriteBytes(PINNACLE_SYS_CONFIG, buffer, 3);
         detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
         setAdcGain(0);                 // most sensitive attenuation
-        tuneEdgeSensitivity();         // because "why not?"
-        uint8_t configs[3] = {0, 1, 0};
-        // configs[0] => clears AnyMeas flags
-        // configs[1] => set relative mode & enable feed
-        // configs[2] => enables all taps in Relative mode
-        rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
-        return calibrate(true); // enables all compensations, runs calibration, & clearStatusFlags()
+        tuneEdgeSensitivity();         // because "why not?" (may only be beneficial if using an overlay)
+        while (available()) {
+            clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
+        }
+        if (calibrate()) { // enables all compensations, runs calibration, & clearStatusFlags()
+            feedEnabled(true);
+            return true;
+        }
     }
     // else if hardware check failed
-    _dataMode = PINNACLE_ERROR; // prevent operations if hardware check failed
+    _dataMode = PINNACLE_ERROR; // prevent further operations if hardware check failed
     return false;
 }
 
@@ -61,7 +64,7 @@ void PinnacleTouch::feedEnabled(bool isEnabled)
         uint8_t temp = 0;
         rapRead(PINNACLE_FEED_CONFIG_1, &temp);
         if (static_cast<bool>(temp & 1) != isEnabled)
-            rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0xfe) | isEnabled);
+            rapWrite(PINNACLE_FEED_CONFIG_1, (temp & 0xFE) | isEnabled);
     }
 }
 
@@ -73,7 +76,7 @@ bool PinnacleTouch::isFeedEnabled()
         return static_cast<bool>(temp & 1);
     }
     /* AnyMeas mode: "feed" is instigated by measureADC()
-       & x,y tracking measurements are already disabled */
+       & x/y tracking measurements are already disabled */
     return false;
 }
 
@@ -83,19 +86,19 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
     if (mode <= PINNACLE_ABSOLUTE && _dataMode != PINNACLE_ERROR) {
         uint8_t sysConfig = 0;
         rapRead(PINNACLE_SYS_CONFIG, &sysConfig);
-        sysConfig &= 0xE7;
+        sysConfig &= 0xE7; // clears AnyMeas flags
         if (mode == PINNACLE_RELATIVE || mode == PINNACLE_ABSOLUTE) {
 #if PINNACLE_ANYMEAS_SUPPORT
             if (_dataMode == PINNACLE_ANYMEAS) { // if leaving AnyMeas mode
                 _dataMode = mode;
-                uint8_t configs[3] = {sysConfig, static_cast<uint8_t>(_dataMode | 1), 0};
-                // configs[0] => clears AnyMeas flags
-                // configs[1] => set new mode's flag & enables feed
-                // configs[2] => enables taps in Relative mode
-                rapWriteBytes(PINNACLE_SYS_CONFIG, configs, 3);
                 setSampleRate(100);
                 rapWrite(PINNACLE_CAL_CONFIG, 0x1E); // enables all compensations
                 rapWrite(PINNACLE_Z_IDLE, 30);       // 30 z-idle packets
+                uint8_t buffer[3] = {
+                    sysConfig,
+                    static_cast<uint8_t>(_dataMode | 1), // set new mode's flag, & enables feed
+                    0};                                  // config relative mode defaults
+                rapWriteBytes(PINNACLE_SYS_CONFIG, buffer, 3);
             }
             else { // ok to just write appropriate mode
 
@@ -127,7 +130,7 @@ bool PinnacleTouch::isHardConfigured()
     if (_dataMode <= PINNACLE_ABSOLUTE) {
         uint8_t temp = 0;
         rapRead(PINNACLE_HCO_ID, &temp);
-        return temp > 0;
+        return (temp & 0x80) > 0;
     }
     return false;
 }
@@ -136,9 +139,9 @@ bool PinnacleTouch::available()
 {
     PINNACLE_USE_ARDUINO_API
     if (_dataReady == PINNACLE_SW_DR) {
-        uint8_t tmp = 0;
-        rapRead(PINNACLE_STATUS, &tmp);
-        return (bool)(tmp & 0x0C);
+        uint8_t temp = 0;
+        rapRead(PINNACLE_STATUS, &temp);
+        return (bool)(temp & 0x0C);
     }
     return digitalRead(_dataReady);
 }
@@ -307,8 +310,8 @@ bool PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
 {
     PINNACLE_USE_ARDUINO_API
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
-        uint8_t cal_config = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
-        rapWrite(PINNACLE_CAL_CONFIG, cal_config | run);
+        uint8_t temp = (tap << 4) | (trackError << 3) | (nerd << 2) | (background << 1);
+        rapWrite(PINNACLE_CAL_CONFIG, temp | run);
         if (run) {
             bool done = false;
             uint32_t timeout = millis() + 100;
@@ -381,25 +384,28 @@ void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWide
 void PinnacleTouch::anymeasModeConfig(uint8_t gain, uint8_t frequency, uint32_t sampleLength, uint8_t muxControl, uint32_t apertureWidth, uint8_t controlPowerCount)
 {
     if (_dataMode == PINNACLE_ANYMEAS) {
-        uint8_t togPol[8] = {0};
-        rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
-        uint8_t anymeas_config[10] = {2, 3, 4, 0, 4, 0, PINNACLE_PACKET_BYTE_1, 0, 0, 1};
-        anymeas_config[0] = gain | frequency;
+        uint8_t buffer[10] = {0};
+        rapWriteBytes(PINNACLE_PACKET_BYTE_1, buffer, 8); // zero out toggle/polarity registers
+
+        buffer[0] = gain | frequency;
         sampleLength /= 128;
-        anymeas_config[1] = (uint8_t)(sampleLength < 1 ? 1 : (sampleLength > 3 ? 3 : sampleLength));
-        anymeas_config[2] = muxControl;
+        buffer[1] = (uint8_t)(sampleLength < 1 ? 1 : (sampleLength > 3 ? 3 : sampleLength));
+        buffer[2] = muxControl;
         apertureWidth /= 125;
-        anymeas_config[4] = (uint8_t)(apertureWidth < 2 ? 2 : (apertureWidth > 15 ? 15 : apertureWidth));
-        anymeas_config[9] = controlPowerCount;
-        rapWriteBytes(5, anymeas_config, 10);
+        buffer[4] = (uint8_t)(apertureWidth < 2 ? 2 : (apertureWidth > 15 ? 15 : apertureWidth));
+        buffer[6] = PINNACLE_PACKET_BYTE_1;
+        buffer[9] = controlPowerCount;
+        rapWriteBytes(PINNACLE_FEED_CONFIG_2, buffer, 10);
         clearStatusFlags();
     }
 }
 
 int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
 {
+    if (_dataMode != PINNACLE_ANYMEAS)
+        return 0;
     startMeasureAdc(bitsToToggle, togglePolarity);
-    while (!available() && _dataReady != PINNACLE_SW_DR) {
+    while (!available()) {
         // wait till measurements are complete
     }
     return getMeasureAdc();
@@ -408,26 +414,27 @@ int16_t PinnacleTouch::measureAdc(unsigned int bitsToToggle, unsigned int toggle
 void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity)
 {
     if (_dataMode == PINNACLE_ANYMEAS) {
-        uint8_t togPol[8] = {}; // array buffer for registers
-        for (int8_t i = 3; i >= 0; --i)
-            togPol[3 - i] = (uint8_t)(bitsToToggle >> ((uint8_t)i * 8));
-        for (int8_t i = 3; i >= 0; --i)
-            togPol[3 - i + 4] = (uint8_t)(togglePolarity >> ((uint8_t)i * 8));
-        rapWriteBytes(PINNACLE_PACKET_BYTE_1, togPol, 8);
-        // initiate measurements
-        uint8_t temp = 0;
-        rapRead(PINNACLE_SYS_CONFIG, &temp);
-        rapWrite(PINNACLE_SYS_CONFIG, temp | 0x18);
+        uint8_t buffer[8] = {0};
+        for (int8_t i = 3; i >= 0; --i) {
+            buffer[3 - i] = (uint8_t)(bitsToToggle >> (i * 8));
+            buffer[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
+        }
+        rapWriteBytes(PINNACLE_PACKET_BYTE_1, buffer, 8);
+        buffer[0] = 0; // clearStatusFlags()
+        rapRead(PINNACLE_SYS_CONFIG, buffer + 1);
+        buffer[1] |= 0x18; // initiate measurements
+        rapWriteBytes(PINNACLE_STATUS, buffer, 2);
     }
 }
 
 int16_t PinnacleTouch::getMeasureAdc()
 {
-    if (_dataMode == PINNACLE_ANYMEAS && available()) {
-        uint8_t result[2] = {};
-        rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, result, 2);
+    // user code should only call this when Data Ready pin has asserted after calling startMeasureAdc()
+    if (_dataMode == PINNACLE_ANYMEAS) {
+        uint16_t buffer = 0;
+        rapReadBytes(PINNACLE_PACKET_BYTE_0 - 1, reinterpret_cast<uint8_t*>(&buffer), 2);
         clearStatusFlags();
-        return (int16_t)(((uint16_t)result[0] << 8) | result[1]);
+        return (int16_t)((buffer << 8) | (buffer >> 8));
     }
     return 0;
 }
@@ -441,13 +448,12 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
         feedEnabled(false); // accessing raw memory, so do this
     }
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
-    uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
-    rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
+    uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
+    rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 2); // indicate writing only 1 byte
-    uint8_t temp = 1;
     do {
-        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-    } while (temp);
+        rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+    } while (buffer[0]);
     clearStatusFlags(); // clear Command Complete flag in Status register
     if (prevFeedState) {
         feedEnabled(prevFeedState); // resume previous feed state
@@ -462,14 +468,13 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
         feedEnabled(false); // accessing raw memory, so do this
     }
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
-    uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
-    rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
+    uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
+    rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 0x0A); // indicate writing sequential bytes
-    uint8_t temp = 1;
     for (uint8_t i = 0; i < repeat; i++) {
         do {
-            rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-        } while (temp);
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+        } while (buffer[0]);
         clearStatusFlags(); // clear Command Complete flag in Status register
     }
     if (prevFeedState) {
@@ -483,13 +488,12 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
-    uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
-    rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
+    uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
+    rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
-    uint8_t temp = 1;
     do {
-        rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-    } while (temp);
+        rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+    } while (buffer[0]);
     rapRead(PINNACLE_ERA_VALUE, data); // get data
     clearStatusFlags();                // clear Command Complete flag in Status register
     if (prevFeedState) {
@@ -503,14 +507,13 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
-    uint8_t reg_value[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xff)};
-    rapWriteBytes(PINNACLE_ERA_ADDR, reg_value, 2);
-    uint8_t temp = 1;
+    uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
+    rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     for (uint8_t i = 0; i < registerCount; ++i) {
         rapWrite(PINNACLE_ERA_CONTROL, 5); // indicate reading sequential bytes
         do {
-            rapRead(PINNACLE_ERA_CONTROL, &temp); // read until registerAddress == 0
-        } while (temp);
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+        } while (buffer[0]);
         rapRead(PINNACLE_ERA_VALUE, data + i); // get value
         clearStatusFlags();                    // clear Command Complete flag in Status register
     }
