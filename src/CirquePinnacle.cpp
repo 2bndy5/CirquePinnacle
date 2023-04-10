@@ -156,36 +156,54 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
 void PinnacleTouch::relativeModeConfig(bool taps, bool rotate90, bool secondaryTap, bool glideExtend, bool intellimouse)
 {
     if (_dataMode == PINNACLE_RELATIVE) {
-        uint8_t config2 = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!taps << 1) | intellimouse;
-        rapWrite(PINNACLE_FEED_CONFIG_2, config2);
+        uint8_t temp = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!taps << 1) | intellimouse;
+        rapWrite(PINNACLE_FEED_CONFIG_2, temp);
+        if (intellimouse) {
+            _intellimouse = false;
+            // send required cmd to enable intellimouse mode
+            uint8_t sequence[6] = {0xF3, 0xC8, 0xF3, 0x64, 0xF3, 0x50};
+            rapWriteCmd(sequence, 6);
+            // verify cmd was accepted with the device ID cmd
+            rapReadBytes(0xF2, sequence, 3);
+            if (sequence[0] == 0xFA && sequence[1] == 0x03) {
+                _intellimouse = true;
+            }
+        }
     }
 }
 
-void PinnacleTouch::read(RelativeReport* report)
+void PinnacleTouch::read(RelativeReport* report, bool readButtons)
 {
     if (_dataMode == PINNACLE_RELATIVE) {
-        uint8_t temp[4] = {};
-        rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 4);
+        uint8_t buffer[4] = {0};
+        uint8_t skip = !readButtons;
+        rapReadBytes(PINNACLE_PACKET_BYTE_0 + skip, buffer, 3 - skip + _intellimouse);
         clearStatusFlags();
-        report->buttons &= 0xF8;
-        report->buttons |= temp[0] & 7;
-        report->x = (int8_t)temp[1];
-        report->y = (int8_t)temp[2];
-        report->scroll = (int8_t)temp[3];
+        if (readButtons) {
+            report->buttons &= 0xF8;
+            report->buttons |= buffer[0] & 7;
+        }
+        report->x = (int8_t)buffer[1 - skip];
+        report->y = (int8_t)buffer[2 - skip];
+        if (_intellimouse)
+            report->scroll = (int8_t)buffer[3 - skip];
     }
 }
 
-void PinnacleTouch::read(AbsoluteReport* report)
+void PinnacleTouch::read(AbsoluteReport* report, bool readButtons)
 {
     if (_dataMode == PINNACLE_ABSOLUTE) {
-        uint8_t temp[6] = {};
-        rapReadBytes(PINNACLE_PACKET_BYTE_0, temp, 6);
+        uint8_t buffer[6] = {0};
+        uint8_t skip = (!readButtons) * 2;
+        rapReadBytes(PINNACLE_PACKET_BYTE_0 + skip, buffer, 6 - skip);
         clearStatusFlags();
-        report->buttons &= 0xF8;
-        report->buttons |= temp[0] & 0x3F;
-        report->x = (uint16_t)(((temp[4] & 0x0F) << 8) | temp[2]);
-        report->y = (uint16_t)(((temp[4] & 0xF0) << 4) | temp[3]);
-        report->z = (uint8_t)(temp[5] & 0x1F);
+        if (readButtons) {
+            report->buttons &= 0xF8;
+            report->buttons |= buffer[0] & 0x3F;
+        }
+        report->x = (uint16_t)(((buffer[4 - skip] & 0x0F) << 8) | buffer[2 - skip]);
+        report->y = (uint16_t)(((buffer[4 - skip] & 0xF0) << 4) | buffer[3 - skip]);
+        report->z = (uint8_t)(buffer[5 - skip] & 0x1F);
     }
 }
 
@@ -531,6 +549,20 @@ bool PinnacleTouchSPI::begin()
     return PinnacleTouchSPI::begin(&SPI);
 }
 
+void PinnacleTouchSPI::rapWriteCmd(uint8_t* sequence, uint8_t len)
+{
+    PINNACLE_USE_ARDUINO_API
+#ifdef SPI_HAS_TRANSACTION
+    spi->beginTransaction(SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1));
+#endif
+    PINNACLE_SS_CTRL(_slaveSelect, LOW);
+    spi->transfer(sequence, len);
+    PINNACLE_SS_CTRL(_slaveSelect, HIGH);
+#ifdef SPI_HAS_TRANSACTION
+    spi->endTransaction();
+#endif
+}
+
 void PinnacleTouchSPI::rapWrite(uint8_t registerAddress, uint8_t registerValue)
 {
     PINNACLE_USE_ARDUINO_API
@@ -610,6 +642,15 @@ bool PinnacleTouchI2C::begin()
     Wire.begin();
     // no max/min I2C clock speed is specified (in ASIC's specs); use MCU default.
     return PinnacleTouchI2C::begin(&Wire);
+}
+
+void PinnacleTouchI2C::rapWriteCmd(uint8_t* sequence, uint8_t len)
+{
+    i2c->beginTransmission(_slaveAddress);
+    for (uint8_t i = 0; i < len; ++i) {
+        i2c->write(sequence[i]);
+    }
+    i2c->endTransmission(true);
 }
 
 void PinnacleTouchI2C::rapWrite(uint8_t registerAddress, uint8_t registerValue)

@@ -220,8 +220,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("relativeModeConfig", &PinnacleTouch::relativeModeConfig,
                       py::arg("taps") = true, py::arg("rotate90") = false, py::arg("secondary_tap") = true,
                       py::arg("glide_extend") = false, py::arg("intellimouse") = false);
-    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"));
-    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"));
+    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(AbsoluteReport*)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
+    pinnacleTouch.def("read", static_cast<void (PinnacleTouch::*)(RelativeReport*)>(&PinnacleTouch::read), py::arg("report"), py::arg("read_buttons") = true);
     pinnacleTouch.def("clear_status_flags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def("clearStatusFlags", &PinnacleTouch::clearStatusFlags);
     pinnacleTouch.def_property("allow_sleep", &PinnacleTouch::isAllowSleep, &PinnacleTouch::allowSleep);
@@ -269,8 +269,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     py::class_<PinnacleTouchSPI> pinnacleTouchSPI(m, "PinnacleTouchSPI", pinnacleTouch);
     pinnacleTouchSPI.def(py::init<pinnacle_gpio_t, pinnacle_gpio_t, uint32_t>(), py::arg("dataReadyPin"), py::arg("slaveSelectPin"), py::arg("spiSpeed") = PINNACLE_SPI_SPEED);
     pinnacleTouchSPI.def("begin", static_cast<bool (PinnacleTouchSPI::*)(void)>(&PinnacleTouchSPI::begin));
-    // The overloaded begin(_SPI*) is not exposed since it would require binding the driver-specific implementation (a lot of work).
-    // Additionally, begin(_SPI*) isn't needed on Linux because the SS_PIN param to the c'tor specifies both bus and CEx numbers.
+    // The overloaded begin(pinnacle_spi_t*) is not exposed since it would require binding the driver-specific implementation (a lot of work).
+    // Additionally, begin(pinnacle_spi_t*) isn't needed on Linux because the SS_PIN param to the c'tor specifies both bus and CEx numbers.
 
     // ******************* bindings for TwoWire
     py::class_<arduino::TwoWire> twoWire(m, "TwoWire");

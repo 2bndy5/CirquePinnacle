@@ -403,10 +403,9 @@ public:
      * @param rotate90 Specifies if the axis data is altered for 90 degree rotation before
      *     reporting it (essentially swaps the axis data). Default is ``false``.
      * @param secondaryTap Specifies if tapping in the top-left corner (depending on
-     *     orientation) triggers the secondary button data. Defaults to ``true``. This feature is
-     *     always disabled if `isHardConfigured()` is ``true``.
+     *     orientation) triggers the secondary button data. Defaults to ``true``.
      * @param glideExtend A patented feature that allows the user to glide their finger off
-     *     the edge of the sensor and continue gesture with the touch event. Default is ``true``.
+     *     the edge of the sensor and continue gesture with the touch event. Default is ``false``.
      *     This feature is always disabled if `isHardConfigured()` is ``true``.
      * @param intellimouse Specifies if the data reported includes a byte about scroll data.
      *     Default is ``false``. This feature is always disabled if `isHardConfigured()`
@@ -426,10 +425,20 @@ public:
      * @param[out] report A reference pointer (declared variable of datatype
      *     `RelativeReport`) for storing the data that describes the touch (and
      *     button) event.
+     * @param readButtons A flag that can be used to skip reading the button data from
+     *     the Pinnacle. The default (``true``) will read the button data and store it
+     *     in the ``report`` object's `~RelativeReport::buttons` attribute. This
+     *     parameter is useful to speed up read operations when not using the Pinnacle's
+     *     button input pins.
+     *
+     *     .. warning::
+     *         If relative mode's tap detection is enabled, then setting this parameter
+     *         to ``false`` can yield deceptively inaccurate data when reporting tap
+     *         gestures.
      *
      * @id RelativeReport
      */
-    void read(RelativeReport* report);
+    void read(RelativeReport* report, bool readButtons = true);
     /**
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC (including empty packets on ending of a touch/button
@@ -440,10 +449,15 @@ public:
      * @param[out] report A reference pointer (declared variable of datatype
      *     `AbsoluteReport`) for storing the data that describes the touch (and
      *     button) event.
+     * @param readButtons A flag that can be used to skip reading the button data from
+     *     the Pinnacle. The default (``true``) will read the button data and store it
+     *     in the ``report`` object's `~AbsoluteReport::buttons` attribute. This
+     *     parameter is useful to speed up read operations when not using the Pinnacle's
+     *     button input pins.
      *
      * @id AbsoluteReport
      */
-    void read(AbsoluteReport* report);
+    void read(AbsoluteReport* report, bool readButtons = true);
     /**
      * Use this function to clear the interrupt signal (digital input; active
      * when HIGH) on the "data ready" pin (marked "DR" in the
@@ -786,7 +800,9 @@ private:
     void eraRead(uint16_t, uint8_t*);
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
     PinnacleDataMode _dataMode;
+    bool _intellimouse;
     const pinnacle_gpio_t _dataReady;
+    virtual void rapWriteCmd(uint8_t*, uint8_t) = 0;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
     virtual void rapWriteBytes(uint8_t, uint8_t*, uint8_t) = 0;
     virtual void rapRead(uint8_t, uint8_t*) = 0;
@@ -849,6 +865,7 @@ public:
     bool begin(pinnacle_spi_t* spi_bus);
 
 private:
+    void rapWriteCmd(uint8_t*, uint8_t);
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
     void rapRead(uint8_t, uint8_t*);
@@ -900,6 +917,7 @@ public:
     bool begin(pinnacle_i2c_t* i2c_bus);
 
 private:
+    void rapWriteCmd(uint8_t*, uint8_t);
     void rapWrite(uint8_t, uint8_t);
     void rapWriteBytes(uint8_t, uint8_t*, uint8_t);
     void rapRead(uint8_t, uint8_t*);
