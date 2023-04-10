@@ -2,6 +2,10 @@
 C++ API
 ==================
 
+.. toctree::
+
+    arduino_wrappers
+
 .. _Data Mode:
 
 Data Mode

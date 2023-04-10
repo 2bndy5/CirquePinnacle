@@ -27,7 +27,7 @@ typedef struct _MeasureVector
 } measureVector;
 
 measureVector vectorDeterminants[] = {
-    // {toggle, polarity}
+    // toggle  ,   polarity
     {0x0000FFFF, 0x00000000}, // toggle all x-axis bits negatively (to 0)
     {0x0FFF0000, 0x00000000}, // toggle all y-axis bits negatively (to 0)
     {0x00FF00FF, 0x000000FF}, // toggle Y0-Y7 negatively (to 0) & X0-X7 positively (to 1)

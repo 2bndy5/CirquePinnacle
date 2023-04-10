@@ -133,15 +133,26 @@ In order to use the CirquePinnacle library in your RP2040 based project:
                CMakeLists.txt
                ...
 
-   Alternatively, you can add the CirquePinnacle repository as
-   `git submodules <https://git-scm.com/book/en/v2/Git-Tools-Submodules>`_.
+   Alternatively, you can add the CirquePinnacle repository as a
+   `git submodule <https://git-scm.com/book/en/v2/Git-Tools-Submodules>`_.
 2. Include the root CMakeLists.txt file from the CirquePinnacle library in your project's top-level
-   CMakeLists.txt file (usually located in the "src" directory). The following snippet
-   assumes that your project's "src" directory is on the same level as the previously
-   mentioned "lib" directory.
+   CMakeLists.txt file (usually located in the "src" directory) *after* invoking the
+   ``pico_sdk_init()`` function. The following snippet assumes that your project's "src" directory
+   is on the same level as the previously mentioned "lib" directory.
 
    .. code-block:: cmake
+       :emphasize-lines: 10
 
+
+       # Pull in SDK (must be before `project()`)
+       include(../lib/CirquePinnacle/src/cmake/pico_sdk_import.cmake)
+
+       project(${projectName} C CXX ASM)
+
+       # Initialize the Pico SDK
+       pico_sdk_init()
+
+       # must be done after `pico_sdk_init()`
        include(../lib/CirquePinnacle/src/CMakeLists.txt)
 
 3. In the same CMakeLists.txt file (in your project) from step 2, add the CirquePinnacle library into
@@ -149,7 +160,7 @@ In order to use the CirquePinnacle library in your RP2040 based project:
 
    .. code-block:: cmake
 
-       target_link_libraries(${CMAKE_PROJECT_NAME}
+       target_link_libraries(${targetName}
            # ... Your project's other libraries ...
            CirquePinnacle
        )
@@ -158,7 +169,7 @@ In order to use the CirquePinnacle library in your RP2040 based project:
 
    .. code-block:: cmake
 
-       target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+       target_include_directories(${targetName} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
 4. Finally, remember to include the necessary CirquePinnacle library's header files in your
    project's source code where applicable.
@@ -206,17 +217,17 @@ Project Source code option
         :cpp:expr:`PinnacleTouchSPI::begin(pinnacle_spi_t *spi_bus)`.
 
         .. code-block:: cpp
+            :emphasize-lines: 7,9
 
             #include <CirquePinnacle.h>
-            PinnacleTouchSPI trackpad = PinnacleTouchSPI(DR_PIN, SS_PIN);
+            PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
             int main()
             {
-                // using the namespace for the pre-instantiated `SPI` object
-                namespace arduino = cirque_pinnacle_arduino_wrappers;
+                // Using the pre-instantiated `SPI` object
+                // Again, please review the GPIO pins' "Function Select Table" in the Pico SDK docs
+                cirque_pinnacle_arduino_wrappers::SPI.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
 
-                // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
-                arduino::SPI.begin(spi0, 2, 3, 4); // spi0 or spi1 bus, SCK, TX, RX
-                if (!trackpad.begin(&arduino::SPI)) {
+                if (!trackpad.begin(&cirque_pinnacle_arduino_wrappers::SPI)) {
                     printf("Cirque Pinnacle not responding!\n");
                 }
                 // continue with program as normal ...
@@ -229,17 +240,17 @@ Project Source code option
         :cpp:expr:`PinnacleTouchI2C::begin(pinnacle_i2c_t *i2c_bus)`.
 
         .. code-block:: cpp
+            :emphasize-lines: 7,9
 
             #include <CirquePinnacle.h>
             PinnacleTouchI2C trackpad(DR_PIN);
             int main()
             {
-                // using the namespace for the pre-instantiated `Wire` object
-                namespace arduino = cirque_pinnacle_arduino_wrappers;
+                // Using the pre-instantiated `Wire` object.
+                // Again, please review the GPIO pins' "Function Select Table" in the Pico SDK docs
+                cirque_pinnacle_arduino_wrappers::Wire.begin(i2c0, 4, 5); // i2c0 or i2c1 bus, SDA, SCL
 
-                // again please review the GPIO pins' "Function Select Table" in the Pico SDK docs
-                arduino::Wire.begin(i2c0, 4, 5); // i2c0 or i2c1 bus, SDA, SCL
-                if (!trackpad.begin(&arduino::Wire)) {
+                if (!trackpad.begin(&cirque_pinnacle_arduino_wrappers::Wire)) {
                     printf("Cirque Pinnacle not responding!\n");
                 }
                 // continue with program as normal ...
@@ -289,22 +300,20 @@ demonstrate how to do that.
     .. md-tab-item:: SPI
 
         .. code-block:: cpp
+            :emphasize-lines: 12,24-25
 
             #include <CirquePinnacle.h>
 
-            // using the namespace for the wrapped arduino-like API
-            namespace arduino = cirque_pinnacle_arduino_wrappers;
-
             // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
-            PinnacleTouchSPI trackpad0 = PinnacleTouchSPI(DR_PIN_0, SS_PIN_0); // first trackpad object
-            PinnacleTouchSPI trackpad1 = PinnacleTouchSPI(DR_PIN_1, SS_PIN_1); // second trackpad object
+            PinnacleTouchSPI trackpad0(DR_PIN_0, SS_PIN_0); // first trackpad object
+            PinnacleTouchSPI trackpad1(DR_PIN_1, SS_PIN_1); // second trackpad object
 
             // By default, one SPI bus instance is created by the CirquePinnacle lib. We'll use this
             // default instance of the `spi0` interface for our first trackpad, but we want a
             // different SPI bus for the second trackpad.
             //
             // So, here we declare a second SPI bus instance:
-            arduino::SPIClass my_spi = arduino::SPIClass(); // we specify the `spi1` bus interface below
+            cirque_pinnacle_arduino_wrappers::SPIClass my_spi; // we specify the `spi1` bus interface below
 
             bool setupTrackpads()
             {
@@ -338,22 +347,20 @@ demonstrate how to do that.
     .. md-tab-item:: I2C
 
         .. code-block:: cpp
+            :emphasize-lines: 12,24-25
 
             #include <CirquePinnacle.h>
 
-            // using the namespace for the wrapped arduino-like API
-            namespace arduino = cirque_pinnacle_arduino_wrappers;
-
             // Declare the pin numbers connected to the trackpads' DR and SS pins (respectively)
-            PinnacleTouchI2C trackpad0 = PinnacleTouchI2C(DR_PIN_0); // first trackpad object
-            PinnacleTouchI2C trackpad1 = PinnacleTouchI2C(DR_PIN_1); // second trackpad object
+            PinnacleTouchI2C trackpad0(DR_PIN_0); // first trackpad object
+            PinnacleTouchI2C trackpad1(DR_PIN_1); // second trackpad object
 
             // By default, one I2C bus instance is created by the CirquePinnacle lib. We'll use this
             // default instance of the `i2c0` interface for our first trackpad, but we want a
             // different I2C bus for the second trackpad.
             //
             // So, here we declare a second I2C bus instance:
-            arduino::TwoWire my_i2c = arduino::TwoWire(); // we specify the `i2c1` bus interface below
+            cirque_pinnacle_arduino_wrappers::TwoWire my_i2c; // we specify the `i2c1` bus interface below
 
             bool setupTrackpads()
             {

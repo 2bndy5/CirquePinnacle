@@ -22,12 +22,21 @@
 
     #include <stdexcept>
 
+/**
+ * An alias for platform-specific representation of GPIO pin numbers
+ *
+ * @ingroup arduino-gpio
+ */
 typedef uint16_t pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0xFFFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/** Specific exception for SPI errors */
+/**
+ * Specific exception for GPIO errors
+ *
+ * @ingroup arduino-gpio
+ */
 class GPIOException : public std::runtime_error
 {
 public:
@@ -37,6 +46,11 @@ public:
     }
 };
 
+/**
+ * A class to wrap platform-specific implementation of GPIO pins in Arduino-like API.
+ *
+ * @ingroup arduino-gpio
+ */
 class GPIOClass
 {
 
@@ -50,32 +64,36 @@ public:
     GPIOClass();
 
     /**
-     * Similar to Arduino pinMode(pin, mode);
-     * @param port
-     * @param direction
+     * Similar to Arduino ``pinMode(pin, mode)``.
+     *
+     * @param port The GPIO pin.
+     * @param direction The direction of the signals (``INPUT`` or ``OUTPUT``).
      */
     static void open(pinnacle_gpio_t port, int direction);
 
     /**
      * Defined for completeness; not actually exposed in the Arduino API
-     * @param port
+     *
+     * @param port The GPIO pin.
      */
     static void close(pinnacle_gpio_t port);
 
     /**
-     * Similar to Arduino digitalRead(pin);
-     * @param port
+     * Similar to Arduino ``digitalRead(pin)``.
+     *
+     * @param port The GPIO pin.
      */
     static int read(pinnacle_gpio_t port);
 
     /**
-     * Similar to Arduino digitalWrite(pin, level);
-     * @param port
-     * @param value
+     * Similar to Arduino ``digitalWrite(pin, level)``.
+     *
+     * @param port The GPIO pin.
+     * @param value The binary level of an output signal (``HIGH`` or ``LOW``).
      */
     static void write(pinnacle_gpio_t port, int value);
 
-    virtual ~GPIOClass();
+    /* virtual ~GPIOClass(); */
 
 private:
 };

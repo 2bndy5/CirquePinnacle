@@ -67,6 +67,8 @@ void TwoWire::beginTransmission(uint8_t address)
 
 uint8_t TwoWire::endTransmission(uint8_t sendStop)
 {
+    (void)sendStop; // param not used in this implementation
+
     if (::write(bus_fd, xBuff, xBuffLen) != xBuffLen) {
         throw I2CException("Could not write data to I2C bus.");
     }

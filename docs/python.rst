@@ -16,6 +16,9 @@ Installing from Github
 
        sudo apt install python3-dev cmake
 
+   .. note::
+       Building on non-Linux platforms doesn't require any installed dependencies (other than
+       Python 3).
 2. Clone the repository and initialize the submodule for pybind11.
 
    .. code-block:: shell
@@ -45,8 +48,7 @@ Installing from Github
    The optional ``-v`` will use ``pip``\ 's verbosity to show that the process isn't frozen. Otherwise, the
    step labeled "building wheel" may look like it isn't doing anything for a few minutes.
 
-   .. tip::
-       :title: Optional ``CMAKE_ARGS`` environment variable
+   .. info:: Optional ``CMAKE_ARGS`` environment variable
        :collapsible:
 
        You can customize the build further using an environment variable named ``CMAKE_ARGS`` set to a string of
@@ -80,6 +82,8 @@ Installing from Github
        python3 examples/cpython/relative_mode.py
 
    .. important::
+       :title: ``sudo`` in a Virtual Environment
+
        Remember that the drivers ``pigpio`` and ``bcm2xxx`` will require ``sudo`` permission.
        This *will* cause problems if using ``sudo`` from a python virtual environment because
        ``sudo`` will invoke the system install of the python interpreter (not the virtual

@@ -151,7 +151,7 @@ This is done in the python binding to expedite the formation of an immutable pyt
 Exposed I2C implementation
 --------------------------
 
-Since multiple buses are supported by this library, the underlying class ``TwoWire`` is exposed
+Since multiple buses are supported by this library, the underlying class `~cirque_pinnacle_arduino_wrappers::TwoWire` is exposed
 that implements the I2C protocol similar to `the Arduino API
 <https://www.arduino.cc/reference/en/language/functions/communication/wire/>`_. Typical
 applications shouldn't need to use this as most Linux-based SoC boards only have 1 I2C bus exposed

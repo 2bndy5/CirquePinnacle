@@ -324,11 +324,11 @@ public:
      *     .. csv-table::
      *         :header: "``mode`` (enum value)", description
      *
-     *         "`PINNACLE_RELATIVE` (``0``)", "for relative/mouse mode"
-     *         "`PINNACLE_ANYMEAS` (``1``)", "for reading raw ADC values"
-     *         "`PINNACLE_ABSOLUTE` (``2``)", "for absolute positioning mode"
+     *         ":expr:`PINNACLE_RELATIVE` (``0``)", "for relative/mouse mode"
+     *         ":expr:`PINNACLE_ANYMEAS` (``1``)", "for reading raw ADC values"
+     *         ":expr:`PINNACLE_ABSOLUTE` (``2``)", "for absolute positioning mode"
      *
-     * Invalid input values have no affect.
+     *     Invalid input values have no affect.
      */
     void setDataMode(PinnacleDataMode mode);
     /**
@@ -340,11 +340,12 @@ public:
      *     re-configured by using  `absoluteModeConfig()` or `relativeModeConfig()`.
      *
      * @return
-     *     - ``0`` (AKA `PINNACLE_RELATIVE`) for Relative mode (AKA mouse mode)
-     *     - ``1`` (AKA `PINNACLE_ANYMEAS`) for AnyMeas mode (raw ADC measurements)
-     *     - ``2`` (AKA `PINNACLE_ABSOLUTE`) for Absolute mode (X & Y axis
+     *     - :expr:`PINNACLE_RELATIVE` (``0``) for relative mode (AKA mouse mode)
+     *     - :expr:`PINNACLE_ANYMEAS` (``1``) for anymeas mode (raw ADC measurements)
+     *     - :expr:`PINNACLE_ABSOLUTE` (``2``) for absolute mode (X & Y axis
      *       positions)
-     *     - ``255`` if `begin()` returns ``false`` (failed to initialize the trackpad)
+     *     - :expr:`PINNACLE_ERROR` (``0xFF``) if `begin()` returns ``false`` (failed to
+     *       initialize the trackpad)
      */
     PinnacleDataMode getDataMode();
     /**
@@ -358,6 +359,11 @@ public:
      *     labeled "R4"; ``false`` if no resistor is populated at the "R4" junction.
      *     This function will also return ``false`` if `begin()` failed to initialize
      *     the trackpad.
+     *
+     *     .. error::
+     *         :no-title:
+     *
+     *         This seems to return ``true`` when the trackpad is configured for I2C interface.
      */
     bool isHardConfigured();
     /**

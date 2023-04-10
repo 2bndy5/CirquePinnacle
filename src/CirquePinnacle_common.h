@@ -49,9 +49,19 @@
         #define PINNACLE_SPI_SPEED 6000000
     #endif
 
-// alias for SPI bus implementation
+
+/**
+ * alias for SPI bus implementation
+ *
+ * @ingroup arduino-spi
+ */
 typedef SPIClass pinnacle_spi_t;
-// alias for I2C bus implementation
+
+/**
+ * alias for I2C bus implementation
+ *
+ * @ingroup arduino-i2c
+ */
 typedef TwoWire pinnacle_i2c_t;
 
     #ifdef NUM_DIGITAL_PINS

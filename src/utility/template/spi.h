@@ -37,19 +37,23 @@ namespace cirque_pinnacle_arduino_wrappers {
         /**
          * Default is the recommended 6 MHz (maximum supported SPI speed is 13 MHz)
          *
-         * @ingroup cmake-options
+         * @ingroup arduino-spi
          */
         #define PINNACLE_SPI_SPEED 6000000
     #endif
 
     #ifndef PINNACLE_DEFAULT_SPI_BUS
-        /// @ingroup cmake-options
+        /// @ingroup arduino-spi
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
     #define PINNACLE_SS_CTRL(pin, value) // uses digitalWrite() when not using SPI bus' native CS pin
 
-/** Specific exception for SPI errors */
+/**
+ * Specific exception for SPI errors
+ *
+ * @ingroup arduino-spi
+ */
 class SPIException : public std::runtime_error
 {
 public:
@@ -59,6 +63,15 @@ public:
     }
 };
 
+/**
+ * A class to wrap platform-specific implementation of the SPI data bus in Arduino-like API.
+ *
+ * .. failure:: Missing features
+ *
+ *     This implementation does not support slave device behavior or interrupt service routines.
+ *
+ * @ingroup arduino-spi
+ */
 class SPIClass
 {
 
@@ -68,48 +81,74 @@ public:
 
     /**
      * Initialize a certain SPI bus. Uses boards defaults when available.
-     * @param busNumber This is the SPI bus number and corresponding channel (CEx pin on RPi).
-     * | bus ID | CE number | param value | spidev device  |
-     * |:------:|:---------:|:-----------:|:--------------:|
-     * |    0   |     0     |      0      | /dev/spidev0.0 |
-     * |    0   |     1     |      1      | /dev/spidev0.1 |
-     * |    1   |     0     |     10      | /dev/spidev1.0 |
-     * |    1   |     1     |     11      | /dev/spidev1.1 |
-     * |    1   |     2     |     12      | /dev/spidev1.2 |
+     *
+     * @param bus_number This is the SPI bus number and corresponding channel (CEx pin on RPi).
+     *     Default is ``0``.
+     *
+     *     +--------+-----------+-------------+---------------------------+
+     *     | bus ID | CE number | param value | spidev adapter            |
+     *     +========+===========+=============+===========================+
+     *     |  ``0`` |   ``0``   |    ``0``    | :literal:`/dev/spidev0.0` |
+     *     +--------+-----------+-------------+---------------------------+
+     *     |  ``0`` |   ``1``   |    ``1``    | :literal:`/dev/spidev0.1` |
+     *     +--------+-----------+-------------+---------------------------+
+     *     |  ``1`` |   ``0``   |   ``10``    | :literal:`/dev/spidev1.0` |
+     *     +--------+-----------+-------------+---------------------------+
+     *     |  ``1`` |   ``1``   |   ``11``    | :literal:`/dev/spidev1.1` |
+     *     +--------+-----------+-------------+---------------------------+
+     *     |  ``1`` |   ``2``   |   ``12``    | :literal:`/dev/spidev1.2` |
+     *     +--------+-----------+-------------+---------------------------+
+     *
      * @param spi_speed The baudrate (aka frequency) to be used on the specified SPI bus.
+     *     Default is 6 MHz (``6000000``).
      */
-    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
+    void begin(int bus_number = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
+     *
      * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
      * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
-     * @param len The length of each buffer of bytes; each buffer should have equal length.
+     * @param len The length of each buffer in bytes; each buffer must have equal length.
+     *
+     * @id buffered
      */
     void transfer(void* tx_buf, void* rx_buf, uint32_t len);
 
     /**
      * Transfer a buffer of bytes to a SPI slave device.
-     * @param buf The pointer to a buffer of bytes to send over MOSI.
-     * @param len The length of the buffer of bytes.
      *
-     * @note The bytes received over MISO will replace the
-     * buffer contents as the bytes are sent over MOSI.
+     * @param buf The pointer to a buffer of bytes to send over MOSI.
+     * @param len The length of the `buf` in bytes.
+     *
+     * .. note::
+     *     The bytes received over MISO will replace the
+     *     contents of `buf` as the bytes are sent over MOSI.
+     *
+     * @id bytes
      */
     void transfer(void* buf, uint32_t len);
 
     /**
      * Transfer a single byte to/from a SPI slave device.
+     *
      * @param tx The byte to send over MOSI.
-     * @return The byte received over MISO when sending the `tx` byte over MOSI.
+     *
+     * @returns The byte received over MISO when sending the `tx` byte over MOSI.
+     *
+     * @id byte
      */
     uint8_t transfer(uint8_t tx);
 
-    /** Clean-up any internal pointers/buffers/etc. */
-    virtual ~SPIClass();
+    /* Clean-up any internal pointers/buffers/etc.
+    virtual ~SPIClass(); */
 };
 
-// pre-instantiated SPI bus object (to use as a convenient default)
+/**
+ * Pre-instantiated SPI bus object (to use as a convenient default).
+ *
+ * @ingroup arduino-spi
+ */
 extern SPIClass SPI;
 
 } // namespace cirque_pinnacle_arduino_wrappers

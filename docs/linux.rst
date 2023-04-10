@@ -30,9 +30,9 @@ Installing from Source
 
    .. code-block:: shell
 
-       cmake ../src -D PINNACLE_DRIVER=linux_kernel
+       cmake ../src -DPINNACLE_DRIVER=linux_kernel
 
-   The ``-D PINNACLE_DRIVER`` will force the build to use 1 of the supported hardware drivers.
+   The ``-DPINNACLE_DRIVER`` will force the build to use 1 of the supported hardware drivers.
    This can also be specified using an environment variable named ``PINNACLE_DRIVER``.
    With out this specified, CMake will look for required dependencies and use the first driver found.
    Supported options include (in order of precedence):
@@ -79,7 +79,7 @@ repository's root folder (as created in step 3 above).
 
    .. code-block:: shell
 
-       cmake ../examples/linux -D PINNACLE_DRIVER=linux_kernel
+       cmake ../examples/linux -DPINNACLE_DRIVER=linux_kernel
 
    Again, specify the driver used to build the library (see step 4 above) is recommended because
    some drivers require the built applications to be linked to pre-installed libraries.
@@ -109,7 +109,7 @@ repository's root folder (as created in step 3 above).
 
        ./relative_mode
 
-   Remember that any driver other than ``linux_kernel`` will require ``sudo`` permission.
+   Remember that both ``PINNACLE_DRIVER``\ s ``bcm2xxx`` and ``pigpio`` will require ``sudo`` permission.
 
 .. _slaveSelectPin:
 
@@ -126,13 +126,44 @@ Therefore, the pin number passed to the `~PinnacleTouchSPI::PinnacleTouchSPI()` 
     :header: "bus ID","CE number","constructor's ``slaveSelectPin`` value","spidev adapter"
     :widths: 2, 4, 8, 6
 
-    0,0,0,``/dev/spidev0.0``
-    0,1,1,``/dev/spidev0.1``
-    1,0,10,``/dev/spidev1.0``
-    1,1,11,``/dev/spidev1.1``
-    1,2,12,``/dev/spidev1.2``
+    ``0``,``0``,:expr:`0`,``/dev/spidev0.0``
+    ``0``,``1``,:expr:`1`,``/dev/spidev0.1``
+    ``1``,``0``,:expr:`10`,``/dev/spidev1.0``
+    ``1``,``1``,:expr:`11`,``/dev/spidev1.1``
+    ``1``,``2``,:expr:`12`,``/dev/spidev1.2``
 
 .. note::
     Support for the auxiliary (AKA secondary) SPI bus (``/dev/spidev1.x``) is only well supported in
     the ``linux_kernel`` driver. Other drivers have their own set of limitations when it comes to
     using ``/dev/spidev1.x``.
+
+Using a non-default I2C bus
+***************************
+
+The default I2C bus used is ``/dev/i2c-1``. However, some boards may use a different I2C bus number
+as a default. This can be remedied by passing the correct bus number to `cirque_pinnacle_arduino_wrappers::TwoWire::begin()`.
+
+.. code-block:: cpp
+    :caption: To use ``/dev/i2c-0`` bus
+    :class: annotated-with-numbers
+    :emphasize-lines: 7,9
+
+    #include <CirquePinnacle.h>
+    #define DR_PIN 25
+    PinnacleTouchI2C trackpad(DR_PIN);
+
+    int main() {
+        // specify the I2C bus
+        cirque_pinnacle_arduino_wrappers::Wire.begin(0); // (1)!
+
+        if (!trackpad.begin(&cirque_pinnacle_arduino_wrappers::Wire)) { // (2)!
+            return 1; // failed to initialize the trackpad
+        }
+        // continue the program as usual ...
+    }
+
+.. code-annotations::
+    1. Use :expr:`0` for ``/dev/i2c-0``. Default is :expr:`1` for ``/dev/i2c-1``.
+
+       .. seealso:: `cirque_pinnacle_arduino_wrappers::TwoWire::begin()`
+    2. Explicitly pass a reference of the `~cirque_pinnacle_arduino_wrappers::TwoWire` object to `PinnacleTouchI2C::begin()`.

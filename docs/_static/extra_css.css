@@ -8,3 +8,27 @@ th {
   line-height: inherit;
   padding-top: 3.5rem;
 }
+
+.md-typeset .annotated-with-numbers .md-annotation__index > ::before {
+  content: attr(data-md-annotation-id);
+}
+.md-typeset .annotated-with-numbers :focus-within > .md-annotation__index > ::before {
+  transform: none;
+}
+
+.md-typeset .annotated-with-numbers .md-annotation__index::after {
+  background-color: var(--md-primary-fg-color);
+}
+/* style for the unchecked checkboxes */
+.custom-task-list-style > ul > li > label .task-list-indicator::before {
+  -webkit-mask-image: var(--md-admonition-icon--failure);
+  mask-image: var(--md-admonition-icon--failure);
+  background-color: hsl(0, 72%, 55%);
+}
+
+/* style for the checked checkboxes */
+.custom-task-list-style > ul > li > .task-list-control > [type="checkbox"]:checked + .task-list-indicator::before {
+  -webkit-mask-image: var(--md-admonition-icon--success);
+  mask-image: var(--md-admonition-icon--success);
+  background-color: hsl(122, 84%, 45%);
+}

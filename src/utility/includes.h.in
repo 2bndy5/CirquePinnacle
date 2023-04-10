@@ -29,9 +29,18 @@
 #define PINNACLE_DRIVER_@PINNACLE_DRIVER@
 // clang-format on
 
-// alias for SPI bus implementation
+/**
+ * An alias for platform-specific representation of SPI bus objects
+ *
+ * @ingroup arduino-spi
+ */
 typedef cirque_pinnacle_arduino_wrappers::SPIClass pinnacle_spi_t;
-// alias for I2C bus implementation
+
+/**
+ * An alias for platform-specific representation of I2C bus objects
+ *
+ * @ingroup arduino-i2c
+ */
 typedef cirque_pinnacle_arduino_wrappers::TwoWire pinnacle_i2c_t;
 
 #define PINNACLE_USE_ARDUINO_API using namespace cirque_pinnacle_arduino_wrappers;

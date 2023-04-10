@@ -161,19 +161,25 @@ sphinx_immaterial_custom_admonitions = [
     },
 ]
 
+# enable custom checkboxes
+custom_checkbox = True
+
+object_description_options = [("py:method", dict(include_fields_in_toc=False))]
 cpp_src_dir = str(Path(__file__).parent.parent / "src")
 
 cpp_apigen_configs = [
     dict(
         document_prefix="API/cpp-generated/",
         api_parser_config=dict(
-            input_content='#include "CirquePinnacle.h"',
+            input_content="\n".join(
+                ['#include "CirquePinnacle.h"', '#include "utility/includes.h"']
+            ),
             compiler_flags=["-std=c++17", "-I", cpp_src_dir, "-x", "c++"],
             include_directory_map={
                 f"{cpp_src_dir}/": "",
             },
-            allow_paths=["utility/template", ""],
-            disallow_paths=["utility/.*"],
+            allow_paths=["utility/template/", "utility/includes.h", ""],
+            disallow_paths=["utility/[^template]/"],
             disallow_namespaces=["^std$"],
             verbose=True,
         ),
@@ -197,7 +203,9 @@ cpp_apigen_rst_prolog = """
 includes_header = Path(__file__).parent.parent / "src/utility/includes.h"
 includes_header_conf = includes_header.with_name("includes.h.in")
 includes_header.write_text(
-    includes_header_conf.read_text(encoding="utf-8").replace("@PINNACLE_DRIVER@", "template")
+    includes_header_conf.read_text(encoding="utf-8").replace(
+        "@PINNACLE_DRIVER@", "template"
+    )
 )
 
 # Add any paths that contain custom static files (such as style sheets) here,

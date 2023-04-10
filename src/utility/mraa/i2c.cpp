@@ -53,6 +53,8 @@ void TwoWire::beginTransmission(uint8_t address)
 
 uint8_t TwoWire::endTransmission(uint8_t sendStop)
 {
+    (void)sendStop; // param not used in this wrapped implementation
+
     int reason = i2c_inst->write((const uint8_t*)xBuff, xBuffLen);
     uint8_t retVal = xBuffLen;
     if (reason < 0)

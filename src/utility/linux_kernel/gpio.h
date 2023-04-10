@@ -28,7 +28,7 @@ const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/** Specific exception for SPI errors */
+/** Specific exception for GPIO errors */
 class GPIOException : public std::runtime_error
 {
 public:

@@ -32,6 +32,7 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
 .. literalinclude:: ../examples/anymeas_mode/anymeas_mode.ino
     :caption: examples/anymeas_mode/anymeas_mode.ino
     :linenos:
+    :emphasize-lines: 21-25
 
 Linux Examples
 **************
@@ -62,6 +63,7 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
 .. literalinclude:: ../examples/linux/anymeas_mode.cpp
     :caption: examples/linux/anymeas_mode.cpp
     :linenos:
+    :emphasize-lines: 30-34
 
 RPi Pico SDK Examples
 *********************
@@ -92,6 +94,7 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
 .. literalinclude:: ../examples/pico_sdk/anymeas_mode.cpp
     :caption: examples/pico_sdk/anymeas_mode.cpp
     :linenos:
+    :emphasize-lines: 25-29
 
 Python Examples
 ***************
@@ -125,3 +128,4 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
     :caption: examples/cpython/anymeas_mode.py
     :linenos:
     :language: python
+    :emphasize-lines: 34-44
