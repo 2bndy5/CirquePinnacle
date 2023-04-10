@@ -29,7 +29,7 @@ class CMakeBuild(build_ext):
 
     def build_extension(self, ext: Extension):
         # Must be in this form due to bug in .resolve() only fixed in Python 3.10+
-        ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)  # type: ignore[no-untyped-call]
+        ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)
         extdir = ext_fullpath.parent.resolve()
 
         # Using this requires trailing slash for auto-detection & inclusion of

@@ -37,6 +37,11 @@ public:
     using PinnacleTouch::PinnacleTouch; // inherit c'tors
 
 protected:
+    void rapWriteCmd(uint8_t* sequence, uint8_t length) override
+    {
+        PYBIND11_OVERRIDE_PURE(
+            void, PinnacleTouch, rapWriteCmd, sequence, length);
+    }
     void rapWrite(uint8_t registerAddress, uint8_t registerValue) override
     {
         PYBIND11_OVERRIDE_PURE(
