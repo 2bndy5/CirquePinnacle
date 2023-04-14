@@ -71,7 +71,9 @@ repository's root folder (as created in step 3 above).
 1. First make sure the created build folder is empty.
 
    .. code-block:: shell
-       :caption: Be sure to do this from within the build folder!!!
+       :caption: :si-icon:`fontawesome/regular/trash-can;pulsing-red`
+           Be sure to do this from within the build folder!!!
+           :si-icon:`material/sign-yield;pulsing-red`
 
        rm -r ./*
 
@@ -118,9 +120,9 @@ SlaveSelect pin
 
 Using the SPI bus' SS pin (Slave Select, aka Chip Select) on a Linux platform is a bit different
 from the Arduino platform because the Linux kernel controls the pin during bus transactions.
-Therefore, the pin number passed to the `~PinnacleTouchSPI::PinnacleTouchSPI()` constructor should follow the form
-``ab`` where ``a`` is the SPI bus number and ``b`` is the specified bus' SS pin (often labeled
-``CE<b>`` on Raspberry Pi pinout diagrams).
+Therefore, the pin number passed to the `~PinnacleTouchSPI::PinnacleTouchSPI()` constructor should
+follow the form ``ab`` where ``a`` is the SPI bus number and ``b`` is the specified bus' SS pin
+(often labeled ``CE<b>`` on Raspberry Pi pinout diagrams).
 
 .. csv-table::
     :header: "bus ID","CE number","constructor's ``slaveSelectPin`` value","spidev adapter"
@@ -166,4 +168,5 @@ as a default. This can be remedied by passing the correct bus number to `cirque_
     1. Use :expr:`0` for ``/dev/i2c-0``. Default is :expr:`1` for ``/dev/i2c-1``.
 
        .. seealso:: `cirque_pinnacle_arduino_wrappers::TwoWire::begin()`
-    2. Explicitly pass a reference of the `~cirque_pinnacle_arduino_wrappers::TwoWire` object to `PinnacleTouchI2C::begin()`.
+    2. Explicitly pass a reference of the `~cirque_pinnacle_arduino_wrappers::TwoWire` object to
+       `PinnacleTouchI2C::begin()`.

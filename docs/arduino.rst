@@ -55,7 +55,7 @@ Using a non-default SPI or I2C bus
 
                Developers are encouraged to identify the use of ``SPIClass::begin()`` (or any
                ``SPIClass::set<pin>()``) as instructed by the utilized Arduino core's SPI library.
-            3. Pass a reference to the instantiated ``SPIClass`` object to `PinnacleTouchSPI::begin()`.
+            3. Pass a reference of the instantiated ``SPIClass`` object to `PinnacleTouchSPI::begin()`.
 
 
     .. md-tab-item:: I2C
@@ -102,4 +102,4 @@ Using a non-default SPI or I2C bus
 
                Developers are encouraged to identify the use of ``TwoWire::begin()`` (or any
                ``TwoWire::set<pin>()``) as instructed by the utilized Arduino core's I2C library.
-            3. Pass a reference to the instantiated ``TwoWire`` object to `PinnacleTouchI2C::begin()`.
+            3. Pass a reference of the instantiated ``TwoWire`` object to `PinnacleTouchI2C::begin()`.

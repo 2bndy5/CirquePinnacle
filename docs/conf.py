@@ -181,6 +181,8 @@ cpp_apigen_configs = [
             allow_paths=["utility/template/", "utility/includes.h", ""],
             disallow_paths=["utility/[^template]/"],
             disallow_namespaces=["^std$"],
+            allow_macros=["^PINNACLE_"],
+            allow_symbols=["^PINNACLE_"],
             verbose=True,
         ),
     ),

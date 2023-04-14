@@ -61,7 +61,7 @@ enum PinnacleDataMode : uint8_t
      * .. anymeas-limits::
      *
      *     Anymeas mode requires the use of a Hardware Data Ready pin.
-     *     Do not use ``PINNACLE_SW_DR`` as the value for the ``dataReadyPin`` parameter to
+     *     Do not use `PINNACLE_SW_DR` as the value for the ``dataReadyPin`` parameter to
      *     `~PinnacleTouchSPI::PinnacleTouchSPI()` or `~PinnacleTouchI2C::PinnacleTouchI2C()`
      *     constructors.
      */
@@ -293,7 +293,7 @@ public:
      * touch controller.
      *
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to ``PINNACLE_SW_DR``.
+     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
      *     BEWARE, the Hardware Data Ready pin is required for anymeas mode. In general, it
      *     recommended to use the Hardware Data Ready pin for speed and efficient bus activity.
      */
@@ -833,7 +833,7 @@ public:
      * Create an instance to interface with the Pinnacle ASIC over an SPI bus.
      *
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to ``PINNACLE_SW_DR``.
+     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
      *     In general, it recommended to use the Hardware Data Ready pin for speed and efficient
      *     bus activity.
      *
@@ -887,7 +887,7 @@ public:
      * Create an instance to interface with the Pinnacle ASIC over an I2C bus.
      *
      * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to ``PINNACLE_SW_DR``.
+     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
      *     In general, it recommended to use the Hardware Data Ready pin for speed and efficient
      *     bus activity.
      *

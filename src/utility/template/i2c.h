@@ -159,14 +159,14 @@ public:
      *
      * @return The number of bytes read into the internal buffer.
      */
-    uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop);
+    uint8_t requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop = false);
 
     /**
      * Check for remaining bytes in the internal buffer.
      *
      * .. note::
      *     This must be called after `requestFrom()` in order to capture bytes from the bus into
-     *     the internal RX buffer.
+     *     the internal buffer.
      *
      * @returns The number of bytes left in the buffer. A negative number (or zero) means
      *     all data from buffer has been `read()`.

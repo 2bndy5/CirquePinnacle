@@ -68,6 +68,17 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
 RPi Pico SDK Examples
 *********************
 
+.. _pico_example_pins:
+
+defaultPins.h
+-------------
+
+The ``DR_PIN`` AND ``SS_PIN`` example definitions for various RP2040 based boards.
+
+.. literalinclude:: ../examples/pico_sdk/defaultPins.h
+    :caption: examples/pico_sdk/defaultPins.h
+    :linenos:
+
 Relative Mode
 -------------
 
@@ -95,6 +106,8 @@ Example to output data reports in AnyMeas Mode (using SPI protocol).
     :caption: examples/pico_sdk/anymeas_mode.cpp
     :linenos:
     :emphasize-lines: 25-29
+
+.. _py_examples:
 
 Python Examples
 ***************

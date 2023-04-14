@@ -4,6 +4,9 @@ Python API
 The python bindings use the same API that is publicly exposed in the :doc:`cpp`.
 There are a few differences to make the Python API more "pythonic".
 
+.. seealso::
+    Review the :ref:`python examples <py_examples>` for basic usage.
+
 Name Casing
 -----------
 
@@ -121,6 +124,10 @@ Each integer must still fit within 2 bytes (signed).
     # is equivalent to
     values = trackpad.getCalibrationMatrix()
 
+.. note::
+    The python binding of `PinnacleTouch::getCalibrationMatrix()` does not accept any arguments.
+    Rather the matrix is returned as a `list`.
+
 ``RelativeReport.buffer``
 -------------------------
 
@@ -132,7 +139,9 @@ This is done in the python binding to expedite the formation of an immutable pyt
 
     report = RelativeReport()
     touchpad.read(report)  # relative mode data saved to `report` object.
-    # optionally manipulate the reported data (eg. apply acceleration or axis inversion)
+
+    # ... optionally manipulate the reported data (eg. apply acceleration or axis inversion)
+
     buf: bytes = report.buffer  # can be used as a mouse HID report
 
 .. hint::
@@ -165,15 +174,21 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
 
 .. code-block:: python
     :caption: Using the ``/dev/i2c-0`` bus
+    :class: annotated-with-numbers
+    :emphasize-lines: 4,6
 
     from cirque_pinnacle import PinnacleTouchI2C, TwoWire
 
     i2c_bus = TwoWire()
-    i2c_bus.begin(0)  # specify the bus number here
+    i2c_bus.begin(0)  # (1)!
     trackpad = PinnacleTouchI2C(DR_PIN)
-    ok = trackpad.begin(i2c_bus)  # feed the custom I2C bus obj here
+    ok = trackpad.begin(i2c_bus)  # (2)!
     if not ok:
         raise OSError("failed to find the trackpad")
+
+.. code-annotations::
+    1. Specify the bus number to :py:meth:`cirque_pinnacle.TwoWire.begin()`.
+    2. Pass the custom I2C bus object to `PinnacleTouchI2C::begin()`.
 
 .. py:module:: cirque_pinnacle
 
@@ -234,7 +249,7 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
 
         :returns: The amount of data (in bytes) added. This should always be 1.
 
-    .. py:method:: endTransmission(sendStop: int = 1) -> int
+    .. py:method:: endTransmission(sendStop: int = 0) -> int
 
         Perform a buffered write operation over the I2C bus.
 
@@ -242,7 +257,7 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
 
         :returns: The amount of data (in bytes) written.
 
-    .. py:method:: requestFrom(address: int, quantity: int, sendStop: int = 1) -> int
+    .. py:method:: requestFrom(address: int, quantity: int, sendStop: int = 0) -> int
 
         Read a number of bytes from the specified I2C address.
 
@@ -266,7 +281,7 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
             returned may be about the data passed to :py:meth:`write()` (which uses the
             same internal buffer).
 
-        :returns: The amount of data (in bytes) ready read to read from the internal buffer.
+        :returns: The amount of data (in bytes) ready to read from the internal buffer.
 
     .. py:method:: read() -> int
 

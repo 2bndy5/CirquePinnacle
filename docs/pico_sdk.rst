@@ -35,7 +35,7 @@ Building the library examples for the Pico SDK
 **********************************************
 
 Each example imports a set of constants (``DR_PIN``, ``SS_PIN``) from the
-examples/pico_sdk/defaultPins.h file. Default values for SPI pins (SCK, MOSI, MISO)
+examples/pico_sdk/\ :ref:`pico_example_pins` file. Default values for SPI pins (SCK, MOSI, MISO)
 and I2C pins (SDA & SCL) come from the Pico SDK repository's
 `pico-sdk/src/boards/include/boards/\<board_name>.h files
 <https://github.com/raspberrypi/pico-sdk/tree/master/src/boards/include/boards>`_.

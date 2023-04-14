@@ -25,14 +25,6 @@
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-    #define MSBFIRST 0
-    #define LSBFIRST 1
-
-    #define SPI_MODE0 0
-    #define SPI_MODE1 1
-    #define SPI_MODE2 2
-    #define SPI_MODE3 3
-
     #ifndef PINNACLE_SPI_SPEED
         /**
          * Default is the recommended 6 MHz (maximum supported SPI speed is 13 MHz)
@@ -47,7 +39,8 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
-    #define PINNACLE_SS_CTRL(pin, value) // uses digitalWrite() when not using SPI bus' native CS pin
+    /// Uses digitalWrite() when not using SPI bus' native CS pin
+    #define PINNACLE_SS_CTRL(pin, value)
 
 /**
  * Specific exception for SPI errors
@@ -64,6 +57,113 @@ public:
 };
 
 /**
+ * An enumeration of endianess options.
+ *
+ * @ingroup arduino-spi
+ */
+enum BitOrder : uint8_t
+{
+    MSBFIRST = 0, ///< Most Significant Byte First
+    LSBFIRST = 1  ///< Least Significant Byte First
+};
+
+/**
+ * An enumeration of Clock interpretations.
+ *
+ * @ingroup arduino-spi
+ */
+enum DataMode : uint8_t
+{
+    /**
+     * .. csv-table::
+     *     :header: "Clock Polarity (CPOL)","Clock Phase (CPHA)","Output Edge","Capture Edge"
+     *
+     *     0,0,Falling,Rising
+     */
+    SPI_MODE0 = 0,
+    /**
+     * .. csv-table::
+     *     :header: "Clock Polarity (CPOL)","Clock Phase (CPHA)","Output Edge","Capture Edge"
+     *
+     *     0,1,Rising,Falling
+     */
+    SPI_MODE1 = 1,
+    /**
+     * .. csv-table::
+     *     :header: "Clock Polarity (CPOL)","Clock Phase (CPHA)","Output Edge","Capture Edge"
+     *
+     *     1,0,Rising,Falling
+     */
+    SPI_MODE2 = 2,
+    /**
+     * .. csv-table::
+     *     :header: "Clock Polarity (CPOL)","Clock Phase (CPHA)","Output Edge","Capture Edge"
+     *
+     *     1,1,Falling,Rising
+     */
+    SPI_MODE3 = 3,
+};
+
+/**
+ * A class to represent common SPI bus configurations
+ *
+ * @ingroup arduino-spi
+ */
+class SPISettings
+{
+public:
+    /**
+     * @param clock The SPI speed (in Hz) to be used.
+     * @param bitOrder The Endianess to be used. Options are:
+     *
+     *     - `MSBFIRST`
+     *     - `LSBFIRST`
+     * @param dataMode The clock phase and polarity to be used. Options are:
+     *
+     *     +---------------+-----------------------+--------------------+-------------+--------------+
+     *     | ``dataMode``  | Clock Polarity (CPOL) | Clock Phase (CPHA) | Output Edge | Capture Edge |
+     *     +===============+=======================+====================+=============+==============+
+     *     |  `SPI_MODE0`  | 0                     | 0                  | Falling     | Rising       |
+     *     +---------------+-----------------------+--------------------+-------------+--------------+
+     *     |  `SPI_MODE1`  | 0                     | 1                  | Rising      | Falling      |
+     *     +---------------+-----------------------+--------------------+-------------+--------------+
+     *     |  `SPI_MODE2`  | 1                     | 0                  | Rising      | Falling      |
+     *     +---------------+-----------------------+--------------------+-------------+--------------+
+     *     |  `SPI_MODE3`  | 1                     | 1                  | Falling     | Rising       |
+     *     +---------------+-----------------------+--------------------+-------------+--------------+
+     *
+     * @id custom
+     */
+    SPISettings(uint32_t clock, BitOrder bitOrder, DataMode dataMode)
+    {
+        init(clock, bitOrder, dataMode);
+    }
+    /**
+     * A blank constructor to use the default configuration.
+     *
+     * The default configuration is 6 MHz speed (:expr:`6000000`), using `MSBFIRST`, and `SPI_MODE1`.
+     *
+     * @id default
+     */
+    SPISettings()
+    {
+        init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
+    }
+
+    uint32_t clock; ///< The SPI bus clock speed (in Hz).
+    BitOrder bitOrder; ///< The SPI bus byte order (endianess).
+    DataMode mode; ///< The SPI bus mode (clock polarity/phase).
+
+private:
+    void init(uint32_t _clock, BitOrder _bitOrder, DataMode _dataMode)
+    {
+        clock = _clock;
+        bitOrder = _bitOrder;
+        mode = _dataMode;
+    }
+};
+
+/**
  * A class to wrap platform-specific implementation of the SPI data bus in Arduino-like API.
  *
  * .. failure:: Missing features
@@ -74,7 +174,6 @@ public:
  */
 class SPIClass
 {
-
 public:
     /** Instantiate an object for use with a single SPi bus. */
     SPIClass();
@@ -85,24 +184,28 @@ public:
      * @param bus_number This is the SPI bus number and corresponding channel (CEx pin on RPi).
      *     Default is ``0``.
      *
-     *     +--------+-----------+-------------+---------------------------+
-     *     | bus ID | CE number | param value | spidev adapter            |
-     *     +========+===========+=============+===========================+
-     *     |  ``0`` |   ``0``   |    ``0``    | :literal:`/dev/spidev0.0` |
-     *     +--------+-----------+-------------+---------------------------+
-     *     |  ``0`` |   ``1``   |    ``1``    | :literal:`/dev/spidev0.1` |
-     *     +--------+-----------+-------------+---------------------------+
-     *     |  ``1`` |   ``0``   |   ``10``    | :literal:`/dev/spidev1.0` |
-     *     +--------+-----------+-------------+---------------------------+
-     *     |  ``1`` |   ``1``   |   ``11``    | :literal:`/dev/spidev1.1` |
-     *     +--------+-----------+-------------+---------------------------+
-     *     |  ``1`` |   ``2``   |   ``12``    | :literal:`/dev/spidev1.2` |
-     *     +--------+-----------+-------------+---------------------------+
+     *     .. default-literal-role::
      *
-     * @param spi_speed The baudrate (aka frequency) to be used on the specified SPI bus.
-     *     Default is 6 MHz (``6000000``).
+     *     +--------+-----------+-----------------+--------------------+
+     *     | bus ID | CE number | param value     | spidev adapter     |
+     *     +========+===========+=================+====================+
+     *     |  ``0`` |   ``0``   |    :expr:`0`    | ``/dev/spidev0.0`` |
+     *     +--------+-----------+-----------------+--------------------+
+     *     |  ``0`` |   ``1``   |    :expr:`1`    | ``/dev/spidev0.1`` |
+     *     +--------+-----------+-----------------+--------------------+
+     *     |  ``1`` |   ``0``   |   :expr:`10`    | ``/dev/spidev1.0`` |
+     *     +--------+-----------+-----------------+--------------------+
+     *     |  ``1`` |   ``1``   |   :expr:`11`    | ``/dev/spidev1.1`` |
+     *     +--------+-----------+-----------------+--------------------+
+     *     |  ``1`` |   ``2``   |   :expr:`12`    | ``/dev/spidev1.2`` |
+     *     +--------+-----------+-----------------+--------------------+
+     *
+     *     .. default-literal-role:: cpp
+     * @param settings An object used to specify the baudrate (aka frequency), Endianess, and clock
+     *     polarity/phase to be used on the specified SPI bus. Default is 6 MHz (``6000000``) speed
+     *     using `MSBFIRST` (Big Endian) under `SPI_MODE1`.
      */
-    void begin(int bus_number = PINNACLE_DEFAULT_SPI_BUS, uint32_t spi_speed = PINNACLE_SPI_SPEED);
+    void begin(int bus_number = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
 
     /**
      * Transfer buffers of bytes to/from a SPI slave device.
