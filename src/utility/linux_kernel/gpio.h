@@ -23,66 +23,70 @@
     #include <stdexcept>
     #include <map>
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 typedef int pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/** Specific exception for GPIO errors */
-class GPIOException : public std::runtime_error
-{
-public:
-    explicit GPIOException(const std::string& msg)
-        : std::runtime_error(msg)
+    /** Specific exception for GPIO errors */
+    class GPIOException : public std::runtime_error
     {
-    }
-};
+    public:
+        explicit GPIOException(const std::string& msg)
+            : std::runtime_error(msg)
+        {
+        }
+    };
 
-typedef int gpio_cache_fd_t;
+    typedef int gpio_cache_fd_t;
 
-class GPIOClass
-{
+    class GPIOClass
+    {
 
-public:
-    GPIOClass();
+    public:
+        GPIOClass();
 
-    static constexpr char OUTPUT_HIGH[2] = {'1', '\n'};
-    static constexpr char OUTPUT_LOW[2] = {'0', '\n'};
-    static const bool DIRECTION_IN = false;
-    static const bool DIRECTION_OUT = true;
+        static constexpr char OUTPUT_HIGH[2] = {'1', '\n'};
+        static constexpr char OUTPUT_LOW[2] = {'0', '\n'};
+        static const bool DIRECTION_IN = false;
+        static const bool DIRECTION_OUT = true;
 
-    /**
-     * Similar to Arduino pinMode(pin, mode);
-     * @param port
-     * @param direction
-     */
-    static void open(pinnacle_gpio_t port, bool direction);
+        /**
+         * Similar to Arduino pinMode(pin, mode);
+         * @param port
+         * @param direction
+         */
+        static void open(pinnacle_gpio_t port, bool direction);
 
-    /**
-     * Defined for completeness; not actually exposed in the Arduino API
-     * @param port
-     */
-    static void close(pinnacle_gpio_t port);
+        /**
+         * Defined for completeness; not actually exposed in the Arduino API
+         * @param port
+         */
+        static void close(pinnacle_gpio_t port);
 
-    /**
-     * Similar to Arduino digitalRead(pin);
-     * @param port
-     */
-    static bool read(pinnacle_gpio_t port);
+        /**
+         * Similar to Arduino digitalRead(pin);
+         * @param port
+         */
+        static bool read(pinnacle_gpio_t port);
 
-    /**
-    * Similar to Arduino digitalWrite(pin, level);
-    * @param port
-    * @param value
-    */
-    static void write(pinnacle_gpio_t port, const char* value);
+        /**
+         * Similar to Arduino digitalWrite(pin, level);
+         * @param port
+         * @param value
+         */
+        static void write(pinnacle_gpio_t port, const char* value);
 
-    virtual ~GPIOClass();
+        virtual ~GPIOClass();
 
-private:
-    /* fd cache */
-    static std::map<pinnacle_gpio_t, gpio_cache_fd_t> cache;
-};
+    private:
+        /* fd cache */
+        static std::map<pinnacle_gpio_t, gpio_cache_fd_t> cache;
+    };
 
     #define INPUT                    GPIOClass::DIRECTION_IN
     #define OUTPUT                   GPIOClass::DIRECTION_OUT
@@ -93,6 +97,10 @@ private:
     #define pinMode(pin, direction)  GPIOClass::open(pin, direction)
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_GPIO_H_

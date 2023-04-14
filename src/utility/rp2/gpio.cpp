@@ -19,37 +19,45 @@
 #ifndef ARDUINO
     #include "gpio.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
-GPIOClass::GPIOClass()
-{
-}
+    GPIOClass::GPIOClass()
+    {
+    }
 
-void GPIOClass::open(pinnacle_gpio_t port, bool direction)
-{
-    gpio_init(port);
-    gpio_set_dir(port, direction);
-}
+    void GPIOClass::open(pinnacle_gpio_t port, bool direction)
+    {
+        gpio_init(port);
+        gpio_set_dir(port, direction);
+    }
 
-void GPIOClass::close(pinnacle_gpio_t port)
-{
-    gpio_init(port);
-}
+    void GPIOClass::close(pinnacle_gpio_t port)
+    {
+        gpio_init(port);
+    }
 
-bool GPIOClass::read(pinnacle_gpio_t port)
-{
-    return gpio_get(port);
-}
+    bool GPIOClass::read(pinnacle_gpio_t port)
+    {
+        return gpio_get(port);
+    }
 
-void GPIOClass::write(pinnacle_gpio_t port, bool value)
-{
-    gpio_put(port, value);
-}
+    void GPIOClass::write(pinnacle_gpio_t port, bool value)
+    {
+        gpio_put(port, value);
+    }
 
-GPIOClass::~GPIOClass()
-{
-}
+    GPIOClass::~GPIOClass()
+    {
+    }
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)

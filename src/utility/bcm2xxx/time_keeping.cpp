@@ -20,6 +20,10 @@
     #include "time_keeping.h"
     #include <chrono>
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
 auto start = std::chrono::steady_clock::now();
@@ -32,5 +36,9 @@ uint32_t __millis()
 }
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)

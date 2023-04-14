@@ -20,62 +20,70 @@
 
     #include "spi.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BYTE_SIZE 8
 
-SPIClass::SPIClass()
-{
-}
+    SPIClass::SPIClass()
+    {
+    }
 
-void SPIClass::begin(spi_inst_t* hw_id, uint8_t _sck, uint8_t _tx, uint8_t _rx)
-{
-    _hw_id = hw_id;
-    gpio_set_function(_sck, GPIO_FUNC_SPI);
-    gpio_set_function(_tx, GPIO_FUNC_SPI);
-    gpio_set_function(_rx, GPIO_FUNC_SPI);
-    spi_init(_hw_id, PINNACLE_SPI_SPEED);
-}
+    void SPIClass::begin(spi_inst_t* hw_id, uint8_t _sck, uint8_t _tx, uint8_t _rx)
+    {
+        _hw_id = hw_id;
+        gpio_set_function(_sck, GPIO_FUNC_SPI);
+        gpio_set_function(_tx, GPIO_FUNC_SPI);
+        gpio_set_function(_rx, GPIO_FUNC_SPI);
+        spi_init(_hw_id, PINNACLE_SPI_SPEED);
+    }
 
-void SPIClass::end()
-{
-    spi_deinit(_hw_id);
-}
+    void SPIClass::end()
+    {
+        spi_deinit(_hw_id);
+    }
 
-void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
-{
-    spi_write_read_blocking(_hw_id, (const uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
-}
+    void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
+    {
+        spi_write_read_blocking(_hw_id, (const uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
+    }
 
-void SPIClass::transfer(void* buf, uint32_t len)
-{
-    spi_write_blocking(_hw_id, (const uint8_t*)buf, len);
-}
+    void SPIClass::transfer(void* buf, uint32_t len)
+    {
+        spi_write_blocking(_hw_id, (const uint8_t*)buf, len);
+    }
 
-uint8_t SPIClass::transfer(uint8_t tx)
-{
-    uint8_t recv = 0;
-    spi_write_read_blocking(_hw_id, &tx, &recv, 1);
-    return recv;
-}
+    uint8_t SPIClass::transfer(uint8_t tx)
+    {
+        uint8_t recv = 0;
+        spi_write_read_blocking(_hw_id, &tx, &recv, 1);
+        return recv;
+    }
 
-void SPIClass::beginTransaction(SPISettings spiSettings)
-{
-    spi_set_baudrate(_hw_id, spiSettings.clock);
-    spi_set_format(_hw_id, PINNACLE_SPI_BYTE_SIZE, (spi_cpol_t)spiSettings.polarity, (spi_cpha_t)spiSettings.phase, spiSettings.bitOrder);
-}
+    void SPIClass::beginTransaction(SPISettings spiSettings)
+    {
+        spi_set_baudrate(_hw_id, spiSettings.clock);
+        spi_set_format(_hw_id, PINNACLE_SPI_BYTE_SIZE, (spi_cpol_t)spiSettings.polarity, (spi_cpha_t)spiSettings.phase, (spi_order_t)spiSettings.bitOrder);
+    }
 
-void SPIClass::endTransaction()
-{
-}
+    void SPIClass::endTransaction()
+    {
+    }
 
-SPIClass::~SPIClass()
-{
-    end();
-}
+    SPIClass::~SPIClass()
+    {
+        end();
+    }
 
-SPIClass SPI = SPIClass();
+    SPIClass SPI = SPIClass();
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)

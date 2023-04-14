@@ -22,13 +22,17 @@
 
     #include "bcm2835.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 typedef uint8_t pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0xFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-// include this header in other /utility/bcm2xxx headers to init the lib globally.
-static bool bcmInitialized = (bool)bcm2835_init();
+    // include this header in other /utility/bcm2xxx headers to init the lib globally.
+    static bool bcmInitialized = (bool)bcm2835_init();
 
     #define INPUT  BCM2835_GPIO_FSEL_INPT
     #define OUTPUT BCM2835_GPIO_FSEL_OUTP
@@ -38,6 +42,10 @@ static bool bcmInitialized = (bool)bcm2835_init();
     #define pinMode(pin, value)      bcm2835_gpio_fsel(pin, value)
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_BCM2XXX_GPIO_H_

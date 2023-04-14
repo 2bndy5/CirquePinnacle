@@ -23,6 +23,10 @@
     #include <stdexcept>
     #include "mraa.hpp"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
     #ifndef PINNACLE_SPI_SPEED
@@ -35,115 +39,125 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
-    #define MSBFIRST false
-    #define LSBFIRST true
-
-    #define SPI_MODE0 mraa::Spi_Mode::SPI_MODE0
-    #define SPI_MODE1 mraa::Spi_Mode::SPI_MODE1
-    #define SPI_MODE2 mraa::Spi_Mode::SPI_MODE2
-    #define SPI_MODE3 mraa::Spi_Mode::SPI_MODE3
-
     #define PINNACLE_SS_CTRL(pin, value)
     #define PINNACLE_USE_NATIVE_CS
 
     #define PINNACLE_SPI_BUFFER_OPS 1
 
-/** Specific exception for SPI errors */
-class SPIException : public std::runtime_error
-{
-public:
-    explicit SPIException(const std::string& msg)
-        : std::runtime_error(msg)
+    enum BitOrder : bool
     {
-    }
-};
+        MSBFIRST = false,
+        LSBFIRST = true
+    };
 
-class SPISettings
-{
-
-public:
-    SPISettings(uint32_t clock, uint8_t bitOrder, mraa::Spi_Mode dataMode)
+    enum DataMode : uint8_t
     {
-        init(clock, bitOrder, dataMode);
-    }
+        SPI_MODE0 = mraa::Spi_Mode::SPI_MODE0,
+        SPI_MODE1 = mraa::Spi_Mode::SPI_MODE1,
+        SPI_MODE2 = mraa::Spi_Mode::SPI_MODE2,
+        SPI_MODE3 = mraa::Spi_Mode::SPI_MODE3
+    };
 
-    SPISettings()
+    /** Specific exception for SPI errors */
+    class SPIException : public std::runtime_error
     {
-        init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
-    }
+    public:
+        explicit SPIException(const std::string& msg)
+            : std::runtime_error(msg)
+        {
+        }
+    };
 
-    uint32_t clock;
-    bool bitOrder;
-    mraa::Spi_Mode mode;
-
-private:
-    void init(uint32_t _clock, bool _bitOrder, mraa::Spi_Mode _dataMode)
+    class SPISettings
     {
-        clock = _clock;
-        bitOrder = _bitOrder;
-        mode = _dataMode;
-    }
-};
 
-class SPIClass
-{
+    public:
+        SPISettings(uint32_t clock, BitOrder bitOrder, DataMode dataMode)
+        {
+            init(clock, bitOrder, dataMode);
+        }
 
-public:
-    /** Instantiate an object for use with a single SPi bus. */
-    SPIClass();
+        SPISettings()
+        {
+            init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
+        }
 
-    /**
-     * Initialize a certain SPI bus. Uses boards defaults when available.
-     * @param busNumber This is the SPI bus number and corresponding channel (CEx pin on RPi).
-     * | bus ID | CE number | param value | spidev device  |
-     * |:------:|:---------:|:-----------:|:--------------:|
-     * |    0   |     0     |      0      | /dev/spidev0.0 |
-     * |    0   |     1     |      1      | /dev/spidev0.1 |
-     * |    1   |     0     |     10      | /dev/spidev1.0 |
-     * |    1   |     1     |     11      | /dev/spidev1.1 |
-     * |    1   |     2     |     12      | /dev/spidev1.2 |
-     */
-    void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
+        uint32_t clock;
+        BitOrder bitOrder;
+        DataMode mode;
 
-    /** Deinitialize the SPI bus. */
-    void end();
+    private:
+        void init(uint32_t _clock, BitOrder _bitOrder, DataMode _dataMode)
+        {
+            clock = _clock;
+            bitOrder = _bitOrder;
+            mode = _dataMode;
+        }
+    };
 
-    /**
-     * Transfer buffers of bytes to/from a SPI slave device.
-     * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
-     * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
-     * @param len The length of each buffer of bytes; each buffer should have equal length.
-     */
-    void transfer(void* tx_buf, void* rx_buf, uint32_t len);
+    class SPIClass
+    {
 
-    /**
-     * Transfer a buffer of bytes to a SPI slave device.
-     * @param buf The pointer to a buffer of bytes to send over MOSI.
-     * @param len The length of the buffer of bytes.
-     *
-     * @note The bytes received over MISO will replace the
-     * buffer contents as the bytes are sent over MOSI.
-     */
-    void transfer(void* buf, uint32_t len);
+    public:
+        /** Instantiate an object for use with a single SPi bus. */
+        SPIClass();
 
-    /**
-     * Transfer a single byte to/from a SPI slave device.
-     * @param tx The byte to send over MOSI.
-     * @return The byte received over MISO when sending the `tx` byte over MOSI.
-     */
-    uint8_t transfer(uint8_t tx);
+        /**
+         * Initialize a certain SPI bus. Uses boards defaults when available.
+         * @param busNumber This is the SPI bus number and corresponding channel (CEx pin on RPi).
+         * | bus ID | CE number | param value | spidev device  |
+         * |:------:|:---------:|:-----------:|:--------------:|
+         * |    0   |     0     |      0      | /dev/spidev0.0 |
+         * |    0   |     1     |      1      | /dev/spidev0.1 |
+         * |    1   |     0     |     10      | /dev/spidev1.0 |
+         * |    1   |     1     |     11      | /dev/spidev1.1 |
+         * |    1   |     2     |     12      | /dev/spidev1.2 |
+         */
+        void begin(int busNumber = PINNACLE_DEFAULT_SPI_BUS, SPISettings settings = SPISettings());
 
-    /** Clean-up any internal pointers/buffers/etc. */
-    virtual ~SPIClass();
+        /** Deinitialize the SPI bus. */
+        void end();
 
-private:
-    mraa::Spi* spi_inst;
-};
+        /**
+         * Transfer buffers of bytes to/from a SPI slave device.
+         * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
+         * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
+         * @param len The length of each buffer of bytes; each buffer should have equal length.
+         */
+        void transfer(void* tx_buf, void* rx_buf, uint32_t len);
 
-// declare a instantiated object (for use as a convenient default)
-extern SPIClass SPI;
+        /**
+         * Transfer a buffer of bytes to a SPI slave device.
+         * @param buf The pointer to a buffer of bytes to send over MOSI.
+         * @param len The length of the buffer of bytes.
+         *
+         * @note The bytes received over MISO will replace the
+         * buffer contents as the bytes are sent over MOSI.
+         */
+        void transfer(void* buf, uint32_t len);
+
+        /**
+         * Transfer a single byte to/from a SPI slave device.
+         * @param tx The byte to send over MOSI.
+         * @return The byte received over MISO when sending the `tx` byte over MOSI.
+         */
+        uint8_t transfer(uint8_t tx);
+
+        /** Clean-up any internal pointers/buffers/etc. */
+        virtual ~SPIClass();
+
+    private:
+        mraa::Spi* spi_inst;
+    };
+
+    // declare a instantiated object (for use as a convenient default)
+    extern SPIClass SPI;
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_MRAA_SPI_H_

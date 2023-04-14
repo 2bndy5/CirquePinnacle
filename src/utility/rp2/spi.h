@@ -23,15 +23,11 @@
     #include "pico/stdlib.h"
     #include "hardware/spi.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
-
-    #define MSBFIRST SPI_MSB_FIRST
-    #define LSBFIRST SPI_LSB_FIRST
-
-    #define SPI_MODE0 0
-    #define SPI_MODE1 1
-    #define SPI_MODE2 2
-    #define SPI_MODE3 3
 
     #ifndef PINNACLE_SPI_SPEED
         // Default is the recommended 6 MHz (maximum supported SPI speed is 13 MHz)
@@ -44,115 +40,132 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS spi0
     #endif
 
-    // this SPI implements beginTransaction() & endTransaction() to
+    // this SPIClass implements beginTransaction() & endTransaction() to
     // configure the SPI bus
     #define SPI_HAS_TRANSACTION 1
 
     #define PINNACLE_SS_CTRL(pin, value) digitalWrite(pin, value)
 
-class SPISettings
-{
-public:
-    SPISettings(uint32_t clock, spi_order_t bitOrder, uint8_t dataMode)
+    enum BitOrder : uint8_t
     {
-        init(clock, bitOrder, dataMode);
-    }
+        MSBFIRST = SPI_MSB_FIRST,
+        LSBFIRST = SPI_LSB_FIRST
+    };
 
-    SPISettings()
+    enum DataMode : uint8_t
     {
-        init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
-    }
+        SPI_MODE0 = 0,
+        SPI_MODE1 = 1,
+        SPI_MODE2 = 2,
+        SPI_MODE3 = 3
+    };
 
-    uint32_t clock;
-    spi_order_t bitOrder;
-    bool polarity;
-    bool phase;
-
-private:
-    void init(uint32_t _clock, spi_order_t _bitOrder, uint8_t _dataMode)
+    class SPISettings
     {
-        clock = _clock;
-        bitOrder = _bitOrder;
-        polarity = (bool)((_dataMode >> 1) & 1);
-        phase = (bool)(_dataMode & 1);
-    }
-};
+    public:
+        SPISettings(uint32_t clock, BitOrder bitOrder, DataMode dataMode)
+        {
+            init(clock, bitOrder, dataMode);
+        }
 
-class SPIClass
-{
+        SPISettings()
+        {
+            init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
+        }
 
-public:
-    /** Instantiate an object for use with a single SPi bus. */
-    SPIClass();
+        uint32_t clock;
+        BitOrder bitOrder;
+        bool polarity;
+        bool phase;
 
-    /**
-     * Initialize a certain SPI bus. Uses boards defaults when declared in the Pico SDK.
-     * @param hw_id This is either `spi0` or `spi1` (provided by the Pico SDK)
-     * @param _sck The pin to be used as the SPI bus' sck
-     * @param _tx The pin to be used as the SPI bus' tx (MOSI)
-     * @param _rx The pin to be used as the SPI bus' rx (MISO)
-     *
-     * @note This function assumes using the default SPI pins defined for your
-     * board in "pico-sdk/src/boards/include/boards/*.h" files of the Pico SDK.
-     * @see The [Pico SDK has a chart of applicable pins](https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf#%5B%7B%22num%22%3A106%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22XYZ%22%7D%2C115%2C377.118%2Cnull%5D)
-     * that can be used for hardware driven SPI transactions.
-     */
-    void begin(
-        spi_inst_t* hw_id = PINNACLE_DEFAULT_SPI_BUS,
-        uint8_t _sck = PICO_DEFAULT_SPI_SCK_PIN,
-        uint8_t _tx = PICO_DEFAULT_SPI_TX_PIN,
-        uint8_t _rx = PICO_DEFAULT_SPI_RX_PIN);
+    private:
+        void init(uint32_t _clock, BitOrder _bitOrder, DataMode _dataMode)
+        {
+            clock = _clock;
+            bitOrder = _bitOrder;
+            polarity = (bool)((_dataMode >> 1) & 1);
+            phase = (bool)(_dataMode & 1);
+        }
+    };
 
-    /**
-     * de-initialize the specified SPI bus
-     */
-    void end();
+    class SPIClass
+    {
+    public:
+        /** Instantiate an object for use with a single SPi bus. */
+        SPIClass();
 
-    /**
-     * Transfer a buffer of bytes to/from a SPI slave device.
-     * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
-     * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
-     * @param len The length of each buffer of bytes; each buffer should have equal length.
-     */
-    void transfer(void* tx_buf, void* rx_buf, uint32_t len);
+        /**
+         * Initialize a certain SPI bus. Uses boards defaults when declared in the Pico SDK.
+         * @param hw_id This is either `spi0` or `spi1` (provided by the Pico SDK)
+         * @param _sck The pin to be used as the SPI bus' sck
+         * @param _tx The pin to be used as the SPI bus' tx (MOSI)
+         * @param _rx The pin to be used as the SPI bus' rx (MISO)
+         *
+         * @note This function assumes using the default SPI pins defined for your
+         * board in "pico-sdk/src/boards/include/boards/*.h" files of the Pico SDK.
+         * @see The [Pico SDK has a chart of applicable pins](https://datasheets.raspberrypi.org/pico/raspberry-pi-pico-c-sdk.pdf#%5B%7B%22num%22%3A106%2C%22gen%22%3A0%7D%2C%7B%22name%22%3A%22XYZ%22%7D%2C115%2C377.118%2Cnull%5D)
+         * that can be used for hardware driven SPI transactions.
+         */
+        void begin(
+            spi_inst_t* hw_id = PINNACLE_DEFAULT_SPI_BUS,
+            uint8_t _sck = PICO_DEFAULT_SPI_SCK_PIN,
+            uint8_t _tx = PICO_DEFAULT_SPI_TX_PIN,
+            uint8_t _rx = PICO_DEFAULT_SPI_RX_PIN);
 
-    /**
-     * Transfer a buffer of bytes to a SPI slave device.
-     * @param buf The pointer to a buffer of bytes to send over MOSI.
-     * @param len The length of the buffer of bytes.
-     *
-     * @note Any bytes received over MISO are discarded.
-     */
-    void transfer(void* buf, uint32_t len);
+        /**
+         * de-initialize the specified SPI bus
+         */
+        void end();
 
-    /**
-     * Transfer a single byte to/from a SPI slave device.
-     * @param tx The byte to send over MOSI.
-     * @return The byte received over MISO when sending the `tx` byte over MOSI.
-     */
-    uint8_t transfer(uint8_t tx);
+        /**
+         * Transfer a buffer of bytes to/from a SPI slave device.
+         * @param tx_buf The pointer to a buffer of bytes to send over MOSI.
+         * @param rx_buf The pointer to a buffer of bytes that get received over MISO.
+         * @param len The length of each buffer of bytes; each buffer should have equal length.
+         */
+        void transfer(void* tx_buf, void* rx_buf, uint32_t len);
 
-    /**
-     * Initialize and configure the SPI bus.
-     * @param spiSettings A `SPISettings` object that encapsulates SPI bus configuration.
-     */
-    void beginTransaction(SPISettings spiSettings);
+        /**
+         * Transfer a buffer of bytes to a SPI slave device.
+         * @param buf The pointer to a buffer of bytes to send over MOSI.
+         * @param len The length of the buffer of bytes.
+         *
+         * @note Any bytes received over MISO are discarded.
+         */
+        void transfer(void* buf, uint32_t len);
 
-    /** Deinitialize the SPI bus. */
-    void endTransaction();
+        /**
+         * Transfer a single byte to/from a SPI slave device.
+         * @param tx The byte to send over MOSI.
+         * @return The byte received over MISO when sending the `tx` byte over MOSI.
+         */
+        uint8_t transfer(uint8_t tx);
 
-    /** Clean-up any internal pointers/buffers/etc. */
-    virtual ~SPIClass();
+        /**
+         * Initialize and configure the SPI bus.
+         * @param spiSettings A `SPISettings` object that encapsulates SPI bus configuration.
+         */
+        void beginTransaction(SPISettings spiSettings);
 
-private:
-    /** the ID of the hardware driven SPI bus */
-    spi_inst_t* _hw_id;
-};
+        /** Deinitialize the SPI bus. */
+        void endTransaction();
 
-// pre-instantiated SPI bus object (to use as a convenient default)
-extern SPIClass SPI;
+        /** Clean-up any internal pointers/buffers/etc. */
+        virtual ~SPIClass();
+
+    private:
+        /** the ID of the hardware driven SPI bus */
+        spi_inst_t* _hw_id;
+    };
+
+    // pre-instantiated SPI bus object (to use as a convenient default)
+    extern SPIClass SPI;
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_RP2_SPI_H_

@@ -22,6 +22,10 @@
 
     #include "pico/stdlib.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
     #define delay(milisec)          sleep_ms(milisec)
@@ -29,6 +33,10 @@ namespace cirque_pinnacle_arduino_wrappers {
     #define millis()                to_ms_since_boot(get_absolute_time())
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_RP2_TIME_KEEPING_H_

@@ -22,51 +22,55 @@
 
     #include "pico/stdlib.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 typedef uint8_t pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0xFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-class GPIOClass
-{
+    class GPIOClass
+    {
 
-public:
-    static const bool DIRECTION_OUT = true;
-    static const bool DIRECTION_IN = false;
+    public:
+        static const bool DIRECTION_OUT = true;
+        static const bool DIRECTION_IN = false;
 
-    static const bool OUTPUT_HIGH = true;
-    static const bool OUTPUT_LOW = false;
+        static const bool OUTPUT_HIGH = true;
+        static const bool OUTPUT_LOW = false;
 
-    GPIOClass();
+        GPIOClass();
 
-    /**
-     * Similar to Arduino pinMode(pin, mode);
-     * @param port
-     * @param direction
-     */
-    static void open(pinnacle_gpio_t port, bool direction);
+        /**
+         * Similar to Arduino pinMode(pin, mode);
+         * @param port
+         * @param direction
+         */
+        static void open(pinnacle_gpio_t port, bool direction);
 
-    /**
-     * Defined for completeness; not actually exposed in the Arduino API
-     * @param port
-     */
-    static void close(pinnacle_gpio_t port);
+        /**
+         * Defined for completeness; not actually exposed in the Arduino API
+         * @param port
+         */
+        static void close(pinnacle_gpio_t port);
 
-    /**
-     * Similar to Arduino digitalRead(pin);
-     * @param port
-     */
-    static bool read(pinnacle_gpio_t port);
+        /**
+         * Similar to Arduino digitalRead(pin);
+         * @param port
+         */
+        static bool read(pinnacle_gpio_t port);
 
-    /**
-    * Similar to Arduino digitalWrite(pin, level);
-    * @param port
-    * @param value
-    */
-    static void write(pinnacle_gpio_t port, bool value);
+        /**
+         * Similar to Arduino digitalWrite(pin, level);
+         * @param port
+         * @param value
+         */
+        static void write(pinnacle_gpio_t port, bool value);
 
-    virtual ~GPIOClass();
-};
+        virtual ~GPIOClass();
+    };
 
     #define INPUT                    GPIOClass::DIRECTION_IN
     #define OUTPUT                   GPIOClass::DIRECTION_OUT
@@ -77,6 +81,10 @@ public:
     #define pinMode(pin, direction)  GPIOClass::open(pin, direction)
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_RP2_GPIO_H_

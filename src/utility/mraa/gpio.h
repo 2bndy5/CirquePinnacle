@@ -24,62 +24,66 @@
     #include <map>
     #include "mraa.hpp"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 typedef int pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/** Specific exception for GPIO errors */
-class GPIOException : public std::runtime_error
-{
-public:
-    explicit GPIOException(const std::string& msg)
-        : std::runtime_error(msg)
+    /** Specific exception for GPIO errors */
+    class GPIOException : public std::runtime_error
     {
-    }
-};
+    public:
+        explicit GPIOException(const std::string& msg)
+            : std::runtime_error(msg)
+        {
+        }
+    };
 
-class GPIOClass
-{
+    class GPIOClass
+    {
 
-public:
-    static const int OUTPUT_HIGH = 1;
-    static const int OUTPUT_LOW = 0;
+    public:
+        static const int OUTPUT_HIGH = 1;
+        static const int OUTPUT_LOW = 0;
 
-    GPIOClass();
+        GPIOClass();
 
-    virtual ~GPIOClass();
+        virtual ~GPIOClass();
 
-    /**
-     * Similar to Arduino pinMode(pin, mode);
-     * @param port
-     * @param direction
-     */
-    static void open(pinnacle_gpio_t port, mraa::Dir direction);
+        /**
+         * Similar to Arduino pinMode(pin, mode);
+         * @param port
+         * @param direction
+         */
+        static void open(pinnacle_gpio_t port, mraa::Dir direction);
 
-    /**
-     * Defined for completeness; not actually exposed in the Arduino API
-     * @param port
-     */
-    static void close(pinnacle_gpio_t port);
+        /**
+         * Defined for completeness; not actually exposed in the Arduino API
+         * @param port
+         */
+        static void close(pinnacle_gpio_t port);
 
-    /**
-     * Similar to Arduino digitalRead(pin);
-     * @param port
-     */
-    static int read(pinnacle_gpio_t port);
+        /**
+         * Similar to Arduino digitalRead(pin);
+         * @param port
+         */
+        static int read(pinnacle_gpio_t port);
 
-    /**
-    * Similar to Arduino digitalWrite(pin, level);
-    * @param port
-    * @param value
-    */
-    static void write(pinnacle_gpio_t port, int value);
+        /**
+         * Similar to Arduino digitalWrite(pin, level);
+         * @param port
+         * @param value
+         */
+        static void write(pinnacle_gpio_t port, int value);
 
-private:
-    /* cache for mraa::Gpio instances */
-    static std::map<pinnacle_gpio_t, mraa::Gpio*> cache;
-};
+    private:
+        /* cache for mraa::Gpio instances */
+        static std::map<pinnacle_gpio_t, mraa::Gpio*> cache;
+    };
 
     #define INPUT                    mraa::DIR_IN
     #define OUTPUT                   mraa::DIR_OUT
@@ -90,6 +94,10 @@ private:
     #define pinMode(pin, direction)  GPIOClass::open(pin, direction)
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_MRAA_GPIO_H_

@@ -22,11 +22,11 @@
 
     #include <cstdint>
 
-namespace cirque_pinnacle_arduino_wrappers {
-
     #ifdef __cplusplus
 extern "C" {
     #endif
+
+namespace cirque_pinnacle_arduino_wrappers {
 
 void __msleep(int milliseconds);
 
@@ -38,11 +38,11 @@ uint32_t __millis();
     #define delayMicroseconds(us) __usleep(us)
     #define millis()              __millis()
 
+} // namespace cirque_pinnacle_arduino_wrappers
+
     #ifdef __cplusplus
 }
     #endif
-
-} // namespace cirque_pinnacle_arduino_wrappers
 
 #endif // !defined(ARDUINO)
 #endif // CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_

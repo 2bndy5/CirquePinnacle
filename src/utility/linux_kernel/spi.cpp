@@ -26,134 +26,142 @@
     #include <unistd.h>
     #include "spi.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
     #define PINNACLE_SPI_BITS_PER_WORD 8
 
-SPIClass::SPIClass()
-    : fd(-1), _spi_speed(PINNACLE_SPI_SPEED)
-{
-}
-
-void SPIClass::begin(int busNumber, SPISettings settings)
-{
-
-    if (spiIsInitialized) {
-        return;
+    SPIClass::SPIClass()
+        : fd(-1), _spi_speed(PINNACLE_SPI_SPEED)
+    {
     }
 
-    /* set spidev accordingly to busNumber like:
+    void SPIClass::begin(int busNumber, SPISettings settings)
+    {
+
+        if (spiIsInitialized) {
+            return;
+        }
+
+        /* set spidev accordingly to busNumber like:
      * busNumber = 23 -> /dev/spidev2.3
      */
-    char device[] = "/dev/spidev0.0";
-    device[11] += (busNumber / 10) % 10;
-    device[13] += busNumber % 10;
+        char device[] = "/dev/spidev0.0";
+        device[11] += (busNumber / 10) % 10;
+        device[13] += busNumber % 10;
 
-    if (fd >= 0) // check whether spi is already open
+        if (fd >= 0) // check whether spi is already open
+        {
+            close(fd);
+            fd = -1;
+        }
+
+        fd = open(device, O_RDWR);
+        if (fd < 0) {
+            throw SPIException("can't open device");
+        }
+        spiIsInitialized = true;
+
+        int ret;
+
+        // spi mode
+        ret = ioctl(fd, SPI_IOC_WR_MODE, &settings.mode);
+        if (ret == -1) {
+            throw SPIException("SPI can't set mode");
+        }
+
+        ret = ioctl(fd, SPI_IOC_RD_MODE, &settings.mode);
+        if (ret == -1) {
+            throw SPIException("SPI can't read mode");
+        }
+
+        // bits per word
+        uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
+        ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
+        if (ret == -1) {
+            throw SPIException("SPI can't set bits per word");
+        }
+
+        ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
+        if (ret == -1) {
+            throw SPIException("SPI can't read bits per word");
+        }
+
+        // max speed Hz
+        ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.clock);
+        if (ret == -1) {
+            throw SPIException("SPI can't set max speed Hz");
+        }
+
+        ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.clock);
+        if (ret == -1) {
+            throw SPIException("SPI can't read max speed Hz");
+        }
+
+        _spi_speed = settings.clock;
+    }
+
+    uint8_t SPIClass::transfer(uint8_t tx)
     {
-        close(fd);
-        fd = -1;
+        struct spi_ioc_transfer tr;
+        memset(&tr, 0, sizeof(tr));
+        tr.tx_buf = (unsigned long)&tx;
+        uint8_t rx;
+        tr.rx_buf = (unsigned long)&rx;
+        tr.len = sizeof(tx);
+        tr.speed_hz = _spi_speed;
+        tr.delay_usecs = 0;
+        tr.bits_per_word = PINNACLE_SPI_BITS_PER_WORD;
+        tr.cs_change = 0;
+
+        int ret;
+        ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+        if (ret < 1) {
+            throw SPIException("SPI ioctl() transfer failed.");
+        }
+        return rx;
     }
 
-    fd = open(device, O_RDWR);
-    if (fd < 0) {
-        throw SPIException("can't open device");
-    }
-    spiIsInitialized = true;
+    void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
+    {
+        struct spi_ioc_transfer tr;
+        memset(&tr, 0, sizeof(tr));
+        tr.tx_buf = (unsigned long)tx_buf;
+        tr.rx_buf = (unsigned long)rx_buf;
+        tr.len = len;
+        tr.speed_hz = _spi_speed;
+        tr.delay_usecs = 0;
+        tr.bits_per_word = PINNACLE_SPI_BITS_PER_WORD;
+        tr.cs_change = 0;
 
-    int ret;
-
-    // spi mode
-    ret = ioctl(fd, SPI_IOC_WR_MODE, &settings.mode);
-    if (ret == -1) {
-        throw SPIException("SPI can't set mode");
-    }
-
-    ret = ioctl(fd, SPI_IOC_RD_MODE, &settings.mode);
-    if (ret == -1) {
-        throw SPIException("SPI can't read mode");
-    }
-
-    // bits per word
-    uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
-    ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
-    if (ret == -1) {
-        throw SPIException("SPI can't set bits per word");
+        int ret;
+        ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
+        if (ret < 1) {
+            throw SPIException("SPI ioctl() transfer failed.");
+        }
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
-    if (ret == -1) {
-        throw SPIException("SPI can't read bits per word");
+    void SPIClass::transfer(void* buf, uint32_t len)
+    {
+        transfer(buf, buf, len);
     }
 
-    // max speed Hz
-    ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.clock);
-    if (ret == -1) {
-        throw SPIException("SPI can't set max speed Hz");
+    SPIClass::~SPIClass()
+    {
+        if (fd >= 0) {
+            close(fd);
+        }
     }
 
-    ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.clock);
-    if (ret == -1) {
-        throw SPIException("SPI can't read max speed Hz");
-    }
-
-    _spi_speed = settings.clock;
-}
-
-uint8_t SPIClass::transfer(uint8_t tx)
-{
-    struct spi_ioc_transfer tr;
-    memset(&tr, 0, sizeof(tr));
-    tr.tx_buf = (unsigned long)&tx;
-    uint8_t rx;
-    tr.rx_buf = (unsigned long)&rx;
-    tr.len = sizeof(tx);
-    tr.speed_hz = _spi_speed;
-    tr.delay_usecs = 0;
-    tr.bits_per_word = PINNACLE_SPI_BITS_PER_WORD;
-    tr.cs_change = 0;
-
-    int ret;
-    ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-    if (ret < 1) {
-        throw SPIException("SPI ioctl() transfer failed.");
-    }
-    return rx;
-}
-
-void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
-{
-    struct spi_ioc_transfer tr;
-    memset(&tr, 0, sizeof(tr));
-    tr.tx_buf = (unsigned long)tx_buf;
-    tr.rx_buf = (unsigned long)rx_buf;
-    tr.len = len;
-    tr.speed_hz = _spi_speed;
-    tr.delay_usecs = 0;
-    tr.bits_per_word = PINNACLE_SPI_BITS_PER_WORD;
-    tr.cs_change = 0;
-
-    int ret;
-    ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-    if (ret < 1) {
-        throw SPIException("SPI ioctl() transfer failed.");
-    }
-}
-
-void SPIClass::transfer(void* buf, uint32_t len)
-{
-    transfer(buf, buf, len);
-}
-
-SPIClass::~SPIClass()
-{
-    if (fd >= 0) {
-        close(fd);
-    }
-}
-
-SPIClass SPI = SPIClass();
+    SPIClass SPI = SPIClass();
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)

@@ -22,6 +22,10 @@
     #include <stdexcept>
     #include "spi.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
 static pthread_mutex_t spiMutex0 = PTHREAD_MUTEX_INITIALIZER;
@@ -112,5 +116,9 @@ SPIClass::~SPIClass()
 SPIClass SPI = SPIClass();
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)

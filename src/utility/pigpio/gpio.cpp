@@ -20,38 +20,45 @@
     #include <pigpio.h>
     #include "gpio.h"
 
+    #ifdef __cplusplus
+extern "C" {
+    #endif
+
 namespace cirque_pinnacle_arduino_wrappers {
 
+    GPIOClass::GPIOClass()
+    {
+    }
 
-GPIOClass::GPIOClass()
-{
-}
+    GPIOClass::~GPIOClass()
+    {
+        gpioTerminate();
+    }
 
-GPIOClass::~GPIOClass()
-{
-    gpioTerminate();
-}
+    void GPIOClass::open(pinnacle_gpio_t port, int direction)
+    {
+        gpioSetMode(port, direction);
+    }
 
-void GPIOClass::open(pinnacle_gpio_t port, int direction)
-{
-    gpioSetMode(port, direction);
-}
+    void GPIOClass::close(pinnacle_gpio_t port)
+    {
+        // see destructor as it clears initialized pins.
+    }
 
-void GPIOClass::close(pinnacle_gpio_t port)
-{
-    // see destructor as it clears initialized pins.
-}
+    int GPIOClass::read(pinnacle_gpio_t port)
+    {
+        return gpioRead(port);
+    }
 
-int GPIOClass::read(pinnacle_gpio_t port)
-{
-    return gpioRead(port);
-}
-
-void GPIOClass::write(pinnacle_gpio_t port, int value)
-{
-    gpioWrite(port, value);
-}
+    void GPIOClass::write(pinnacle_gpio_t port, int value)
+    {
+        gpioWrite(port, value);
+    }
 
 } // namespace cirque_pinnacle_arduino_wrappers
+
+    #ifdef __cplusplus
+}
+    #endif
 
 #endif // !defined(ARDUINO)
