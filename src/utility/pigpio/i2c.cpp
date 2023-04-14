@@ -48,22 +48,17 @@ namespace cirque_pinnacle_arduino_wrappers {
             busID = bus_number;
         }
         else {
-            I2CException("Failed to open I2C bus.");
+            throw I2CException("Failed to open I2C bus.");
         }
     }
 
     void TwoWire::end()
     {
-        if (!i2cInitialized) {
-            return; // nothing to do here
-        }
-
-        int result = i2cClose(devHandle);
-        if (result != 0) {
-            throw I2CException("Failed to close the I2C bus.");
-        }
-        else {
+        if (i2cInitialized) {
             i2cInitialized = false;
+
+            i2cClose(devHandle);
+            // PI_BAD_HANDLE can mean expired from prior destruction of pigpio interface
         }
     }
 
@@ -113,9 +108,10 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
         xBuffLen = response;
         xBuffIndex = 0;
-        // close the I2C bus here as the intention of this implementation is to
-        // use the same instantiated object for the entire bus (agnostic of slave devices).
-        end();
+        // Typically, we would close the I2C bus here as the intention is to use the same
+        // object for the entire bus (agnostic of slave devices).
+        // The pigpio library treats I2C handles as objects specific to slave device address.
+        // Instead of closing the bus here, we'll rely on `beginTransmission()` for speed.
         return response;
     }
 
@@ -141,8 +137,8 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     TwoWire::~TwoWire()
     {
-        end();
         free(xBuff);
+        end();
     }
 
     TwoWire Wire = TwoWire();
