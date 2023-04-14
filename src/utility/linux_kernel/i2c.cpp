@@ -130,7 +130,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         end();
     }
 
-    TwoWire Wire = TwoWire();
+    TwoWire Wire;
 
 } // namespace cirque_pinnacle_arduino_wrappers
 

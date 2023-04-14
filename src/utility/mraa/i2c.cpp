@@ -121,7 +121,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         delete i2c_inst;
     }
 
-    TwoWire Wire = TwoWire();
+    TwoWire Wire;
 
 } // namespace cirque_pinnacle_arduino_wrappers
 

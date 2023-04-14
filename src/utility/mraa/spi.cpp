@@ -88,7 +88,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         delete spi_inst;
     }
 
-    SPIClass SPI = SPIClass();
+    SPIClass SPI;
 
 } // namespace cirque_pinnacle_arduino_wrappers
 
