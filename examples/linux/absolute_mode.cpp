@@ -97,7 +97,7 @@ void loop()
                 double radius = sqrt(pow(coord_x, 2) + pow(coord_y, 2));
                 double angle = atan2(coord_y, coord_x) * 180 / M_PI; // angle (in degrees) ranges (-180, 180]
 
-                std::cout << std::setprecision(2) << "angle: " << angle << " radius:" << radius << std::endl;
+                std::cout << std::setprecision(6) << "angle: " << angle << " radius:" << radius << std::endl;
             }
         }
     } // end if trackpad.available()
