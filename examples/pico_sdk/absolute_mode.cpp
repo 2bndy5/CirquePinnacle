@@ -81,8 +81,8 @@ void loop()
             }
             else {
                 // coordinates assume axes have been clamped to recommended ranges
-                double coord_x = (int16_t)(data.x) - 768;
-                double coord_y = (int16_t)(data.y) - 640; // NOTE: y-axis is inverted by default
+                double coord_x = (int16_t)(data.x) - 960;
+                double coord_y = (int16_t)(data.y) - 736; // NOTE: y-axis is inverted by default
 
                 double radius = sqrt(pow(coord_x, 2) + pow(coord_y, 2));
                 double angle = atan2(coord_y, coord_x) * 180 / PI; // angle (in degrees) ranges (-180, 180]

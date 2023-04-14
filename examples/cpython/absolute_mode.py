@@ -84,8 +84,8 @@ def print_trig(timeout=6):
                 data.y = max(64, min(1472, data.y))  # 64 <= y <= 1472
 
                 # coordinates assume axes have been clamped to recommended ranges
-                coord_x = data.x - 768
-                coord_y = data.y - 640  # NOTE: y-axis is inverted by default
+                coord_x = data.x - 960
+                coord_y = data.y - 736  # NOTE: y-axis is inverted by default
                 radius = math.sqrt(math.pow(coord_x, 2) + math.pow(coord_y, 2))
                 # angle (in degrees) ranges [-180, 180];
                 angle = math.atan2(coord_y, coord_x) * 180 / math.pi
