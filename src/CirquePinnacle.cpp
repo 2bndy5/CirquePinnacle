@@ -548,7 +548,15 @@ bool PinnacleTouchSPI::begin(pinnacle_spi_t* spi_bus)
 bool PinnacleTouchSPI::begin()
 {
     PINNACLE_USE_ARDUINO_API
-    SPI.begin();
+    SPI.begin(
+#ifdef PINNACLE_USE_NATIVE_CS // (mainly Linux drivers)
+        _slaveSelect          // SS_PIN is not an actual GPIO pin -> /dev/spidevX.Y
+    #ifndef SPI_HAS_TRANSACTION
+        , // include SPI speed if begin/endTransaction() aren't implemented
+        SPISettings(_spiSpeed, MSBFIRST, SPI_MODE1)
+    #endif
+#endif // ifdef PINNACLE_USE_NATIVE_CS
+    );
     return PinnacleTouchSPI::begin(&SPI);
 }
 
