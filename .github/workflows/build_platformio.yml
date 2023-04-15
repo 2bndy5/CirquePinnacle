@@ -72,10 +72,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example:
-          - "examples/absolute_mode/absolute_mode.ino"
-          - "examples/relative_mode/relative_mode.ino"
-          - "examples/anymeas_mode/anymeas_mode.ino"
         board:
           - "teensy31"
           - "teensy35"
@@ -87,6 +83,10 @@ jobs:
           - "blackpill_f103c8"
           - "nodemcuv2"
           - "adafruit_qtpy_esp32s2"
+        example:
+          - "examples/absolute_mode/absolute_mode.ino"
+          - "examples/relative_mode/relative_mode.ino"
+          - "examples/anymeas_mode/anymeas_mode.ino"
 
     steps:
       - name: Cache pip
@@ -101,7 +101,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.platformio
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+          key: ${{ runner.os }}-${{ matrix.board }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
