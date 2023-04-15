@@ -156,7 +156,7 @@ void PinnacleTouch::absoluteModeConfig(uint8_t zIdleCount, bool invertX, bool in
     }
 }
 
-void PinnacleTouch::relativeModeConfig(bool taps, bool rotate90, bool secondaryTap, bool glideExtend, bool intellimouse)
+void PinnacleTouch::relativeModeConfig(bool taps, bool rotate90, bool secondaryTap, bool intellimouse, bool glideExtend)
 {
     if (_dataMode == PINNACLE_RELATIVE) {
         uint8_t temp = (rotate90 << 7) | (!glideExtend << 4) | (!secondaryTap << 2) | (!taps << 1) | intellimouse;

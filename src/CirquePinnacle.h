@@ -404,18 +404,18 @@ public:
      *     reporting it (essentially swaps the axis data). Default is ``false``.
      * @param secondaryTap Specifies if tapping in the top-left corner (depending on
      *     orientation) triggers the secondary button data. Defaults to ``true``.
-     * @param glideExtend A patented feature that allows the user to glide their finger off
-     *     the edge of the sensor and continue gesture with the touch event. Default is ``false``.
-     *     This feature is always disabled if `isHardConfigured()` is ``true``.
      * @param intellimouse Specifies if the data reported includes a byte about scroll data.
      *     Default is ``false``. This feature is always disabled if `isHardConfigured()`
      *     is ``true``.
+     * @param glideExtend A patented feature that allows the user to glide their finger off
+     *     the edge of the sensor and continue gesture with the touch event. Default is ``false``.
+     *     This feature is always disabled if `isHardConfigured()` is ``true``.
      */
     void relativeModeConfig(bool taps = true,
                             bool rotate90 = false,
                             bool secondaryTap = true,
-                            bool glideExtend = false,
-                            bool intellimouse = false);
+                            bool intellimouse = false,
+                            bool glideExtend = false);
     /**
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC. This function only applies to `PINNACLE_RELATIVE` mode,
