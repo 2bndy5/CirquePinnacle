@@ -54,8 +54,11 @@ void loop() {
     trackpad.read(&data);
 
     // datasheet recommends clamping the axes value to reliable range
-    data.x = data.x > 1920 ? 1920 : (data.x < 128 ? 128 : data.x);  // 128 <= x <= 1920
-    data.y = data.y > 1472 ? 1472 : (data.y < 64 ? 64 : data.y);    //  64 <= y <= 1472
+    if (data.z) {  // only clamp values if Z axis is not idle.
+
+      data.x = data.x > 1920 ? 1920 : (data.x < 128 ? 128 : data.x);  // 128 <= x <= 1920
+      data.y = data.y > 1472 ? 1472 : (data.y < 64 ? 64 : data.y);    //  64 <= y <= 1472
+    }
 
     if (!onlyShowTrigVals) {
       // print raw data from the trackpad
@@ -96,8 +99,7 @@ void loop() {
     char input = Serial.read();
     if (input == 't' || input == 'T') {
       onlyShowTrigVals = true;
-    }
-    else if  (input == 'm' || input == 'M') {
+    } else if (input == 'm' || input == 'M') {
       onlyShowTrigVals = false;
     }
   }

@@ -57,8 +57,10 @@ def print_data(timeout=6):
 
             # specification sheet recommends clamping absolute position data of
             # X & Y axis for reliability
-            data.x = max(128, min(1920, data.x))  # X-axis
-            data.y = max(64, min(1472, data.y))  # Y-axis
+            if data.z:  # only clamp values if Z axis is not idle
+                data.x = max(128, min(1920, data.x))  # 128 <= x < = 1920
+                data.y = max(64, min(1472, data.y))  #   64 <= y < = 1472
+
             print(data)
             start = time.monotonic()
 
@@ -81,7 +83,7 @@ def print_trig(timeout=6):
             else:  # if touching (or near) the sensor
                 # datasheet recommends clamping X & Y axis for reliability
                 data.x = max(128, min(1920, data.x))  # 128 <= x <= 1920
-                data.y = max(64, min(1472, data.y))  # 64 <= y <= 1472
+                data.y = max(64, min(1472, data.y))  #   64 <= y <= 1472
 
                 # coordinates assume axes have been clamped to recommended ranges
                 coord_x = data.x - 960
