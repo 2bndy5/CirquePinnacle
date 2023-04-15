@@ -373,6 +373,12 @@ public:
      * is active. Data, new or antiquated, can be retrieved using
      * `read()` depending on what `setDataMode()` is given.
      *
+     * .. note::
+     *     If `~PinnacleTouch::PinnacleTouch()` is given `PINNACLE_SW_DR` as the
+     *     ``dataReadyPin`` parameter, then this function will attempt to read data from
+     *     the Pinnacle's Status register. However, this tactic is only allowed for
+     *     `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE` modes.
+     *
      * @returns ``true`` if there is new data to report; ``false`` if there is no
      *     new data to report.
      */
@@ -399,7 +405,7 @@ public:
      * `PINNACLE_ANYMEAS` or `PINNACLE_ABSOLUTE`, then this function does nothing.
      *
      * @param taps Specifies if all taps should be reported (``true``) or not
-     *     (``false``). Default is ``true``. This affects ``secondaryTap`` option as well.
+     *     (``false``). Default is ``true``. This affects `secondaryTap` option as well.
      * @param rotate90 Specifies if the axis data is altered for 90 degree rotation before
      *     reporting it (essentially swaps the axis data). Default is ``false``.
      * @param secondaryTap Specifies if tapping in the top-left corner (depending on
@@ -427,7 +433,7 @@ public:
      *     button) event.
      * @param readButtons A flag that can be used to skip reading the button data from
      *     the Pinnacle. The default (``true``) will read the button data and store it
-     *     in the ``report`` object's `~RelativeReport::buttons` attribute. This
+     *     in the `report` object's `~RelativeReport::buttons` attribute. This
      *     parameter is useful to speed up read operations when not using the Pinnacle's
      *     button input pins.
      *
@@ -451,7 +457,7 @@ public:
      *     button) event.
      * @param readButtons A flag that can be used to skip reading the button data from
      *     the Pinnacle. The default (``true``) will read the button data and store it
-     *     in the ``report`` object's `~AbsoluteReport::buttons` attribute. This
+     *     in the `report` object's `~AbsoluteReport::buttons` attribute. This
      *     parameter is useful to speed up read operations when not using the Pinnacle's
      *     button input pins.
      *
@@ -470,7 +476,7 @@ public:
      * This will specify if the Pinnacle ASIC is allowed to sleep after about
      * 5 seconds of idle activity (no input event).
      *
-     * @note
+     * .. note::
      *     While the touch controller is in sleep mode, if a touch event or
      *     button press is detected, the Pinnacle ASIC will take about 300
      *     milliseconds to wake up (does not include handling the touch event or
@@ -579,11 +585,11 @@ public:
      * @returns
      *     ``false``
      *         - If `setDataMode()` is not set to `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE`.
-     *         - If the calibration ``run`` timed out after 100 milliseconds.
+     *         - If the calibration `run` timed out after 100 milliseconds.
      *     ``true``
      *         - If `setDataMode()` is not given `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE` and the
-     *           calibration is not ``run``.
-     *         - If the calibration ``run`` successfully finishes.
+     *           calibration is not `run`.
+     *         - If the calibration `run` successfully finishes.
      */
     bool calibrate(bool run = true,
                    bool tap = true,
@@ -593,12 +599,11 @@ public:
     /**
      * Manually sets the compensation matrix (array) of the 46 16-bit unsigned
      * integer values stored in the Pinnacle ASIC's memory that is used for
-     * taking measurements. This matrix may not applicable in AnyMeas mode
-     * (specification sheet is lacking adequate information).
+     * taking measurements. This matrix is not applicable to `PINNACLE_ANYMEAS` mode.
      *
      * @param matrix The array of 16-bit unsigned integers that will be used
      *     for compensation calculations when measuring of input events.
-     * @param len The length of the array passed to the ``matrix`` parameter.
+     * @param len The length of the array passed to the `matrix` parameter.
      *     Default is 46 (the maximum elements used).
      *
      * .. seealso:: Review the hint in `getCalibrationMatrix()` from the Pinnacle
@@ -607,8 +612,8 @@ public:
     void setCalibrationMatrix(int16_t* matrix, uint8_t len = 46);
     /**
      * Use this function to compare a prior compensation matrix with a new
-     * matrix that was either loaded manually via setCalibrationMatrix() or
-     * created internally by calling calibrate() with the `run` parameter as
+     * matrix that was either loaded manually via `setCalibrationMatrix()` or
+     * created internally by calling `calibrate()` with the ``run`` parameter as
      * ``true``.
      *
      * .. hint:: A note from Cirque's Application Note on Comparing matrices:
@@ -667,8 +672,8 @@ public:
      * `PINNACLE_ANYMEAS` before calling this function otherwise it will do
      * nothing.
      *
-     * .. note:: The ``apertureWidth`` parameter has an inverse relationship/affect
-     *     on the ``frequency`` parameter. The approximated frequencies described
+     * .. note:: The `apertureWidth` parameter has an inverse relationship/affect
+     *     on the `frequency` parameter. The approximated frequencies described
      *     in this documentation are based on an aperture width of 500
      *     nanoseconds, and they will shrink as the aperture width grows or grow
      *     as the aperture width shrinks.
@@ -726,7 +731,7 @@ public:
      *     corresponding constants (`PINNACLE_MUX_REF0` and/or
      *     `PINNACLE_MUX_REF1`) must be passed to `anymeasModeConfig()` in the
      *     ``muxControl`` parameter, and their representative bits must be flagged
-     *     in both the ``bitsToToggle`` and ``togglePolarity`` parameters.
+     *     in both the `bitsToToggle` and `togglePolarity` parameters.
      *
      *     .. csv-table:: byte 3 (MSByte)
      *           :stub-columns: 1
@@ -761,7 +766,7 @@ public:
      *     for toggling, and a bit of ``0`` signifies that the bit should remain
      *     unaffected.
      * @param togglePolarity This 4-byte integer specifies which polarity the
-     *     specified bits (from ``bitsToToggle`` parameter) are toggled. A bit of
+     *     specified bits (from `bitsToToggle` parameter) are toggled. A bit of
      *     ``1`` toggles that bit positive, and a bit of ``0`` toggles that bit
      *     negative.
      */
@@ -775,16 +780,13 @@ public:
     /**
      * A non-blocking function (meant to be used in conjunction with
      * `startMeasureAdc()`) to retrieve the result of ADC measurements based on
-     * parameters passed to `startMeasureAdc()`. Be sure that the `setDataMode()`
-     * is given `PINNACLE_ANYMEAS` and `available()` returns ``true``
-     * before calling this function otherwise it will return ``0``.
+     * parameters passed to `startMeasureAdc()`. Be sure that `available()` returns ``true``
+     * before calling this function because it will clear status flags (used by `available()`).
      *
-     * @returns
+     * :Returns:
      *
-     *     - A 16-bit integer if `available()` returns ``true`` and if `setDataMode()` is
-     *       given `PINNACLE_ANYMEAS`.
-     *     - ``0`` if `setDataMode()` is not given `PINNACLE_ANYMEAS` or if `available()`
-     *       returns ``false``.
+     *     - A 16-bit integer if `setDataMode()` is given `PINNACLE_ANYMEAS`.
+     *     - ``0`` if `setDataMode()` is not given `PINNACLE_ANYMEAS`.
      */
     int16_t getMeasureAdc();
 #endif // PINNACLE_ANYMEAS_SUPPORT == true
@@ -815,8 +817,8 @@ protected:
      * :Return:
      *     - ``true`` if the Pinnacle ASIC was setup and configured properly (with data
      *       feed enabled using Relative mode).
-     *     - ``false`` if the Pinnacle ASIC was unresponsive for some reason (all further
-     *       operations will be nullified by setting :ref:`Data Mode` to ``0xFF``).
+     *     - ``false`` if the Pinnacle ASIC was unresponsive for some reason; all further
+     *       operations will be nullified by `setDataMode()` to `PINNACLE_ERROR` (``0xFF``).
      */
     bool begin();
 };

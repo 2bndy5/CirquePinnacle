@@ -28,16 +28,16 @@ next to the folder containing your project using the CirquePinnacle library:
         my_pinnacle_project/
 
 Alternatively, the CirquePinnacle repository can be included into your project's "lib"
-folder as copies or git submodules. For more detail, see the below instructions to
+folder as a copy or git submodule. For more detail, see the below instructions to
 :ref:`incorporating_in_user_src`.
 
 Building the library examples for the Pico SDK
 **********************************************
 
 Each example imports a set of constants (``DR_PIN``, ``SS_PIN``) from the
-examples/pico_sdk/\ :ref:`pico_example_pins` file. Default values for SPI pins (SCK, MOSI, MISO)
-and I2C pins (SDA & SCL) come from the Pico SDK repository's
-`pico-sdk/src/boards/include/boards/\<board_name>.h files
+:ref:`examples/pico_sdk/defaultPins.h <pico_example_pins>` file.
+Default values for SPI pins (SCK, MOSI, MISO) and I2C pins (SDA & SCL) come from
+the Pico SDK repository's `pico-sdk/src/boards/include/boards/\<board_name>.h files
 <https://github.com/raspberrypi/pico-sdk/tree/master/src/boards/include/boards>`_.
 
 1. Create a "build" directory in the CirquePinnacle repository's root directory and
@@ -171,7 +171,7 @@ In order to use the CirquePinnacle library in your RP2040 based project:
 
        target_include_directories(${targetName} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
-4. Finally, remember to include the necessary CirquePinnacle library's header files in your
+4. Finally, remember to include the necessary CirquePinnacle library's header file in your
    project's source code where applicable.
 
    .. code-block:: cpp

@@ -7,7 +7,7 @@ Arduino Examples
 Relative Mode
 -------------
 
-Example to output data reports in Relative Mode (using SPI protocol).
+Example to output data reports in Relative Mode.
 
 .. literalinclude:: ../examples/relative_mode/relative_mode.ino
     :caption: examples/relative_mode/relative_mode.ino
@@ -16,7 +16,7 @@ Example to output data reports in Relative Mode (using SPI protocol).
 Absolute Mode
 -------------
 
-Example to output data reports in Absolute Mode (using SPI protocol).
+Example to output data reports in Absolute Mode.
 
 .. literalinclude:: ../examples/absolute_mode/absolute_mode.ino
     :caption: examples/absolute_mode/absolute_mode.ino
@@ -27,7 +27,7 @@ Example to output data reports in Absolute Mode (using SPI protocol).
 AnyMeas Mode
 ------------
 
-Example to output data reports in AnyMeas Mode (using SPI protocol).
+Example to output data reports in AnyMeas Mode.
 
 .. literalinclude:: ../examples/anymeas_mode/anymeas_mode.ino
     :caption: examples/anymeas_mode/anymeas_mode.ino
@@ -40,7 +40,7 @@ Linux Examples
 Relative Mode
 -------------
 
-Example to output data reports in Relative Mode (using SPI protocol).
+Example to output data reports in Relative Mode.
 
 .. literalinclude:: ../examples/linux/relative_mode.cpp
     :caption: examples/linux/relative_mode.cpp
@@ -49,7 +49,7 @@ Example to output data reports in Relative Mode (using SPI protocol).
 Absolute Mode
 -------------
 
-Example to output data reports in Absolute Mode (using SPI protocol).
+Example to output data reports in Absolute Mode.
 
 .. literalinclude:: ../examples/linux/absolute_mode.cpp
     :caption: examples/linux/absolute_mode.cpp
@@ -58,7 +58,7 @@ Example to output data reports in Absolute Mode (using SPI protocol).
 AnyMeas Mode
 ------------
 
-Example to output data reports in AnyMeas Mode (using SPI protocol).
+Example to output data reports in AnyMeas Mode.
 
 .. literalinclude:: ../examples/linux/anymeas_mode.cpp
     :caption: examples/linux/anymeas_mode.cpp
@@ -82,7 +82,7 @@ The ``DR_PIN`` AND ``SS_PIN`` example definitions for various RP2040 based board
 Relative Mode
 -------------
 
-Example to output data reports in Relative Mode (using SPI protocol).
+Example to output data reports in Relative Mode.
 
 .. literalinclude:: ../examples/pico_sdk/relative_mode.cpp
     :caption: examples/pico_sdk/relative_mode.cpp
@@ -91,7 +91,7 @@ Example to output data reports in Relative Mode (using SPI protocol).
 Absolute Mode
 -------------
 
-Example to output data reports in Absolute Mode (using SPI protocol).
+Example to output data reports in Absolute Mode.
 
 .. literalinclude:: ../examples/pico_sdk/absolute_mode.cpp
     :caption: examples/pico_sdk/absolute_mode.cpp
@@ -100,7 +100,7 @@ Example to output data reports in Absolute Mode (using SPI protocol).
 AnyMeas Mode
 ------------
 
-Example to output data reports in AnyMeas Mode (using SPI protocol).
+Example to output data reports in AnyMeas Mode.
 
 .. literalinclude:: ../examples/pico_sdk/anymeas_mode.cpp
     :caption: examples/pico_sdk/anymeas_mode.cpp
@@ -115,7 +115,7 @@ Python Examples
 Relative Mode
 -------------
 
-Example to output data reports in Relative Mode (using SPI protocol).
+Example to output data reports in Relative Mode.
 
 .. literalinclude:: ../examples/cpython/relative_mode.py
     :caption: examples/cpython/relative_mode.py
@@ -125,7 +125,7 @@ Example to output data reports in Relative Mode (using SPI protocol).
 Absolute Mode
 -------------
 
-Example to output data reports in Absolute Mode (using SPI protocol).
+Example to output data reports in Absolute Mode.
 
 .. literalinclude:: ../examples/cpython/absolute_mode.py
     :caption: examples/cpython/absolute_mode.py
@@ -135,7 +135,7 @@ Example to output data reports in Absolute Mode (using SPI protocol).
 AnyMeas Mode
 ------------
 
-Example to output data reports in AnyMeas Mode (using SPI protocol).
+Example to output data reports in AnyMeas Mode.
 
 .. literalinclude:: ../examples/cpython/anymeas_mode.py
     :caption: examples/cpython/anymeas_mode.py
