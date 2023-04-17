@@ -157,7 +157,7 @@ class PinnacleTouch:
     ) -> None: ...
     def calibrate(
         self,
-        run: bool,
+        run: bool = True,
         tap: bool = True,
         track_error: bool = True,
         nerd: bool = True,

@@ -421,8 +421,7 @@ void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togg
         }
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, buffer, 8);
         buffer[0] = 0; // clearStatusFlags()
-        rapRead(PINNACLE_SYS_CONFIG, buffer + 1);
-        buffer[1] |= 0x18; // initiate measurements
+        buffer[1] = 0x18; // initiate measurements
         rapWriteBytes(PINNACLE_STATUS, buffer, 2);
     }
 }
