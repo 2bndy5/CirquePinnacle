@@ -3,6 +3,24 @@ Linux Support
 
 This library can be used on any Linux device that exposes GPIO pins.
 
+Automated install script
+************************
+
+There is a file named ``easy_linux_install.sh`` that automates the process outlined in :ref:`man_install` section.
+To use this script the file permission must be modified (only once):
+
+.. code-block:: shell
+
+    chmod u+x easy_linux_install.sh
+
+Now you can run the script and follow the prompts:
+
+.. code-block:: shell
+
+    ./easy_linux_install.sh
+
+.. _man_install:
+
 Installing from Source
 **********************
 
