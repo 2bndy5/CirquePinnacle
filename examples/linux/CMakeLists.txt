@@ -45,7 +45,7 @@ foreach(example ${EXAMPLES_LIST})
     if("${PINNACLE_DRIVER}" STREQUAL "mraa")
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread ${LibMRAA})
     elseif("${PINNACLE_DRIVER}" STREQUAL "pigpio")
-        target_link_libraries(${example} PUBLIC ${CirquePinnacle} ${LibPIGPIO} pthread)
+        target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread ${LibPIGPIO})
     else() # not using mraa or pigpio drivers
         target_link_libraries(${example} PUBLIC ${CirquePinnacle} pthread)
     endif()
