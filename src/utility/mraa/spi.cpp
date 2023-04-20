@@ -45,7 +45,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         result = spi_inst->bitPerWord((unsigned int)PINNACLE_SPI_BITS_PER_WORD);
         if (result != mraa::Result::SUCCESS)
             throw SPIException("mraa::Spi::bitPerWord() failed.");
-        result = spi_inst->lsbmode(settings.bitOrder);
+        result = spi_inst->lsbmode((bool)settings.bitOrder);
         if (result != mraa::Result::SUCCESS)
             throw SPIException("mraa::Spi::lsbmode() failed.");
         result = spi_inst->frequency(settings.clock);
