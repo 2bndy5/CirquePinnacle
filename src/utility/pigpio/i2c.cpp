@@ -138,7 +138,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     TwoWire::~TwoWire()
     {
         free(xBuff);
-        end();
+        // end();
     }
 
     TwoWire Wire;
