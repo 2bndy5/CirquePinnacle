@@ -1,6 +1,7 @@
 #!/bin/bash
 args=("$@")
 driver=""
+USE_I2C="OFF"
 
 if [[ ${#args[@]} -gt 0 ]]
 then
@@ -99,7 +100,7 @@ build_examples() {
     echo $'\n\n*** Building CirquePinnacle examples\n'
     cd ./examples/linux
     create_build_env
-    if ! cmake ..
+    if ! cmake .. -DUSE_I2C=$USE_I2C
     then
         echo "!!! CMake failed to configure build system. Quitting now."
         exit 1
@@ -141,6 +142,13 @@ INSTALL_LIB="N"
 read -p "*** Install CirquePinnacle lib? [y/N] " INSTALL_LIB
 BUILD_EXAMPLES="N"
 read -p "*** Build CirquePinnacle examples? [y/N] " BUILD_EXAMPLES
+if [[ ${BUILD_EXAMPLES^^} == "Y" ]]
+then
+    read -p "    Make examples use I2C (instead of SPI)? [y/N] " answer
+    case ${answer^^} in
+        Y ) USE_I2C="ON";;
+    esac
+fi
 INSTALL_PY_BINDING="N"
 read -p "*** Build/Install the python package (cirque-pinnacle) from source? [y/N] " INSTALL_PY_BINDING
 
