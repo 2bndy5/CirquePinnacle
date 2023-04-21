@@ -1,0 +1,17 @@
+recursive-include src *.cpp *.h *.typed CMakeLists.txt
+recursive-include src/pybind11 *
+recursive-exclude src/pybind11/.github *
+recursive-exclude src/pybind11/docs *
+recursive-exclude src/pybind11/tests *
+recursive-exclude .github *
+recursive-exclude docs *
+recursive-exclude examples *
+recursive-exclude build *
+recursive-exclude src/cmake/toolchains *.cmake
+recursive-include src/cmake *.cmake
+recursive-exclude src/utility/template* *.h
+recursive-exclude src/utility/rp2 *.h *.cpp *.txt
+recursive-exclude cirque_pinnacle.egg-info *
+global-exclude .clang-format .clang-tidy .git* library.json keywords.txt **.yml **.yaml
+exclude src/utility/includes.h src/cmake/pico_sdk_import.cmake src/cmake/CPackInfo.cmake
+include pyproject.toml setup.py src/utility/includes.h.in library.properties

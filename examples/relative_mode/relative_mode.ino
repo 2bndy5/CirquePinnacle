@@ -1,38 +1,51 @@
-#include <Arduino.h>
-#include "CirquePinnacle.h"
+/*
+ * This example reads data from the Cirque trackpad in "relative mode" and prints the values.
+ *
+ * See documentation at https://cirquepinnacle.rtfd.io/
+ */
+#include <CirquePinnacle.h>
 
-#define ss_pin 5
-#define dr_pin 6
+#define SS_PIN 2
+#define DR_PIN 7
 
-PinnacleTouchSPI tpad = PinnacleTouchSPI(dr_pin, ss_pin);
-RelativeReport report;
+PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
+// If using I2C, then use the following line (not the line above)
+// PinnacleTouchI2C trackpad(DR_PIN);
+
+// an object to hold data reported by the Cirque trackpad
+RelativeReport data;
 
 void setup() {
+  Serial.begin(115200);
   while (!Serial) {
-    delay(1);  // some boards need this to access USB Serial
+    // wait till Serial monitor is opened
   }
-  Serial.begin(9600);
-  if (tpad.begin()) {
-    Serial.println("found Cirque Pinnacle!");
-  } else {
-    Serial.println("Cirque Pinnacle not responding!");
+  if (!trackpad.begin()) {
+    Serial.println(F("Cirque Pinnacle not responding!"));
+    while (true) {
+      // hold program in infinite loop
+    }
   }
+  Serial.println(F("CirquePinnacle/examples/relative_mode"));
+  trackpad.setDataMode(PINNACLE_RELATIVE);
+  trackpad.relativeModeConfig(); // uses default config
+  Serial.println(F("Touch the trackpad to see the data."));
 }
 
 void loop() {
-  if (tpad.available()) {
-    tpad.read(&report);
-    Serial.print("Left: ");
-    Serial.print(report.buttons & 1);
-    Serial.print(" Right: ");
-    Serial.print(report.buttons & 2);
-    Serial.print(" Middle: ");
-    Serial.print(report.buttons & 4);
-    Serial.print("\tdelta X: ");
-    Serial.print(report.x);
-    Serial.print("\tdelta Y: ");
-    Serial.print(report.y);
-    Serial.print("\tdelta Scroll: ");
-    Serial.println(report.scroll);
+  if (trackpad.available()) {
+    trackpad.read(&data);
+    Serial.print(F("Left:"));
+    Serial.print(data.buttons & 1);
+    Serial.print(F(" Right:"));
+    Serial.print(data.buttons & 2);
+    Serial.print(F(" Middle:"));
+    Serial.print(data.buttons & 4);
+    Serial.print(F("\tX:"));
+    Serial.print(data.x);
+    Serial.print(F("\tY:"));
+    Serial.print(data.y);
+    Serial.print(F("\tScroll:"));
+    Serial.println(data.scroll);
   }
 }

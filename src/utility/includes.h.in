@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2023 Brendan Doherty (2bndy5)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+#ifndef CIRQUEPINNACLE_UTILITY_INCLUDES_H_
+#define CIRQUEPINNACLE_UTILITY_INCLUDES_H_
+
+#include "@PINNACLE_DRIVER@/gpio.h"
+#include "@PINNACLE_DRIVER@/spi.h"
+#include "@PINNACLE_DRIVER@/i2c.h"
+#include "@PINNACLE_DRIVER@/time_keeping.h"
+
+// clang-format off
+// A macro to help execute driver specific code
+#define PINNACLE_DRIVER_@PINNACLE_DRIVER@
+// clang-format on
+
+/**
+ * An alias for platform-specific representation of SPI bus objects
+ *
+ * @ingroup arduino-spi
+ */
+typedef cirque_pinnacle_arduino_wrappers::SPIClass pinnacle_spi_t;
+
+/**
+ * An alias for platform-specific representation of I2C bus objects
+ *
+ * @ingroup arduino-i2c
+ */
+typedef cirque_pinnacle_arduino_wrappers::TwoWire pinnacle_i2c_t;
+
+#define PINNACLE_USE_ARDUINO_API using namespace cirque_pinnacle_arduino_wrappers;
+
+#endif // CIRQUEPINNACLE_UTILITY_INCLUDES_H_

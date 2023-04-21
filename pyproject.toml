@@ -1,0 +1,60 @@
+[build-system]
+# building cmake from pypi releases requires openssl-dev installed, so
+# just require users install cmake from apt when getting python-dev (CPython headers)
+requires = [
+    "setuptools>=61",
+    "wheel",
+    "setuptools_scm[toml]>=6.2",
+    "pybind11==2.10.3"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cirque_pinnacle"
+description = "A python package for the wrapping CirquePinnacle C++ library."
+readme = "README.rst"
+keywords = ["cirque", "pinnacle", "raspberry", "pi", "linux", "driver", "touch", "sensor"]
+license = {text = "MIT"}
+authors = [
+    { name = "Brendan Doherty", email = "2bndy5@gmail.com" },
+]
+classifiers = [
+    # https://pypi.org/pypi?%3Aaction=list_classifiers
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Hardware",
+    "Topic :: System :: Hardware :: Hardware Drivers",
+    "Typing :: Typed",
+]
+requires-python = ">=3.7"
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://cirquepinnacle.rtfd.io/"
+Source =  "https://github.com/2bndy5/CirquePinnacle"
+Tracker = "https://github.com/2bndy5/CirquePinnacle/issues"
+
+[tool.setuptools_scm]
+# pypi does not accept version strings with commit SHA in it. See PEP440
+local_scheme = "no-local-version"
+fallback_version = "0.0.0"
+version_scheme = "no-guess-dev"
+
+[tool.mypy]
+show_error_codes = true
+pretty = true
+files = [
+    "src/cirque_pinnacle-stubs/*.pyi",
+    "examples/cpython/*.py",
+]
+exclude = "setup.py"
+check_untyped_defs = true

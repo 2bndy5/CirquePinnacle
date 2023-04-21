@@ -1,20 +1,30 @@
 
 .. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
-  :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
-  :alt: Documentation Status
-.. image:: https://github.com/2bndy5/CirquePinnacle/workflows/Arduino%20CLI%20build/badge.svg
-  :target: https://github.com/2bndy5/CirquePinnacle/actions?query=workflow%3A%22Arduino+CLI+build%22
-  :alt: Arduino CLI build
+    :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml
+    :alt: Arduino build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml
+    :alt: PlatformIO build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml
+    :alt: Pico SDK build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml
+    :alt: Linux build
+.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml/badge.svg
+    :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml
+    :alt: Python build
 
 Introduction
 ============
 
 A driver library for interfacing with the Cirque Pinnacle (1CA027) touch controller used in Cirque Glidepoint Circle Trackpads.
 
-.. warning:: this is a work in progress... This library has not been tested yet as it is
-  being ported from `CircuitPython_Cirque_Pinnacle
-  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
-
+This library was originally ported from
+`CircuitPython_Cirque_Pinnacle  <https://gitHub.com/2bndy5/CircuitPython_Cirque_Pinnacle>`_.
 
 Supported Features
 ------------------
@@ -28,7 +38,7 @@ Supported Features
   Pinnacle (1CA027), thus this is a rather experimental mode.
 * Hardware input buttons' states included in data reports. There are 3 button input lines on
   the Cirque circle trackpads -- see `Pinout`_ section.
-* Configure measurements for finger or stylus (or automatically detirmine either) touch
+* Configure measurements for finger or stylus (or automatically determine either) touch
   events. The Cirque circle trackpads are natively capable of measuring only 1 touch
   point per event.
 * Download/upload the underlying compensation matrix for ADC measurements.
@@ -54,36 +64,51 @@ Unsupported Features
 Pinout
 ======
 
+.. warning::
+    The GPIO pins on these trackpads are **not** 5v tolerant. If your microcontroller uses 5v logic
+    (ie Arduino Nano, Uno, Pro, Micro), then you must remove the resistors at junctions "R7" and "R8".
+    Reportedly, this allows powering the trackpad with 5v (to VDD pin) and the trackpad GPIO pins become
+    tolerant of 5v logic levels.
 .. image:: https://github.com/2bndy5/CircuitPython_Cirque_Pinnacle/raw/master/docs/_static/Cirque_GlidePoint-Circle-Trackpad.png
     :target: https://www.mouser.com/new/cirque/glidepoint-circle-trackpads/
 
 The above picture is a example of the Cirque GlidePoint circle trackpad. This picture
 is chosen as the test pads (larger copper circular pads) are clearly labeled. The test pads
-are extended to the `12-pin FFC/FPC cable <https://www.mouser.com/Connectors/FFC-FPC/
-FFC-FPC-Jumper-Cables/_/N-axro3?P=1yc8ojpZ1z0wxjx>`_ connector (the white block near the
-bottom). The following table shows how the pins are connected in the `examples <examples.html>`_
+are extended to the `12-pin FFC/FPC cable
+<https://www.mouser.com/c/connectors/ffc-fpc/ffc-fpc-jumper-cables/?number%20of%20conductors=12%20Conductor&pitch=0.5%20mm>`_
+connector (the white block near the bottom). The following table shows how the pins are connected in
+the `examples <https://cirquepinnacle.readthedocs.io/en/latest/examples.html>`_
 
 .. csv-table:: pinout (ordered the same as the FFC/FPC cable connector)
-    :header: "cable pin number",Label,"MCU pin",Description
-    :widths: 1,5,5,13
+    :header: "cable pin number",Label,"MCU pin","RPi pin",Description
 
-    1,SCK,SCK,"SPI clock line"
-    2,SO,MISO,"SPI Master Input Slave Output"
-    3,SS,D7,"Slave Select (AKA Chip Select)"
-    4,DR,D2,"Data Ready interrupt"
-    5,SI,MOSI,"SPI Master Output Slave Input"
-    6,B2,N/A,"Hardware input button #2"
-    7,B3,N/A,"Hardware input button #3"
-    8,B1,N/A,"Hardware input button #1"
-    9,SCL,SCL,"I2C clock line"
-    10,SDA,SDA,"I2C data line"
-    11,GND,GND,Ground
-    12,VDD,3V,"3V power supply"
+    1,SCK,SCK,"SCLK (GPIO11)","SPI clock line"
+    2,SO,MISO,"MISO (GPIO9)","SPI Master Input Slave Output"
+    3,SS,D2,"CE0 (GPIO8)","Slave Select (AKA Chip Select)"
+    4,DR,D7,GPIO25,"Data Ready interrupt"
+    5,SI,MOSI,"MOSI (GPIO10)","SPI Master Output Slave Input"
+    6,B2,N/A,N/A,"Hardware input button #2"
+    7,B3,N/A,N/A,"Hardware input button #3"
+    8,B1,N/A,N/A,"Hardware input button #1"
+    9,SCL,SCL,"SCL (GPIO3)","I2C clock line (no builtin pull-up resistor)"
+    10,SDA,SDA,"SDA (GPIO2)","I2C data line (no builtin pull-up resistor)"
+    11,GND,GND,Ground,Ground
+    12,VDD,3V,3V3,"3V power supply"
 
-.. tip:: Of course, you can capture button data manually (if your application utilizes more
+.. tip::
+    Of course, you can capture button data manually (if your application utilizes more
     than 3 buttons), but if you connect the pins B1, B2, B3 to momentary push buttons that
     (when pressed) provide a path to ground, the Pinnacle touch controller will report all 3
     buttons' states for each touch (or even button only) events.
+
+.. note::
+    These trackpads have no builtin pull-up resistors on the I2C bus' SDA and SCL lines.
+    Examples were tested with a 4.7K ohm resistor for each I2C line tied to 3v.
+
+    The Raspberry Pi boards (excluding any RP2040 boards) all have builtin 1.8K ohm pull-up
+    resistors, so the Linux examples were tested with no addition pull-up resistance.
+
+.. _HCO:
 
 Model Labeling Scheme
 ---------------------
@@ -107,27 +132,19 @@ TM\ ``yyyxxx``\ -202\ ``i``\ -\ ``cc``\ ``o``
 Sphinx documentation
 -----------------------
 
-Sphinx is used to build the documentation based on XML output from Doxygen. First,
-install dependencies (Python 3 & Python's pip is required):
+Sphinx is used to build the documentation. First, install dependencies (Python 3 & Python's pip
+is required):
 
 .. code-block:: shell
 
     pip3 install -r docs/requirements.txt
 
-`Install Doxygen as instructed <https://www.doxygen.nl/download.html#srcbin>`_ and
-run it from the docs folder:
+Now, run sphinx. The following command is executed from the repository's root folder.
 
 .. code-block:: shell
 
-    cd docs
-    doxygen
-
-Now, run sphinx from the docs folder:
-
-.. code-block:: shell
-
-    sphinx-build -E -W . _build/html
+    sphinx-build -E -W docs docs/_build/html
 
 This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
-view them. It will also (due to -W) error out on any warning. This is a good way to
-locally verify it will pass.
+view them. It will also (due to ``-W``) error out on any warning. This is a good way to locally verify
+it will pass the CI workflow (and ReadTheDocs builds).

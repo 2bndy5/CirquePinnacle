@@ -1,0 +1,173 @@
+name: Python
+
+on:
+  pull_request_target:
+  workflow_dispatch:
+  release:
+    types: [published]
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/**/*.pyi"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/linux_kernel/*"
+      - ".github/workflows/build_python.yml"
+  push:
+    paths:
+      - "src/*.h"
+      - "src/*.cpp"
+      - "src/**/*.pyi"
+      - "src/CMakeLists.txt"
+      - "src/cmake/**"
+      - "src/utility/CMakeLists.txt"
+      - "src/utility/linux_kernel/*"
+      - ".github/workflows/build_python.yml"
+
+jobs:
+  check_source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        id: python-setup
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Checkout Current Repo
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Create source distribution
+        run: python setup.py sdist
+
+      - name: Install pre-commit, twine, and lib stubs
+        run: pip install pre-commit twine .
+
+      - name: Cache pre-commit venv
+        uses: actions/cache@v3
+        with:
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: '~/.cache/pre-commit'
+
+      - name: run pre-commit on all files
+        run: pre-commit run --all-files
+
+      - name: Checks distributable with twine
+        shell: bash
+        run: twine check dist/*
+
+      - name: Save distributable source as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "cirque_pinnacle-sdist"
+          path: ${{ github.workspace }}/dist
+
+  build_linux:
+    runs-on: ubuntu-latest
+    needs: [check_source]
+    env:
+      BUILD_ARCH: native
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3-dev
+          python3 -m pip install --upgrade pip
+          python3 -m pip install twine
+
+      - name: Fetch distributable source artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: "cirque_pinnacle-sdist"
+          path: ${{ github.workspace }}/sdist
+
+      - name: Try install from source distributable
+        run: pip install sdist/*.tar.gz -v
+
+      - name: Checkout Current Repo
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Build aarch64?
+        if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+        run: echo "BUILD_ARCH=aarch64 ${{ env.BUILD_ARCH }}" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        if: github.event_name == 'release'
+        with:
+          platforms: aarch64
+
+      - name: Build binary wheels with cibuildwheels
+        uses: pypa/cibuildwheel@v2.12.0
+        env:
+          CIBW_ARCHS_LINUX: ${{ env.BUILD_ARCH }}
+          CIBW_SKIP: cp36* pp* *musllinux*
+
+      - name: Move cross-compiled wheels to dist folder
+        run: |
+          mkdir -p dist
+          mv ./wheelhouse/*.whl ${{ github.workspace }}/dist/
+
+      - name: checks distributable with twine
+        run: python3 -m twine check dist/*
+
+      - name: Save distributable wheels as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "cirque_pinnacle-bdist"
+          path: ${{ github.workspace }}/dist
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    needs: [check_source, build_linux]
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Fetch distributable wheel artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: "cirque_pinnacle-bdist"
+          path: ${{ github.workspace }}/dist
+
+      - name: Fetch distributable source artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: "cirque_pinnacle-sdist"
+          path: ${{ github.workspace }}/dist
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install twine
+
+      - name: Publish package (to TestPyPI)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: twine upload --repository testpypi dist/*
+
+      - name: Publish to PyPi
+        # only upload distributions to PyPi when triggered by a published release
+        if: github.event_name == 'release'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: twine upload dist/*

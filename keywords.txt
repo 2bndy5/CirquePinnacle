@@ -5,24 +5,6 @@
 #######################################
 # Constants (LITERAL1)
 #######################################
-PINNACLE_FIRMWARE_ID        LITERAL1
-PINNACLE_STATUS             LITERAL1
-PINNACLE_SYS_CONFIG         LITERAL1
-PINNACLE_FEED_CONFIG_1      LITERAL1
-PINNACLE_FEED_CONFIG_2      LITERAL1
-PINNACLE_FEED_CONFIG_3      LITERAL1
-PINNACLE_CAL_CONFIG         LITERAL1
-PINNACLE_SAMPLE_RATE        LITERAL1
-PINNACLE_Z_IDLE             LITERAL1
-PINNACLE_Z_SCALER           LITERAL1
-PINNACLE_SLEEP_INTERVAL     LITERAL1
-PINNACLE_SLEEP_TIMER        LITERAL1
-PINNACLE_PACKET_BYTE_0      LITERAL1
-PINNACLE_PACKET_BYTE_1      LITERAL1
-PINNACLE_ERA_VALUE          LITERAL1
-PINNACLE_ERA_ADDR           LITERAL1
-PINNACLE_ERA_CONTROL        LITERAL1
-PINNACLE_HCO_ID             LITERAL1
 PINNACLE_RELATIVE           LITERAL1
 PINNACLE_ANYMEAS            LITERAL1
 PINNACLE_ABSOLUTE           LITERAL1
@@ -80,7 +62,7 @@ setCalibrationMatrix        KEYWORD2
 getCalibrationMatrix        KEYWORD2
 setAdcGain                  KEYWORD2
 tuneEdgeSensitivity         KEYWORD2
-anyMeasModeConfig           KEYWORD2
+anymeasModeConfig           KEYWORD2
 measureAdc                  KEYWORD2
 startMeasureAdc             KEYWORD2
 getMeasureAdc               KEYWORD2
