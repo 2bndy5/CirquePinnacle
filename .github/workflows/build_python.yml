@@ -106,7 +106,7 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-        if: github.event_name == 'release'
+        if: contains(env.BUILD_ARCH, 'aarch64')
         with:
           platforms: aarch64
 
