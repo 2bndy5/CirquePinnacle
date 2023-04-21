@@ -23,7 +23,7 @@ on:
 
 jobs:
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
     with:
       ignore: 'examples/pico_sdk|'
   build:

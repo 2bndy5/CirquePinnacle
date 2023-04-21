@@ -4,12 +4,12 @@ on:
   pull_request:
     types: [opened, reopened]
     paths:
-      - ".github/workflows/build_platformIio.yml"
+      - ".github/workflows/build_platformio.yml"
       - "library.json"
       - "examples/**/*.ino"
   push:
     paths:
-      - ".github/workflows/build_platformIio.yml"
+      - ".github/workflows/build_platformio.yml"
       - "library.json"
       - "examples/**/*.ino"
   release:
@@ -48,21 +48,21 @@ jobs:
           path: PlatformIO*.tar.gz
 
       - name: Upload Release assets
-        if: github.events.name == 'release'
+        if: github.event_name == 'release'
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
           asset_path: "PlatformIO*.tar.gz"
 
       - name: upload package to PlatformIO Registry
-        if: github.events.name == 'release'
+        if: github.event_name == 'release'
         # PIO lib packages cannot be re-published under the same tag
         env:
           PLATFORMIO_AUTH_TOKEN: ${{ secrets.PLATFORMIO_AUTH_TOKEN }}
         run: pio package publish --owner 2bndy5 --non-interactive
 
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
     with:
       extensions: ino
 

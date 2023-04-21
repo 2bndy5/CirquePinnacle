@@ -43,7 +43,7 @@ env:
 
 jobs:
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@add-portability
+    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
     with:
       ignore: 'examples|examples_pico|utility/bcm2xxx/bcm2835.h|utility/bcm2xxx/bcm2835.c'
   build:
