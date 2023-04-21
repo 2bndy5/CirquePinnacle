@@ -5,6 +5,21 @@ This library has bindings for use in CPython on Linux. While it is only meant to
 you can still install the python bindings on other platforms which will only yield the stubs-only
 package (type hints) for the python bindings.
 
+Installing via ``pip``
+**********************
+
+A distributable package is deployed to pypi.org, so users can simply install the python bindings
+with the following:
+
+.. code-block:: shell
+
+    pip install cirque-pinnacle
+
+.. note::
+    While this library is designed to function only on Linux boards with GPIO pins exposed, this
+    python package includes a stub-only package for non-Linux platforms. This stub-only package is
+    meant to aid in remote development environments that do type checking in python.
+
 Installing from Github
 **********************
 

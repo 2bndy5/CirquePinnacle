@@ -43,11 +43,11 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Create source distribution
-        run: python setup.py sdist
-
       - name: Install pre-commit, twine, and lib stubs
-        run: pip install pre-commit twine .
+        run: pip install pre-commit twine build .
+
+      - name: Create source distribution
+        run: python -m build -s
 
       - name: Cache pre-commit venv
         uses: actions/cache@v3
