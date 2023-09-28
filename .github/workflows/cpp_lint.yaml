@@ -20,13 +20,11 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: 3.x
-      # Ubuntu 22.04 runners ship with clang-tools v12
-      # - name: Install clang-tools
-      #   uses: KyleMayes/install-llvm-action@v1
-      #   with:
-      #     version: 12
-      - name: Install linter python package
-        run: python3 -m pip install cpp-linter
+      # Ubuntu 22.04 runners no longer ship with clang-format-12
+      - name: Install linter python package and clang-format
+        run: |
+          sudo apt-get install clang-format-12
+          python3 -m pip install cpp-linter
       - name: run linter as a python package
         id: linter
         run: |
