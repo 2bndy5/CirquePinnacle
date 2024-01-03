@@ -34,7 +34,7 @@ jobs:
           --tidy-checks='-*' \
           --files-changed-only='False' \
           --extensions=${{ inputs.extensions }} \
-          --ignore='${{ inputs.ignore-pattern }}'
+          --ignore='${{ inputs.ignore }}'
       - name: Linter checks failed?
         if: steps.linter.outputs.checks-failed > 0
         run: exit 1
