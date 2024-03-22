@@ -17,6 +17,7 @@
 from typing import List, overload
 
 PINNACLE_SW_DR: int = ...
+PINNACLE_DRIVER: str = ...
 
 class PinnacleDataMode:
     @property

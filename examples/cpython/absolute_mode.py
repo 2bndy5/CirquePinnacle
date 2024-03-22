@@ -14,6 +14,7 @@ from cirque_pinnacle import (
     PinnacleTouchI2C,
     PINNACLE_SW_DR,
     PINNACLE_ABSOLUTE,
+    PINNACLE_DRIVER,
 )
 
 print("CirquePinnacle/examples/cpython/absolute_mode")
@@ -22,7 +23,10 @@ print("CirquePinnacle/examples/cpython/absolute_mode")
 dr_pin = PINNACLE_SW_DR  # uses internal DR flag
 if not input("Use SW Data Ready? [y/N] ").lower().startswith("y"):
     print("-- Using HW Data Ready pin.")
-    dr_pin = 25  # GPIO25 (pin 22 if using MRAA driver)
+    if PINNACLE_DRIVER == "mraa":
+        dr_pin = 22  # GPIO25
+    else:
+        dr_pin = 25  # GPIO25
 
 trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
 if not input("Is the trackpad configured for I2C? [y/N] ").lower().startswith("y"):
