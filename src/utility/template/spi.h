@@ -150,9 +150,9 @@ public:
         init(PINNACLE_SPI_SPEED, MSBFIRST, SPI_MODE1);
     }
 
-    uint32_t clock; ///< The SPI bus clock speed (in Hz).
+    uint32_t clock;    ///< The SPI bus clock speed (in Hz).
     BitOrder bitOrder; ///< The SPI bus byte order (endianess).
-    DataMode mode; ///< The SPI bus mode (clock polarity/phase).
+    DataMode mode;     ///< The SPI bus mode (clock polarity/phase).
 
 private:
     void init(uint32_t _clock, BitOrder _bitOrder, DataMode _dataMode)

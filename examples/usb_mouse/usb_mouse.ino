@@ -12,9 +12,9 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
-const uint32_t interval = 750; // milliseconds used to blink LED
-uint32_t lastLedChange = 0;  // millis() since last digitalWrite()
-bool ledState = false;  // last state sent to digitalWrite()
+const uint32_t interval = 750;  // milliseconds used to blink LED
+uint32_t lastLedChange = 0;     // millis() since last digitalWrite()
+bool ledState = false;          // last state sent to digitalWrite()
 
 void setup() {
   pinMode(LED, OUTPUT);

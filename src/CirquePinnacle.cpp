@@ -420,7 +420,7 @@ void PinnacleTouch::startMeasureAdc(unsigned int bitsToToggle, unsigned int togg
             buffer[3 - i + 4] = (uint8_t)(togglePolarity >> (i * 8));
         }
         rapWriteBytes(PINNACLE_PACKET_BYTE_1, buffer, 8);
-        buffer[0] = 0; // clearStatusFlags()
+        buffer[0] = 0;    // clearStatusFlags()
         buffer[1] = 0x18; // initiate measurements
         rapWriteBytes(PINNACLE_STATUS, buffer, 2);
     }

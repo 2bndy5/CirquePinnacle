@@ -2,12 +2,13 @@ name: PlatformIO
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [master]
     paths:
       - ".github/workflows/build_platformio.yml"
       - "library.json"
       - "examples/**/*.ino"
   push:
+    branches: [master]
     paths:
       - ".github/workflows/build_platformio.yml"
       - "library.json"
@@ -20,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: get lib info
         id: lib-info
@@ -29,7 +30,7 @@ jobs:
           echo "release=$(awk -F "=" '/version/ {print $2}' library.properties)" >> $GITHUB_OUTPUT
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
@@ -42,7 +43,7 @@ jobs:
         run: pio package pack -o PlatformIO-${{ steps.lib-info.outputs.name }}-${{ steps.lib-info.outputs.release }}.tar.gz
 
       - name: Save artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: PIO_pkg_${{ steps.lib-info.outputs.name }}
           path: PlatformIO*.tar.gz
@@ -62,7 +63,7 @@ jobs:
         run: pio package publish --owner 2bndy5 --non-interactive
 
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
+    uses: ./.github/workflows/cpp_lint.yaml
     with:
       extensions: ino
 
@@ -90,7 +91,7 @@ jobs:
 
     steps:
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -98,17 +99,17 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Cache PlatformIO
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.platformio
           key: ${{ runner.os }}-${{ matrix.board }}
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install PlatformIO
         run: |

@@ -18,7 +18,7 @@ env:
 
 jobs:
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
+    uses: ./.github/workflows/cpp_lint.yaml
     with:
       extensions: 'ino'
 
@@ -53,7 +53,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Compile examples
         uses: arduino/compile-sketches@main
@@ -66,12 +66,18 @@ jobs:
             - examples/anymeas_mode
             - examples/relative_mode
 
+      - name: sketch reports
+        if: matrix.enable-deltas-report
+        id: delta-report-name
+        run: >-
+          echo "report-name=${{ matrix.fqbn }}" | tr : - >> "$GITHUB_OUTPUT"
+
       # This step is needed to pass the size data to the report job
       - name: Upload sketches report to workflow artifact
         if: matrix.enable-deltas-report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.SKETCH_REPORTS_PATH }}
+          name: arduino-deltas-${{ steps.delta-report-name.outputs.report-name }}
           path: ${{ env.SKETCH_REPORTS_PATH }}
 
   report_size_deltas:
@@ -79,11 +85,12 @@ jobs:
     needs: [build]
     steps:
       - name: Download sketches reports artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: ${{ env.SKETCH_REPORTS_PATH }}
+          pattern: arduino-deltas-*
           path: ${{ env.SKETCH_REPORTS_PATH }}
 
-      - uses: arduino/report-size-deltas@v1
+      - uses: 2bndy5/report-size-deltas@update-comment
         with:
           sketches-reports-source: ${{ env.SKETCH_REPORTS_PATH }}
+          update-comment: true

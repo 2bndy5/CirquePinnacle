@@ -1,5 +1,6 @@
 # pylint: disable=invalid-name,too-few-public-methods
 """This file is for `sphinx-build` configuration"""
+
 import os
 from pathlib import Path
 import sys

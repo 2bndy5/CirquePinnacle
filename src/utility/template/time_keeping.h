@@ -28,11 +28,11 @@ extern "C" {
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-void __msleep(int milliseconds);
+    void __msleep(int milliseconds);
 
-void __usleep(int microseconds);
+    void __usleep(int microseconds);
 
-uint32_t __millis();
+    uint32_t __millis();
 
     #define delay(ms)             __msleep(ms)
     #define delayMicroseconds(us) __usleep(us)

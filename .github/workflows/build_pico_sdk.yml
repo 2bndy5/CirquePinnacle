@@ -2,7 +2,7 @@ name: Pico SDK
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [master]
     paths:
       - "src/*.cpp"
       - "!src/py_bindings.cpp"
@@ -12,6 +12,7 @@ on:
       - "examples/pico_sdk/**"
       - ".github/workflows/build_pico_sdk.yml"
   push:
+    branches: [master]
     paths:
       - "src/*.cpp"
       - "!src/py_bindings.cpp"
@@ -23,9 +24,9 @@ on:
 
 jobs:
   check_formatting:
-    uses: 2bndy5/CirquePinnacle/.github/workflows/cpp_lint.yaml@master
+    uses: ./.github/workflows/cpp_lint.yaml
     with:
-      ignore: 'examples/pico_sdk|'
+      ignore: '!examples/pico_sdk|'
   build:
     needs: check_formatting
     runs-on: ubuntu-latest
@@ -52,7 +53,7 @@ jobs:
         id: lib-info
         run: echo "name=$(echo ${{ github.repository }} | sed 's;.\+/;;')" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: ${{ steps.lib-info.outputs.name }}
 
@@ -60,7 +61,7 @@ jobs:
         run: sudo apt update && sudo apt install gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
 
       - name: Clone pico-sdk
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: raspberrypi/pico-sdk
           # master branch is latest stable release
@@ -88,7 +89,7 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE
 
       - name: Save artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: examples_pico_${{ matrix.board }}_${{ matrix.i2c-bus }}_${{ matrix.dr-pin }}
           path: |

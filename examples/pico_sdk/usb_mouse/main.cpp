@@ -80,7 +80,7 @@ int main(void)
     trackpad.setDataMode(PINNACLE_RELATIVE); // ensure mouse mode is enabled
     // tell the Pinnacle ASIC to rotate the orientation of the axis data by +90 degrees
     trackpad.relativeModeConfig(true, true); // (enable taps, rotate90)
-    trackpad.allowSleep(true); // let power consumption drop if inactive for 5 seconds
+    trackpad.allowSleep(true);               // let power consumption drop if inactive for 5 seconds
 
     while (1)
     {

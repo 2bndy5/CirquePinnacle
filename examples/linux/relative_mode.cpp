@@ -31,7 +31,8 @@ bool setup()
         std::cout << "Cirque Pinnacle not responding!" << std::endl;
         return false;
     }
-    std::cout << "CirquePinnacle/examples/linux/relative_mode\n" << std::endl;
+    std::cout << "CirquePinnacle/examples/linux/relative_mode\n"
+              << std::endl;
 #ifndef USE_SW_DR // if using PINNACLE_SW_DR
     std::cout << "-- Using HW DataReady pin." << std::endl;
 #endif
