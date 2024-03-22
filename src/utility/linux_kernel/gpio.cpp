@@ -17,13 +17,13 @@
  * SOFTWARE.
  */
 #ifndef ARDUINO
-    #include <linux/gpio.h>
     #include <unistd.h>    // close()
     #include <fcntl.h>     // open()
     #include <sys/ioctl.h> // ioctl()
     #include <errno.h>     // errno, strerror()
     #include <string.h>    // std::string, strcpy()
     #include <map>
+    #include "linux/gpio.h"
     #include "gpio.h"
 
 namespace cirque_pinnacle_arduino_wrappers {

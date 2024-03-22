@@ -22,7 +22,7 @@
 
     #include <stdexcept>
     #include <cstdint>
-    #include <linux/gpio.h> // gpiochip_info
+    #include "linux/gpio.h" // gpiochip_info
 
     #ifdef __cplusplus
 extern "C" {
