@@ -8,6 +8,7 @@ on:
       - "examples/**/*.ino"
       - "src/*.h"
       - "src/*.cpp"
+      - "!src/py_bindings.cpp"
   push:
     branches: [master]
     paths:
