@@ -20,8 +20,8 @@
     #include <unistd.h>    // close()
     #include <fcntl.h>     // open()
     #include <sys/ioctl.h> // ioctl()
-    #include <errno.h>     // errno, strerror()
-    #include <string.h>    // std::string, strcpy()
+    #include <errno.h>     // errno
+    #include <string.h>    // strerror(), memset(), strcpy()
     #include <map>
     #include "linux/gpio.h"
     #include "gpio.h"

@@ -17,13 +17,13 @@
  * SOFTWARE.
  */
 #ifndef ARDUINO
-    #include <fcntl.h>
+    #include <stdint.h>    // uintXX_ts
+    #include <unistd.h>    // close()
+    #include <fcntl.h>     // open()
+    #include <sys/ioctl.h> // ioctl()
+    #include <errno.h>     // errno,
+    #include <string.h>    // memset() strerror()
     #include <linux/spi/spidev.h>
-    #include <memory.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <sys/ioctl.h>
-    #include <unistd.h>
     #include "spi.h"
 
     #ifdef __cplusplus
@@ -61,7 +61,11 @@ namespace cirque_pinnacle_arduino_wrappers {
 
         fd = open(device, O_RDWR);
         if (fd < 0) {
-            throw SPIException("can't open device");
+            std::string msg = "[SPIClass::begin] Could not open device ";
+            msg += device;
+            msg += "; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
         spiIsInitialized = true;
 
@@ -70,35 +74,47 @@ namespace cirque_pinnacle_arduino_wrappers {
         // spi mode
         ret = ioctl(fd, SPI_IOC_WR_MODE, &settings.mode);
         if (ret == -1) {
-            throw SPIException("SPI can't set mode");
+            std::string msg = "[SPIClass::begin] Could not set write mode; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MODE, &settings.mode);
         if (ret == -1) {
-            throw SPIException("SPI can't read mode");
+            std::string msg = "[SPIClass::begin] Could not set read mode; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         // bits per word
         uint8_t bits = PINNACLE_SPI_BITS_PER_WORD;
         ret = ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits);
         if (ret == -1) {
-            throw SPIException("SPI can't set bits per word");
+            std::string msg = "[SPIClass::begin] Could not set write bits per word; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_BITS_PER_WORD, &bits);
         if (ret == -1) {
-            throw SPIException("SPI can't read bits per word");
+            std::string msg = "[SPIClass::begin] Could not set read bits per word; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         // max speed Hz
         ret = ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &settings.clock);
         if (ret == -1) {
-            throw SPIException("SPI can't set max speed Hz");
+            std::string msg = "[SPIClass::begin] Could not set write max speed Hz; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         ret = ioctl(fd, SPI_IOC_RD_MAX_SPEED_HZ, &settings.clock);
         if (ret == -1) {
-            throw SPIException("SPI can't read max speed Hz");
+            std::string msg = "[SPIClass::begin] Could not set read max speed Hz; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
 
         _spi_speed = settings.clock;
@@ -120,7 +136,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         int ret;
         ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
         if (ret < 1) {
-            throw SPIException("SPI ioctl() transfer failed.");
+            std::string msg = "[SPIClass::transfer(tx)] Could not transfer buffer; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
         return rx;
     }
@@ -140,7 +158,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         int ret;
         ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
         if (ret < 1) {
-            throw SPIException("SPI ioctl() transfer failed.");
+            std::string msg = "[SPIClass::transfer(tx, rx, len)] Could not transfer buffer; ";
+            msg += strerror(errno);
+            throw SPIException(msg);
         }
     }
 

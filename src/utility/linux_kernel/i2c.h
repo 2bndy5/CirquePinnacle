@@ -20,8 +20,8 @@
 #define CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_I2C_H_
 #ifndef ARDUINO
 
-    #include <cstdint>
-    #include <stdexcept>
+    #include <cstdint>   // uintXX_t
+    #include <stdexcept> // std::exception, std::string
 
     #ifdef __cplusplus
 extern "C" {
