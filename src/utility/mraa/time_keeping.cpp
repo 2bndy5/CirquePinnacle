@@ -19,7 +19,6 @@
 #ifndef ARDUINO
     #include <time.h>
     #include <chrono>
-    #include <sys/time.h>
     #include "time_keeping.h"
 
     #ifdef __cplusplus
@@ -41,7 +40,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     {
         struct timespec req;
         req.tv_sec = (time_t)microseconds / 1000000;
-        req.tv_nsec = (microseconds / 1000000) * 1000;
+        req.tv_nsec = (microseconds % 1000000) * 1000;
         //nanosleep(&req, (struct timespec *)NULL);
         clock_nanosleep(CLOCK_REALTIME, 0, &req, NULL);
     }

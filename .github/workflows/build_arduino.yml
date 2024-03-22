@@ -2,13 +2,14 @@ name: Arduino
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [master]
     paths:
       - ".github/workflows/build_arduino.yml"
       - "examples/**/*.ino"
       - "src/*.h"
       - "src/*.cpp"
   push:
+    branches: [master]
     paths:
       - ".github/workflows/build_arduino.yml"
       - "examples/**/*.ino"
