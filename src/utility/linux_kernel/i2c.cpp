@@ -18,11 +18,15 @@
  */
 #ifndef ARDUINO
 
-    #include <stdlib.h>
-    #include <stdio.h>
-    #include <fcntl.h>
-    #include <unistd.h>
-    #include <sys/ioctl.h>
+    #include <stdlib.h>    // free(), malloc()
+    #include <stddef.h>    // size_t
+    #include <stdint.h>    // uintXX_t
+    #include <stdio.h>     // sprintf
+    #include <unistd.h>    // close()
+    #include <fcntl.h>     // open()
+    #include <sys/ioctl.h> // ioctl()
+    #include <errno.h>     // errno
+    #include <string.h>    // strerror()
     #include <linux/i2c.h>
     #include <linux/i2c-dev.h>
     #include "i2c.h"
@@ -51,7 +55,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         sprintf(filename, "/dev/i2c-%d", busNumber);
         file = open(filename, O_RDWR);
         if (file < 0) {
-            throw I2CException("Can't open I2C bus. Check access rights.");
+            std::string msg = "[TwoWire::begin] Can't open I2C bus; ";
+            msg += strerror(errno);
+            throw I2CException(msg);
         }
         bus_fd = file;
     }
@@ -65,7 +71,9 @@ namespace cirque_pinnacle_arduino_wrappers {
     void TwoWire::beginTransmission(uint8_t address)
     {
         if (ioctl(bus_fd, I2C_SLAVE, address) < 0) {
-            throw I2CException("Could not select I2C slave address.");
+            std::string msg = "[TwoWire::beginTransmission] Could not select I2C slave address; ";
+            msg += strerror(errno);
+            throw I2CException(msg);
         }
         xBuffIndex = 0;
         xBuffLen = 0;
@@ -76,7 +84,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         (void)sendStop; // param not used in this implementation
 
         if (::write(bus_fd, xBuff, xBuffLen) != xBuffLen) {
-            throw I2CException("Could not write data to I2C bus.");
+            std::string msg = "[TwoWire::endTransmission] Could not write data to I2C bus; ";
+            msg += strerror(errno);
+            throw I2CException(msg);
         }
         return xBuffLen;
     }
@@ -102,7 +112,9 @@ namespace cirque_pinnacle_arduino_wrappers {
         xBuffIndex = 0;
         int retVal = ::read(bus_fd, xBuff, quantity);
         if (retVal < 0) {
-            throw I2CException("Could not read data from I2C bus.");
+            std::string msg = "[TwoWire::endTransmission] Could not read data from I2C bus; ";
+            msg += strerror(errno);
+            throw I2CException(msg);
         }
         xBuffLen = quantity;
         return xBuffLen;

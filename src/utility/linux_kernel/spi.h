@@ -20,8 +20,8 @@
 #define CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_SPI_H_
 #ifndef ARDUINO
 
-    #include <cstdint>
-    #include <stdexcept>
+    #include <cstdint>   // uintXX_t
+    #include <stdexcept> // std::exception, std::string
     #include <linux/spi/spidev.h>
 
     #ifdef __cplusplus

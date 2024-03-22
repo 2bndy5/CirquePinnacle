@@ -20,8 +20,8 @@
 #define CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_GPIO_H_
 #ifndef ARDUINO
 
-    #include <stdexcept>
-    #include <cstdint>
+    #include <cstdint>      // uintXX_t
+    #include <stdexcept>    // std::exception, std::string
     #include "linux/gpio.h" // gpiochip_info
 
     #ifdef __cplusplus
