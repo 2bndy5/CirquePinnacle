@@ -173,6 +173,10 @@ else() # if(${PINNACLE_PY_BINDING})
         utility/includes.h
         ${PINNACLE_DRIVER_SOURCES}
     )
+    # expose the selected driver in the python binding
+    target_compile_definitions(cirque_pinnacle PUBLIC
+        PINNACLE_DRIVER="${PINNACLE_DRIVER}"
+    )
 
     if(DEFINED PINNACLE_SPI_SPEED)
         message(STATUS "PINNACLE_SPI_SPEED set to ${PINNACLE_SPI_SPEED}")
