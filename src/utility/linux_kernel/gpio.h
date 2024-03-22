@@ -21,15 +21,23 @@
 #ifndef ARDUINO
 
     #include <stdexcept>
-    #include <map>
+    #include <cstdint>
+    #include <linux/gpio.h> // gpiochip_info
 
     #ifdef __cplusplus
 extern "C" {
     #endif
 
-typedef int pinnacle_gpio_t;
+typedef unsigned int pinnacle_gpio_t;
 const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
+    #ifndef PINNACLE_LINUX_GPIO_CHIP
+        /**
+         * The default GPIO chip to use.  Defaults to `/dev/gpiochip4` (for RPi5).
+         * Falls back to `/dev/gpiochip0` if this value is somehow incorrect.
+         */
+        #define PINNACLE_LINUX_GPIO_CHIP "/dev/gpiochip4"
+    #endif
 namespace cirque_pinnacle_arduino_wrappers {
 
     /** Specific exception for GPIO errors */
@@ -42,7 +50,29 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
     };
 
-    typedef int gpio_cache_fd_t;
+    /// A struct to manage the GPIO chip file descriptor.
+    /// This struct's destructor should close any cached GPIO pin requests' file descriptors.
+    struct GPIOChipCache
+    {
+        const char* chip = PINNACLE_LINUX_GPIO_CHIP;
+        int fd = -1;
+        bool chipInitialized = false;
+
+        /// Open the File Descriptor for the GPIO chip
+        void openDevice();
+
+        /// Close the File Descriptor for the GPIO chip
+        void closeDevice();
+
+        /// should be called automatically on program start.
+        /// Here, we do some one-off configuration.
+        GPIOChipCache();
+
+        /// Should be called automatically on program exit.
+        /// What we need here is to make sure that the File Descriptors used to
+        /// control GPIO pins are properly closed.
+        ~GPIOChipCache();
+    };
 
     class GPIOClass
     {
@@ -50,10 +80,11 @@ namespace cirque_pinnacle_arduino_wrappers {
     public:
         GPIOClass();
 
-        static constexpr char OUTPUT_HIGH[2] = {'1', '\n'};
-        static constexpr char OUTPUT_LOW[2] = {'0', '\n'};
-        static const bool DIRECTION_IN = false;
         static const bool DIRECTION_OUT = true;
+        static const bool DIRECTION_IN = false;
+
+        static const bool OUTPUT_HIGH = true;
+        static const bool OUTPUT_LOW = false;
 
         /**
          * Similar to Arduino pinMode(pin, mode);
@@ -79,13 +110,9 @@ namespace cirque_pinnacle_arduino_wrappers {
          * @param port
          * @param value
          */
-        static void write(pinnacle_gpio_t port, const char* value);
+        static void write(pinnacle_gpio_t port, bool value);
 
         virtual ~GPIOClass();
-
-    private:
-        /* fd cache */
-        static std::map<pinnacle_gpio_t, gpio_cache_fd_t> cache;
     };
 
     #define INPUT                    GPIOClass::DIRECTION_IN
