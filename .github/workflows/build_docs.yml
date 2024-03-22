@@ -2,7 +2,7 @@ name: Docs
 
 on:
   pull_request:
-    types: [opened, reopened]
+    branches: [master]
     paths:
       - "src/CirquePinnacle.h"
       - "docs/**"
@@ -10,6 +10,7 @@ on:
       - "examples/**/*.cpp"
       - ".github/workflows/build_docs.yml"
   push:
+    branches: [master]
     paths:
       - "src/CirquePinnacle.h"
       - "docs/**"
@@ -18,7 +19,6 @@ on:
       - ".github/workflows/build_docs.yml"
   release:
     types: [published, edited]
-    branches: [master]
   workflow_dispatch:
 
 jobs:
