@@ -28,7 +28,7 @@ void setup() {
   }
   Serial.println(F("CirquePinnacle/examples/relative_mode"));
   trackpad.setDataMode(PINNACLE_RELATIVE);
-  trackpad.relativeModeConfig(); // uses default config
+  trackpad.relativeModeConfig();  // uses default config
   Serial.println(F("Touch the trackpad to see the data."));
 }
 

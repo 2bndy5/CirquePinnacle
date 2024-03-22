@@ -1,4 +1,5 @@
 """Build & Install script for the CirquePinnacle C++ library python wrappers."""
+
 import os
 import platform
 import subprocess

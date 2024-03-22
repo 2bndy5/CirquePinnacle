@@ -1,12 +1,11 @@
 name: Python
 
 on:
-  pull_request_target:
   workflow_dispatch:
   release:
     types: [published]
   pull_request:
-    types: [opened, reopened]
+    branches: [master]
     paths:
       - "src/*.h"
       - "src/*.cpp"
@@ -17,6 +16,7 @@ on:
       - "src/utility/linux_kernel/*"
       - ".github/workflows/build_python.yml"
   push:
+    branches: [master]
     paths:
       - "src/*.h"
       - "src/*.cpp"
@@ -33,12 +33,12 @@ jobs:
     steps:
       - name: Set up Python
         id: python-setup
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
@@ -50,7 +50,7 @@ jobs:
         run: python -m build -s
 
       - name: Cache pre-commit venv
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
           path: '~/.cache/pre-commit'
@@ -63,7 +63,7 @@ jobs:
         run: twine check dist/*
 
       - name: Save distributable source as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "cirque_pinnacle-sdist"
           path: ${{ github.workspace }}/dist
@@ -75,7 +75,7 @@ jobs:
       BUILD_ARCH: native
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
@@ -86,7 +86,7 @@ jobs:
           python3 -m pip install twine
 
       - name: Fetch distributable source artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "cirque_pinnacle-sdist"
           path: ${{ github.workspace }}/sdist
@@ -95,7 +95,7 @@ jobs:
         run: pip install sdist/*.tar.gz -v
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
@@ -125,7 +125,7 @@ jobs:
         run: python3 -m twine check dist/*
 
       - name: Save distributable wheels as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "cirque_pinnacle-bdist"
           path: ${{ github.workspace }}/dist
@@ -136,18 +136,18 @@ jobs:
     needs: [check_source, build_linux]
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
       - name: Fetch distributable wheel artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "cirque_pinnacle-bdist"
           path: ${{ github.workspace }}/dist
 
       - name: Fetch distributable source artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: "cirque_pinnacle-sdist"
           path: ${{ github.workspace }}/dist

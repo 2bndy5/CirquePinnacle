@@ -47,8 +47,8 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
 
         /* set spidev accordingly to busNumber like:
-     * busNumber = 23 -> /dev/spidev2.3
-     */
+         * busNumber = 23 -> /dev/spidev2.3
+         */
         char device[] = "/dev/spidev0.0";
         device[11] += (busNumber / 10) % 10;
         device[13] += busNumber % 10;

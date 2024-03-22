@@ -4,6 +4,7 @@ prints the values.
 
 See documentation at https://cirquepinnacle.rtfd.io/
 """
+
 import time
 from typing import Union
 from cirque_pinnacle import (

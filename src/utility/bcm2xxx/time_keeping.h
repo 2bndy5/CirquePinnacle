@@ -28,9 +28,9 @@ extern "C" {
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-// the bcm2835.h defines the following functions for us: `delay()`, `delayMicroseconds()`
+    // the bcm2835.h defines the following functions for us: `delay()`, `delayMicroseconds()`
 
-uint32_t __millis();
+    uint32_t __millis();
 
     #define millis() __millis()
 

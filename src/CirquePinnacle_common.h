@@ -49,7 +49,6 @@
         #define PINNACLE_SPI_SPEED 6000000
     #endif
 
-
 /**
  * alias for SPI bus implementation
  *
