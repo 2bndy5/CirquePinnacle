@@ -4,15 +4,17 @@
 import os
 from pathlib import Path
 import sys
+import time
 
 
 sys.path.insert(0, os.path.abspath(".."))
 
+time_t = time.localtime()
 
 # -- Project information -----------------------------------------------------
 
 project = "Cirque Pinnacle"
-copyright = "2023, Brendan Doherty"
+copyright = f"{time_t.tm_year}, Brendan Doherty"
 author = "Brendan Doherty"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -75,6 +77,7 @@ highlight_language = "cpp"
 
 # -- Options for HTML output
 # ----------------------------------------------
+repo_url = "https://github.com/2bndy5/CirquePinnacle"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -110,12 +113,12 @@ html_theme_options = {
         },
     ],
     # Set the repo location to get a badge with stats
-    "repo_url": "https://github.com/2bndy5/CirquePinnacle/",
+    "repo_url": repo_url,
     "repo_name": "CirquePinnacle",
     "social": [
         {
             "icon": "fontawesome/brands/github",
-            "link": "https://github.com/2bndy5/CirquePinnacle",
+            "link": repo_url,
         },
     ],
 }
