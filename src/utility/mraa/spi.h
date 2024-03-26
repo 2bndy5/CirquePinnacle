@@ -20,8 +20,8 @@
 #define CIRQUEPINNACLE_UTILITY_MRAA_SPI_H_
 #ifndef ARDUINO
 
-    #include <stdexcept>
-    #include "mraa.hpp"
+    #include <stdexcept> // std::exception, std::string
+    #include <mraa.hpp>  // mraa::
 
     #ifdef __cplusplus
 extern "C" {
