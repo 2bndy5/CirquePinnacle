@@ -23,6 +23,7 @@
 #include "@PINNACLE_DRIVER@/spi.h"
 #include "@PINNACLE_DRIVER@/i2c.h"
 #include "@PINNACLE_DRIVER@/time_keeping.h"
+#include "@PINNACLE_DRIVER@/interrupt.h"
 
 /**
  * An alias for platform-specific representation of SPI bus objects

@@ -5,6 +5,7 @@ if("${PINNACLE_DRIVER}" STREQUAL "linux_kernel") # use linux_kernel
     endif()
     install(FILES
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/gpio.h
+            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/interrupt.h
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/spi.h
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.h
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/time_keeping.h
@@ -12,7 +13,9 @@ if("${PINNACLE_DRIVER}" STREQUAL "linux_kernel") # use linux_kernel
     )
     set(PINNACLE_DRIVER_SOURCES
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/spi.cpp
-            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.h
+            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/interrupt.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.h
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/time_keeping.cpp
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/gpio.cpp
         PARENT_SCOPE
