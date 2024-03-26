@@ -45,7 +45,7 @@ jobs:
   check_formatting:
     uses: ./.github/workflows/cpp_lint.yaml
     with:
-      ignore: 'examples|!examples/linux|src/utility/bcm2xxx/bcm2835.h|src/utility/bcm2xxx/bcm2835.c|src/utility/linux_kernel/linux'
+      ignore: 'examples|!examples/linux|src/utility/bcm2xxx/bcm2835.h|src/utility/bcm2xxx/bcm2835.c|src/linux'
   build:
     needs: check_formatting
     runs-on: ubuntu-latest

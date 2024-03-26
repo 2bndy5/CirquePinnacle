@@ -27,13 +27,11 @@ elseif("${PINNACLE_DRIVER}" STREQUAL "linux_kernel") # use linux_kernel
     endif()
     install(FILES
             ${CIRQUE_PINNACLE_UTILITY_HEADERS}
-            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/linux/gpio.h
         DESTINATION include/CirquePinnacle/utility/${PINNACLE_DRIVER}
     )
     set(PINNACLE_DRIVER_SOURCES
             ${PINNACLE_UTILITY_IMPLEMENTATION_FILES}
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/gpio.cpp
-            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/linux/gpio.h
         PARENT_SCOPE
     )
 elseif("${PINNACLE_DRIVER}" STREQUAL "mraa") # use mraa
