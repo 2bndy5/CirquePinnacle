@@ -4,11 +4,13 @@ set(CIRQUE_PINNACLE_UTILITY_HEADERS
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/spi.h
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.h
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/time_keeping.h
+    ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/interrupt.h
 )
 set(PINNACLE_UTILITY_IMPLEMENTATION_FILES
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/spi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/i2c.cpp
     ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/time_keeping.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/interrupt.cpp
 )
 if("${PINNACLE_DRIVER}" STREQUAL "bcm2xxx") # use bcm2835 lib
     install(FILES
@@ -27,13 +29,11 @@ elseif("${PINNACLE_DRIVER}" STREQUAL "linux_kernel") # use linux_kernel
     endif()
     install(FILES
             ${CIRQUE_PINNACLE_UTILITY_HEADERS}
-            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/linux/gpio.h
         DESTINATION include/CirquePinnacle/utility/${PINNACLE_DRIVER}
     )
     set(PINNACLE_DRIVER_SOURCES
             ${PINNACLE_UTILITY_IMPLEMENTATION_FILES}
             ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/gpio.cpp
-            ${CMAKE_CURRENT_LIST_DIR}/${PINNACLE_DRIVER}/linux/gpio.h
         PARENT_SCOPE
     )
 elseif("${PINNACLE_DRIVER}" STREQUAL "mraa") # use mraa

@@ -17,9 +17,9 @@
  * SOFTWARE.
  */
 #ifndef ARDUINO
-    #include <stdlib.h>
-    #include <mraa/common.hpp>
-    #include <mraa/i2c.hpp>
+    #include <stdlib.h>     // free(), malloc()
+    #include <mraa.h>       // mraa_strresult()
+    #include <mraa/i2c.hpp> // mraa::I2c
     #include "i2c.h"
 
     #ifdef __cplusplus
@@ -42,6 +42,9 @@ namespace cirque_pinnacle_arduino_wrappers {
 
     void TwoWire::begin(uint8_t bus_number)
     {
+        if (i2c_inst != nullptr) {
+            end();
+        }
         i2c_inst = new mraa::I2c((int)bus_number);
     }
 
@@ -61,10 +64,12 @@ namespace cirque_pinnacle_arduino_wrappers {
     {
         (void)sendStop; // param not used in this wrapped implementation
 
-        int reason = i2c_inst->write((const uint8_t*)xBuff, xBuffLen);
+        mraa::Result reason = i2c_inst->write((const uint8_t*)xBuff, xBuffLen);
         if (reason < 0)
         {
-            throw I2CException("I2C write operation failed.");
+            std::string msg = "[TwoWire::endTransmission] I2C write operation failed; ";
+            msg += mraa_strresult((mraa_result_t)reason);
+            throw I2CException(msg);
             return 0;
         }
         uint8_t retVal = xBuffLen;
@@ -84,7 +89,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         int response = i2c_inst->read(xBuff, quantity);
         if (response < 0)
         {
-            throw I2CException("mraa::I2c.read() failed.");
+            throw I2CException("[TwoWire::requestFrom] Could not read from I2C bus");
             return 0;
         }
         xBuffLen = response;

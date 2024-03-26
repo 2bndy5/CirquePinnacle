@@ -20,9 +20,9 @@
 #define CIRQUEPINNACLE_UTILITY_MRAA_GPIO_H_
 #ifndef ARDUINO
 
-    #include <stdexcept>
+    #include <stdexcept> // std::exception, std::string
     #include <map>
-    #include "mraa.hpp"
+    #include <mraa.hpp> // mraa::Dir, mraa::Gpio
 
     #ifdef __cplusplus
 extern "C" {
