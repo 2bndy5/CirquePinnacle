@@ -16,35 +16,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
-#define CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
+#ifndef CIRQUEPINNACLE_UTILITY_MRAA_INTERRUPT_H_
+#define CIRQUEPINNACLE_UTILITY_MRAA_INTERRUPT_H_
 #ifndef ARDUINO
 
-    #include <cstdint>
+    #include <stdexcept> // std::exception, std::string
+    #include "mraa.hpp"  // mraa::
+    #include "gpio.h"    // pinnacle_gpio_t
 
-    // exclude C linkage for CPP docs generation
-    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
+    #ifdef __cplusplus
 extern "C" {
     #endif
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-    void __msleep(int milliseconds);
+    enum Edge
+    {
+        FALLING = mraa::Edge::EDGE_FALLING,
+        RISING = mraa::Edge::EDGE_RISING,
+        CHANGE = mraa::Edge::EDGE_BOTH,
+    };
 
-    void __usleep(int microseconds);
+    /** Specific exception for IRQ errors */
+    class IRQException : public std::runtime_error
+    {
+    public:
+        explicit IRQException(const std::string& msg)
+            : std::runtime_error(msg)
+        {
+        }
+    };
 
-    uint32_t __millis();
+    /**
+     * Take the details and create an interrupt handler that will
+     * callback to the user-supplied function.
+     */
+    int attachInterrupt(pinnacle_gpio_t pin, uint8_t mode, void (*function)(void));
 
-    #define delay(ms)             __msleep(ms)
-    #define delayMicroseconds(us) __usleep(us)
-    #define millis()              __millis()
+    /**
+     * Will cancel the interrupt thread, close the filehandle and release the pin.
+     */
+    int detachInterrupt(pinnacle_gpio_t pin);
 
 } // namespace cirque_pinnacle_arduino_wrappers
 
-    // exclude C linkage for CPP docs generation
-    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
+    #ifdef __cplusplus
 }
     #endif
 
 #endif // !defined(ARDUINO)
-#endif // CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
+#endif // CIRQUEPINNACLE_UTILITY_MRAA_INTERRUPT_H_

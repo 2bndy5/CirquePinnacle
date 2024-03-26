@@ -20,8 +20,9 @@
 #define CIRQUEPINNACLE_UTILITY_MRAA_I2C_H_
 #ifndef ARDUINO
 
-    #include <cstdint>
-    #include <stdexcept>
+    #include <cstdint>    // uintXX_t
+    #include <stdexcept>  // std::exception, std::string
+    #include <mraa/i2c.h> // mraa::I2c
 
     #ifdef __cplusplus
 extern "C" {
