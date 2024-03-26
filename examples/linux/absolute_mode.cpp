@@ -6,7 +6,7 @@
 #include <cmath>                           // sqrt(), pow(), atan2(), M_PI
 #include <iostream>                        // cout, endl, cin
 #include <iomanip>                         // setprecision()
-#include <CirquePinnacle/CirquePinnacle.h> // trackpad object, absoluteClampAxis()
+#include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
 #ifdef USE_SW_DR // if using PINNACLE_SW_DR
     #define DR_PIN PINNACLE_SW_DR
@@ -27,6 +27,15 @@ PinnacleTouchI2C trackpad(DR_PIN);
 // an object to hold data reported by the Cirque trackpad
 AbsoluteReport data;
 
+#ifndef USE_SW_DR
+// track the interrupts with our own IRQ flag
+volatile bool isDataReady = false;
+void interruptHandler()
+{
+    isDataReady = true;
+}
+#endif // !defined(USE_SW_DR)
+
 /*
 Showing all the printed output below will slow down the board's ability to
 read() data from the trackpad in a timely manner (resulting in data loss).
@@ -45,8 +54,13 @@ bool setup()
               << std::endl;
     trackpad.setDataMode(PINNACLE_ABSOLUTE);
     trackpad.absoluteModeConfig(1); // set count of z-idle packets to 1
-#ifndef USE_SW_DR                   // if using PINNACLE_SW_DR
+#ifndef USE_SW_DR                   // if not using PINNACLE_SW_DR
     std::cout << "-- Using HW DataReady pin." << std::endl;
+
+    // pull in arduino-like namespace
+    namespace arduino = cirque_pinnacle_arduino_wrappers;
+    // setup the interrupt handler
+    arduino::attachInterrupt(DR_PIN, arduino::FALLING, &interruptHandler);
 #endif
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
@@ -68,7 +82,12 @@ bool setup()
 
 void loop()
 {
+#ifdef USE_SW_DR
     if (trackpad.available()) {
+#else // using interruptHandler()
+    if (isDataReady) {
+        isDataReady = false; // reset our IRQ flag
+#endif
         trackpad.read(&data);
 
         // datasheet recommends clamping the axes value to reliable range

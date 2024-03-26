@@ -25,6 +25,16 @@ PinnacleTouchI2C trackpad(DR_PIN);
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
+#ifndef USE_SW_DR
+// track the interrupts with our own IRQ flag
+volatile bool isDataReady = false;
+
+void interruptHandler()
+{
+    isDataReady = true;
+}
+#endif // !defined(USE_SW_DR)
+
 bool setup()
 {
     if (!trackpad.begin()) {
@@ -33,8 +43,13 @@ bool setup()
     }
     std::cout << "CirquePinnacle/examples/linux/relative_mode\n"
               << std::endl;
-#ifndef USE_SW_DR // if using PINNACLE_SW_DR
+#ifndef USE_SW_DR // if not using PINNACLE_SW_DR
     std::cout << "-- Using HW DataReady pin." << std::endl;
+
+    // pull in arduino-like namespace
+    namespace arduino = cirque_pinnacle_arduino_wrappers;
+    // setup the interrupt handler
+    arduino::attachInterrupt(DR_PIN, arduino::FALLING, &interruptHandler);
 #endif
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
@@ -47,7 +62,12 @@ bool setup()
 
 void loop()
 {
+#ifdef USE_SW_DR
     if (trackpad.available()) {
+#else // using interruptHandler()
+    if (isDataReady) {
+        isDataReady = false; // reset our IRQ flag
+#endif
         trackpad.read(&data);
         std::cout << "Left:" << (unsigned int)(data.buttons & 1)
                   << " Right:" << (unsigned int)(data.buttons & 2)
