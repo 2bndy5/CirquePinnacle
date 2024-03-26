@@ -22,7 +22,8 @@
 
     #include <cstdint>
 
-    #ifdef __cplusplus
+    // exclude C linkage for CPP docs generation
+    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
 extern "C" {
     #endif
 
@@ -40,7 +41,8 @@ namespace cirque_pinnacle_arduino_wrappers {
 
 } // namespace cirque_pinnacle_arduino_wrappers
 
-    #ifdef __cplusplus
+    // exclude C linkage for CPP docs generation
+    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
 }
     #endif
 

@@ -16,11 +16,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H
-#define CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H
+#ifndef CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H_
+#define CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H_
 #ifndef ARDUINO
 
     #include <stdexcept>
+
+    // exclude C linkage for CPP docs generation
+    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H_)
+extern "C" {
+    #endif
 
 /**
  * An alias for platform-specific representation of GPIO pin numbers
@@ -31,71 +36,71 @@ typedef uint16_t pinnacle_gpio_t;
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-/**
- * Specific exception for GPIO errors
- *
- * @ingroup arduino-gpio
- */
-class GPIOException : public std::runtime_error
-{
-public:
-    explicit GPIOException(const std::string& msg)
-        : std::runtime_error(msg)
+    /**
+     * Specific exception for GPIO errors
+     *
+     * @ingroup arduino-gpio
+     */
+    class GPIOException : public std::runtime_error
     {
-    }
-};
-
-/**
- * A class to wrap platform-specific implementation of GPIO pins in Arduino-like API.
- *
- * @ingroup arduino-gpio
- */
-class GPIOClass
-{
-
-public:
-    static const int DIRECTION_OUT = 1;
-    static const int DIRECTION_IN = 0;
-
-    static const int OUTPUT_HIGH = 1;
-    static const int OUTPUT_LOW = 0;
-
-    GPIOClass();
+    public:
+        explicit GPIOException(const std::string& msg)
+            : std::runtime_error(msg)
+        {
+        }
+    };
 
     /**
-     * Similar to Arduino ``pinMode(pin, mode)``.
+     * A class to wrap platform-specific implementation of GPIO pins in Arduino-like API.
      *
-     * @param port The GPIO pin.
-     * @param direction The direction of the signals (``INPUT`` or ``OUTPUT``).
+     * @ingroup arduino-gpio
      */
-    static void open(pinnacle_gpio_t port, int direction);
+    class GPIOClass
+    {
 
-    /**
-     * Defined for completeness; not actually exposed in the Arduino API
-     *
-     * @param port The GPIO pin.
-     */
-    static void close(pinnacle_gpio_t port);
+    public:
+        static const int DIRECTION_OUT = 1;
+        static const int DIRECTION_IN = 0;
 
-    /**
-     * Similar to Arduino ``digitalRead(pin)``.
-     *
-     * @param port The GPIO pin.
-     */
-    static int read(pinnacle_gpio_t port);
+        static const int OUTPUT_HIGH = 1;
+        static const int OUTPUT_LOW = 0;
 
-    /**
-     * Similar to Arduino ``digitalWrite(pin, level)``.
-     *
-     * @param port The GPIO pin.
-     * @param value The binary level of an output signal (``HIGH`` or ``LOW``).
-     */
-    static void write(pinnacle_gpio_t port, int value);
+        GPIOClass();
 
-    /* virtual ~GPIOClass(); */
+        /**
+         * Similar to Arduino ``pinMode(pin, mode)``.
+         *
+         * @param port The GPIO pin.
+         * @param direction The direction of the signals (``INPUT`` or ``OUTPUT``).
+         */
+        static void open(pinnacle_gpio_t port, int direction);
 
-private:
-};
+        /**
+         * Defined for completeness; not actually exposed in the Arduino API
+         *
+         * @param port The GPIO pin.
+         */
+        static void close(pinnacle_gpio_t port);
+
+        /**
+         * Similar to Arduino ``digitalRead(pin)``.
+         *
+         * @param port The GPIO pin.
+         */
+        static int read(pinnacle_gpio_t port);
+
+        /**
+         * Similar to Arduino ``digitalWrite(pin, level)``.
+         *
+         * @param port The GPIO pin.
+         * @param value The binary level of an output signal (``HIGH`` or ``LOW``).
+         */
+        static void write(pinnacle_gpio_t port, int value);
+
+        /* virtual ~GPIOClass(); */
+
+    private:
+    };
 
     #define INPUT                    GPIOClass::DIRECTION_IN
     #define OUTPUT                   GPIOClass::DIRECTION_OUT
@@ -107,5 +112,10 @@ private:
 
 } // namespace cirque_pinnacle_arduino_wrappers
 
+    // exclude C linkage for CPP docs generation
+    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H_)
+}
+    #endif
+
 #endif // !defined(ARDUINO)
-#endif // CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H
+#endif // CIRQUEPINNACLE_UTILITY_TEMPLATE_GPIO_H_
