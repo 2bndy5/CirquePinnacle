@@ -18,6 +18,7 @@
  */
 #ifndef ARDUINO
     #include <cstdio>
+    #include <mraa.h> // mraa_mraa_strresult()
     #include "spi.h"
 
     #ifdef __cplusplus
@@ -38,19 +39,40 @@ namespace cirque_pinnacle_arduino_wrappers {
         // mraa::Spi() uses the default chip select available for the specified bus number on the utilized platform
         // On RPi, mraa only supports the primary SPI bus 0 & seems to only use CE0 (GPIO8)
         spi_inst = new mraa::Spi(busNumber / 10); // reduce the busNumber to only the bus ID (excluding CE number)
+
         mraa::Result result;
+
         result = spi_inst->mode((mraa::Spi_Mode)settings.mode);
-        if (result != mraa::Result::SUCCESS)
-            throw SPIException("mraa::Spi::mode() failed.");
+        if (result != mraa::Result::SUCCESS) {
+            std::string msg = "[SPIClass::begin] Could not set bus mode;";
+            msg += mraa_strresult((mraa_result_t)result);
+            throw SPIException(msg);
+            return;
+        }
+
         result = spi_inst->bitPerWord((unsigned int)PINNACLE_SPI_BITS_PER_WORD);
-        if (result != mraa::Result::SUCCESS)
-            throw SPIException("mraa::Spi::bitPerWord() failed.");
+        if (result != mraa::Result::SUCCESS) {
+            std::string msg = "[SPIClass::begin] Could not set bus bits per word;";
+            msg += mraa_strresult((mraa_result_t)result);
+            throw SPIException(msg);
+            return;
+        }
+
         result = spi_inst->lsbmode((bool)settings.bitOrder);
-        if (result != mraa::Result::SUCCESS)
-            throw SPIException("mraa::Spi::lsbmode() failed.");
+        if (result != mraa::Result::SUCCESS) {
+            std::string msg = "[SPIClass::begin] Could not set bus endianness;";
+            msg += mraa_strresult((mraa_result_t)result);
+            throw SPIException(msg);
+            return;
+        }
+
         result = spi_inst->frequency(settings.clock);
-        if (result != mraa::Result::SUCCESS)
-            throw SPIException("mraa::Spi::frequency() failed.");
+        if (result != mraa::Result::SUCCESS) {
+            std::string msg = "[SPIClass::begin] Could not set bus frequency;";
+            msg += mraa_strresult((mraa_result_t)result);
+            throw SPIException(msg);
+            return;
+        }
     }
 
     void SPIClass::end()
@@ -64,8 +86,12 @@ namespace cirque_pinnacle_arduino_wrappers {
     void SPIClass::transfer(void* tx_buf, void* rx_buf, uint32_t len)
     {
         mraa::Result result = spi_inst->transfer((uint8_t*)tx_buf, (uint8_t*)rx_buf, len);
-        if (result != mraa::Result::SUCCESS)
-            throw SPIException("mraa::Spi::transfer() failed");
+        if (result != mraa::Result::SUCCESS) {
+            std::string msg = "[SPIClass::transfer] Could not transfer buffer; ";
+            msg += mraa_strresult((mraa_result_t)result);
+            throw SPIException(msg);
+            return;
+        }
     }
 
     void SPIClass::transfer(void* buf, uint32_t len)
