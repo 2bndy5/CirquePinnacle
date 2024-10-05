@@ -107,14 +107,12 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         if: contains(env.BUILD_ARCH, 'aarch64')
-        with:
-          platforms: aarch64
 
       - name: Build binary wheels with cibuildwheels
         uses: pypa/cibuildwheel@v2.21.2
         env:
-          CIBW_ARCHS_LINUX: ${{ env.BUILD_ARCH }}
-          CIBW_SKIP: cp36* pp* *musllinux*
+          CIBW_ARCHS_LINUX: aarch64 native armv7l
+          CIBW_SKIP: cp36* pp* *ppc64le *s390x
 
       - name: Move cross-compiled wheels to dist folder
         run: |
