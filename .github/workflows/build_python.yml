@@ -100,9 +100,9 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Build aarch64?
+      - name: Build aarch64 and armv7l?
         if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
-        run: echo "BUILD_ARCH=aarch64 ${{ env.BUILD_ARCH }}" >> $GITHUB_ENV
+        run: echo "BUILD_ARCH=aarch64 armv7l ${{ env.BUILD_ARCH }}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -111,7 +111,7 @@ jobs:
       - name: Build binary wheels with cibuildwheels
         uses: pypa/cibuildwheel@v2.21.2
         env:
-          CIBW_ARCHS_LINUX: aarch64 native armv7l
+          CIBW_ARCHS_LINUX: ${{ env.BUILD_ARCH }}
           CIBW_SKIP: cp36* pp* *ppc64le *s390x
 
       - name: Move cross-compiled wheels to dist folder
