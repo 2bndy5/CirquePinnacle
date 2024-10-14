@@ -109,7 +109,7 @@ jobs:
         if: contains(env.BUILD_ARCH, 'aarch64')
 
       - name: Build binary wheels with cibuildwheels
-        uses: pypa/cibuildwheel@v2.21.2
+        uses: pypa/cibuildwheel@v2.21.3
         env:
           CIBW_ARCHS_LINUX: ${{ env.BUILD_ARCH }}
           CIBW_SKIP: cp36* pp* *ppc64le *s390x
