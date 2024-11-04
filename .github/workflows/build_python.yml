@@ -109,7 +109,7 @@ jobs:
         if: contains(env.BUILD_ARCH, 'aarch64')
 
       - name: Build binary wheels with cibuildwheels
-        uses: pypa/cibuildwheel@v2.21.2
+        uses: pypa/cibuildwheel@v2.21.3
         env:
           CIBW_ARCHS_LINUX: ${{ env.BUILD_ARCH }}
           CIBW_SKIP: cp36* pp* *ppc64le *s390x
@@ -159,11 +159,11 @@ jobs:
 
       - name: Publish package (to TestPyPI)
         if: github.event_name == 'workflow_dispatch'
-        uses: pypa/gh-action-pypi-publish@v1.10.3
+        uses: pypa/gh-action-pypi-publish@v1.11.0
         with:
           repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPi
         # only upload distributions to PyPi when triggered by a published release
         if: github.event_name == 'release'
-        uses: pypa/gh-action-pypi-publish@v1.10.3
+        uses: pypa/gh-action-pypi-publish@v1.11.0
