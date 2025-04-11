@@ -285,7 +285,11 @@ public:
      * Create an instance to use as an interface with the Pinnacle ASIC
      * touch controller.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
+     * @param dataReadyPin |dr_pin_parameter|
+     *
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
+     *
+     *         |dr_pin_required|
      */
     PinnacleTouch(pinnacle_gpio_t dataReadyPin);
     /**
@@ -818,7 +822,11 @@ public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an SPI bus.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
+     * @param dataReadyPin |dr_pin_parameter|
+     *
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
+     *
+     *         |dr_pin_required|
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle ASIC.
      * @param spiSpeed The speed (or baudrate) to use on the SPI bus.
      *     Defaults to the Pinnacle ASIC's maximum 13 MHz (``13000000``).
@@ -865,7 +873,11 @@ public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an I2C bus.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
+     * @param dataReadyPin |dr_pin_parameter|
+     *
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
+     *
+     *         |dr_pin_required|
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
      */
     PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress = 0x2A);
