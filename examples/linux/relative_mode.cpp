@@ -6,12 +6,7 @@
 #include <iostream>                        // cout, endl
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#ifdef USE_SW_DR // if using PINNACLE_SW_DR
-    #define DR_PIN PINNACLE_SW_DR
-#endif
-#if !defined(DR_PIN)
-    #define DR_PIN 25 // GPIO25
-#endif
+#define DR_PIN 25 // GPIO25
 #define SS_PIN 0
 
 #ifndef USE_I2C
@@ -31,9 +26,6 @@ bool setup()
     }
     std::cout << "CirquePinnacle/examples/linux/relative_mode\n"
               << std::endl;
-#ifndef USE_SW_DR // if using PINNACLE_SW_DR
-    std::cout << "-- Using HW DataReady pin." << std::endl;
-#endif
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
 #else

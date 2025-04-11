@@ -8,12 +8,7 @@
 #include <iomanip>                         // setprecision()
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object, absoluteClampAxis()
 
-#ifdef USE_SW_DR // if using PINNACLE_SW_DR
-    #define DR_PIN PINNACLE_SW_DR
-#endif
-#if !defined(DR_PIN)
-    #define DR_PIN 25 // GPIO25
-#endif
+#define DR_PIN 25 // GPIO25
 #define SS_PIN 0
 
 #ifndef USE_I2C
@@ -43,9 +38,6 @@ bool setup()
               << std::endl;
     trackpad.setDataMode(PINNACLE_ABSOLUTE);
     trackpad.absoluteModeConfig(1); // set count of z-idle packets to 1
-#ifndef USE_SW_DR                   // if using PINNACLE_SW_DR
-    std::cout << "-- Using HW DataReady pin." << std::endl;
-#endif
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
 #else

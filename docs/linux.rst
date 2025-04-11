@@ -97,13 +97,6 @@ repository's root folder (as created in step 3 above).
        ``-DUSE_I2C=ON``
            If using the I2C interface (`PinnacleTouchI2C`), then you can enable this for the examples with
            ``-DUSE_I2C=ON``.
-
-       ``-DUSE_SW_DR=ON``
-           If not using a physical GPIO pin for the Data Ready pin, then you can use ``-DUSE_SW_DR=ON`` which
-           will automatically make the examples use ``PINNACLE_SW_DR`` value for the ``dataReadyPin`` parameters to
-           the `~PinnacleTouchSPI::PinnacleTouchSPI()` and `~PinnacleTouchI2C::PinnacleTouchI2C()` constructors.
-           The anymeas_mode example is automatically excluded from the build targets since it requires a hardware
-           Data Ready pin.
 3. Build the examples:
 
    .. code-block:: shell

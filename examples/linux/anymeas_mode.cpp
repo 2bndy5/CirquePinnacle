@@ -59,9 +59,6 @@ bool setup()
     std::cout << "CirquePinnacle/examples/linux/anymeas_mode" << std::endl;
     trackpad.setDataMode(PINNACLE_ANYMEAS);
     trackpad.anymeasModeConfig();
-#ifndef USE_SW_DR // if using PINNACLE_SW_DR
-    std::cout << "-- Using HW DataReady pin." << std::endl;
-#endif
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
 #else

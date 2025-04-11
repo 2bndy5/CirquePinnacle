@@ -28,6 +28,7 @@ words:
   - endforeach
   - ftime
   - gnueabihf
+  - gpiochip
   - intellimouse
   - intersphinx
   - itsybitsy
@@ -43,6 +44,7 @@ words:
   - Muxing
   - Ofast
   - pico
+  - PIMORONI
   - pinout
   - pkgs
   - postinst
@@ -60,9 +62,12 @@ words:
   - shogo
   - sourcedir
   - SOVERSION
+  - SPARFUN
+  - Sparkfun
   - spidev
   - stdlib
   - STREQUAL
+  - THINGPLUS
   - tinyusb
   - toctree
   - tonistiigi

@@ -40,7 +40,6 @@ jobs:
           - "adafruit_itsybitsy_rp2040"
           - "adafruit_qtpy_rp2040"
         i2c-bus: [USE_I2C=ON, USE_I2C=OFF]
-        dr-pin: [USE_SW_DR=ON, USE_SW_DR=OFF]
     env:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Release
@@ -78,7 +77,7 @@ jobs:
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
         env:
           PICO_SDK_PATH: ${{ github.workspace }}/pico-sdk
-        run: cmake ../examples/pico_sdk -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPICO_BOARD=${{ matrix.board }} -D${{ matrix.i2c-bus }} -D${{ matrix.dr-pin }}
+        run: cmake ../examples/pico_sdk -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPICO_BOARD=${{ matrix.board }} -D${{ matrix.i2c-bus }}
 
       - name: Build
         working-directory: ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build
@@ -88,7 +87,7 @@ jobs:
       - name: Save artifact
         uses: actions/upload-artifact@v4
         with:
-          name: examples_pico_${{ matrix.board }}_${{ matrix.i2c-bus }}_${{ matrix.dr-pin }}
+          name: examples_pico_${{ matrix.board }}_${{ matrix.i2c-bus }}
           path: |
             ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/**/*.uf2
           # ${{ github.workspace }}/${{ steps.lib-info.outputs.name }}/build/**/*.elf

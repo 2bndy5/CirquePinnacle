@@ -31,9 +31,6 @@ bool setup()
     }
     printf("CirquePinnacle/examples/pico_sdk/relative_mode\n");
 
-#ifndef USE_SW_DR
-    printf("-- Using HW Data Ready pin\n");
-#endif
 #ifndef USE_I2C
     printf("-- Using SPI interface\n");
 #else

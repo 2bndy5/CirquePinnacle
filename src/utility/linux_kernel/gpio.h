@@ -29,7 +29,6 @@ extern "C" {
     #endif
 
 typedef unsigned int pinnacle_gpio_t;
-const pinnacle_gpio_t PINNACLE_SW_DR = 0x7FFFFFFF;
 
     #ifndef PINNACLE_LINUX_GPIO_CHIP
         /**

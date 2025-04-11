@@ -97,8 +97,6 @@ void setCalibrationMatrix_wrapper(PinnacleTouch* self, py::list& matrix)
  */
 PYBIND11_MODULE(cirque_pinnacle, m)
 {
-    m.attr("PINNACLE_SW_DR") = PINNACLE_SW_DR;
-
     // ******************** expose PinnacleDataMode
     py::enum_<PinnacleDataMode> dataMode(m, "PinnacleDataMode");
     dataMode.value("PINNACLE_RELATIVE", PINNACLE_RELATIVE);

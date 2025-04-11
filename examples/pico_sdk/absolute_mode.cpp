@@ -46,9 +46,6 @@ bool setup()
     trackpad.setDataMode(PINNACLE_ABSOLUTE);
     trackpad.absoluteModeConfig(1); // set count of z-idle packets to 1
 
-#ifndef USE_SW_DR
-    printf("-- Using HW Data Ready pin\n");
-#endif
 #ifndef USE_I2C
     printf("-- Using SPI interface\n");
 #else

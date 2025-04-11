@@ -16,20 +16,13 @@ include(../../src/CMakeLists.txt)
 # These options are really useful in testing different interfaces.
 # Typical applications shouldn't need them
 option(USE_I2C "option to use a I2C bus instead of a SPI bus" OFF)
-option(USE_SW_DR "option to use no physical DR_PIN (incompatible with anymeas mode)" OFF)
 
 # iterate over a list of examples by name
 set(EXAMPLES_LIST
     absolute_mode
     relative_mode
+    anymeas_mode
 )
-
-if (USE_SW_DR)
-    message(STATUS "Using software DR flag (skipping anymeas_mode example)")
-else()
-    message(STATUS "Using physical DR pin")
-    list(APPEND EXAMPLES_LIST anymeas_mode)
-endif()
 
 if (USE_I2C)
     message(STATUS "Using I2C bus interface")
@@ -52,10 +45,6 @@ foreach(example ${EXAMPLES_LIST})
 
     if (USE_I2C)
         target_compile_definitions(${example} PUBLIC USE_I2C=1)
-    endif()
-
-    if (USE_SW_DR)
-        target_compile_definitions(${example} PUBLIC USE_SW_DR=1)
     endif()
 
     # specify USB port as default serial communication's interface (not UART RX/TX pins)

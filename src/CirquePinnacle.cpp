@@ -25,9 +25,7 @@
 PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
 {
     PINNACLE_USE_ARDUINO_API
-    if (_dataReady != PINNACLE_SW_DR) {
-        pinMode(_dataReady, INPUT);
-    }
+    pinMode(_dataReady, INPUT);
 }
 
 bool PinnacleTouch::begin()
@@ -108,7 +106,7 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 #if PINNACLE_ANYMEAS_SUPPORT
             }
         }
-        else if (mode == PINNACLE_ANYMEAS && _dataReady != PINNACLE_SW_DR) { // DR_PIN is required for anymeas mode
+        else if (mode == PINNACLE_ANYMEAS) {
             // disable tracking computations for AnyMeas mode
             rapWrite(PINNACLE_SYS_CONFIG, sysConfig | 0x08);
             delay(10); // wait 10 ms for tracking measurements to expire
@@ -138,11 +136,6 @@ bool PinnacleTouch::isHardConfigured()
 bool PinnacleTouch::available()
 {
     PINNACLE_USE_ARDUINO_API
-    if (_dataReady == PINNACLE_SW_DR) {
-        uint8_t temp = 0;
-        rapRead(PINNACLE_STATUS, &temp);
-        return (bool)(temp & 0x0C);
-    }
     return digitalRead(_dataReady);
 }
 

@@ -79,13 +79,6 @@ the Pico SDK repository's `pico-sdk/src/boards/include/boards/\<board_name>.h fi
            If using the I2C interface (`PinnacleTouchI2C`), then you can enable this for the examples with
            ``-DUSE_I2C=ON``.
 
-       ``-DUSE_SW_DR=ON``
-           If not using a physical GPIO pin for the Data Ready pin, then you can use ``-DUSE_SW_DR=ON`` which
-           will automatically make the examples use ``PINNACLE_SW_DR`` value for the ``dataReadyPin`` parameters to
-           the `~PinnacleTouchSPI::PinnacleTouchSPI()` and `~PinnacleTouchI2C::PinnacleTouchI2C()` constructors.
-           The anymeas_mode example is automatically excluded from the build targets since it requires a hardware
-           Data Ready pin.
-
        ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
            To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
            when the application won't use the Pinnacle's anymeas mode. This option is not specific to the examples,

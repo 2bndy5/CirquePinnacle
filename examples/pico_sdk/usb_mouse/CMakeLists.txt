@@ -29,10 +29,6 @@ if (USE_I2C)
     target_compile_definitions(${targetName} PUBLIC USE_I2C=1)
 endif()
 
-if (USE_SW_DR)
-    target_compile_definitions(${targetName} PUBLIC USE_SW_DR=1)
-endif()
-
 target_compile_definitions(${targetName} PUBLIC PICO_DEFAULT_I2C=1)
 
 # Uncomment this line to enable fix for Errata RP2040-E5 (the fix requires use of GPIO 15)
