@@ -65,7 +65,7 @@ jobs:
       - name: Save distributable source as artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: "cirque_pinnacle-sdist"
+          name: "cirque_pinnacle-dist_source"
           path: ${{ github.workspace }}/dist
 
   build_linux:
