@@ -152,7 +152,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
-    needs: [source-dist, linux-wheels]
+    needs: [lint, source-dist, linux-wheels]
     permissions:
       id-token: write
     steps:
