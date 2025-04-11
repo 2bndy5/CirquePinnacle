@@ -52,10 +52,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        driver:
-          - "bcm2xxx"
-          - "linux_kernel"
-          - "mraa"
         toolchain:
           - compiler: "armhf"
             usr_dir: "arm-linux-gnueabihf"
@@ -65,13 +61,7 @@ jobs:
             usr_dir: "local" # using this toolchain to test python wrapper
         i2c-bus: [-DUSE_I2C=ON, -DUSE_I2C=OFF]
         dr-pin: [-DUSE_SW_DR=ON, -DUSE_SW_DR=OFF]
-        include:
-          - driver: "pigpio"
-            toolchain:
-              compiler: "default"
-              usr_dir: "local"
     env:
-      PINNACLE_DRIVER: ${{ matrix.driver }}
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Release
     steps:
@@ -91,33 +81,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: ${{ github.event.repository.name }}
-
-      - name: provide mraa
-        if: matrix.driver == 'mraa'
-        run: |
-          git clone https://github.com/intel-iot-devkit/mraa.git
-          cd mraa
-          mkdir build
-          cd build
-          cmake .. -D BUILDSWIGNODE=OFF \
-          -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
-          -D CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/${{ github.event.repository.name }}/src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
-          sudo make install
-
-      - name: provide pigpio
-        if: matrix.driver == 'pigpio'
-        run: |
-          git clone https://github.com/joan2937/pigpio.git
-          cd pigpio
-          git fetch --tags
-          latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-          git checkout $latestTag
-          mkdir build
-          cd build
-          cmake .. -D CMAKE_INSTALL_PREFIX=/usr/${{ matrix.toolchain.usr_dir }} \
-          -D CMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/${{ github.event.repository.name }}/src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake
-          make
-          sudo make install
 
       - name: create CMake build environment
         run: cmake -E make_directory ${{ github.workspace }}/${{ github.event.repository.name }}/build
@@ -161,29 +124,6 @@ jobs:
       - name: clean build environment
         working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}/build
         run: sudo rm -r ./*
-
-      - name: provide ncurses
-        # This script assumes that any examples using ncurses reside in a 'ncurses' subdirectory
-        # as is the case w/ RF24Mesh, RF24Gateway, and any new ncurses examples going forward.
-        run: |
-          if [[ -d ${{ github.workspace }}/${{ github.event.repository.name }}/examples/linux/ncurses ]]; then
-            if [[ ${{ matrix.toolchain.compiler }} == 'default' ]]; then
-              sudo apt-get install libncurses5-dev
-            else
-              echo "skipping the ncurses examples for cross-compiled builds"
-
-              # avoid cross-compiling linker problems in CI; this works locally but takes a while to build
-              # curl -L https://invisible-island.net/datafiles/release/ncurses.tar.gz > ncurses.tar.gz
-              # gunzip ncurses.tar.gz
-              # tar xf ncurses.tar
-              # cd ncurses-*
-              # ./configure --prefix=/usr/${{ matrix.toolchain.usr_dir }} --build=${{ matrix.toolchain.usr_dir }}
-              # make
-              # sudo make install
-            fi
-          else
-            echo "ncurses is not needed for these examples"
-          fi
 
       - name: configure examples
         working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}/build

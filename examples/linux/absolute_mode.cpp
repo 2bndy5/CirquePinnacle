@@ -11,10 +11,8 @@
 #ifdef USE_SW_DR // if using PINNACLE_SW_DR
     #define DR_PIN PINNACLE_SW_DR
 #endif
-#if defined(PINNACLE_DRIVER_mraa) && !defined(DR_PIN)
-    #define DR_PIN 22 // GPIO25
-#elif !defined(DR_PIN)
-    #define DR_PIN 25
+#if !defined(DR_PIN)
+    #define DR_PIN 25 // GPIO25
 #endif
 #define SS_PIN 0
 

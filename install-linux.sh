@@ -5,7 +5,7 @@ USE_I2C="OFF"
 
 if [[ ${#args[@]} -gt 0 ]]
 then
-    if [[ ${args[0]} == "linux_kernel" ]] || [[ ${args[0]} == "bcm2xxx" ]] || [[ ${args[0]} == "pigpio" ]] || [[ ${args[0]} == "mraa" ]]
+    if [[ ${args[0]} == "linux_kernel" ]]
     then
         driver=${args[0]}
     fi
@@ -28,23 +28,7 @@ fi
 # set utility driver (if not set from CLI arg)
 if [ -z $driver ]
 then
-    echo "*** Which hardware driver library do you wish to use? ***"
-    echo "1. linux_kernel (default)"
-    echo $'    compatible with most Linux distributions\n    fastest\n    sudo permission not needed for executables'
-    echo "2. bcm2xxx"
-    echo $'    only for RPi\n    a bit slow\n    sudo permission needed for executables'
-    echo "3. pigpio"
-    echo $'    requires PiGPIO lib installed\n    only for RPi\n    a bit slow\n    sudo permission needed for executables'
-    echo "4. mraa"
-    echo $'    requires MRAA lib installed\n    sudo permission not needed for executables'
-    read -p "> " answer
-    case ${answer^^} in
-        1) driver="linux_kernel";;
-        2) driver="bcm2xxx";;
-        3) driver="pigpio";;
-        4) driver="mraa";;
-        *) driver="linux_kernel";;
-    esac
+    driver="linux_kernel"
 fi
 
 # set an env var for easier reuse (specific to RF24 repos).

@@ -7,11 +7,7 @@
 #include <unistd.h>                        // sleep()
 #include <CirquePinnacle/CirquePinnacle.h> // trackpad object
 
-#ifdef PINNACLE_DRIVER_mraa
-    #define DR_PIN 22 // GPIO25
-#else
-    #define DR_PIN 25
-#endif
+#define DR_PIN 25 // GPIO25
 #define SS_PIN 0
 
 #ifndef USE_I2C

@@ -198,11 +198,6 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
 
 .. py:class:: TwoWire
 
-    The actual implementation of this class depends on what ``PINNACLE_DRIVER`` was specified when
-    the python binding was installed. By default, the python binding uses ``linux_kernel``. Review
-    the :doc:`Python binding install instructions <../python>` for how to specify the
-    ``PINNACLE_DRIVER`` to use.
-
     .. failure:: Missing features
 
         Interrupt Service Routines (ISR), acting as a slave device, and timeouts are not supported
@@ -214,17 +209,6 @@ The first Raspberry Pi board exposed ``/dev/i2c-0``, but later iterations change
 
         :param busNumber: The I2C bus number as identified by the directory listing in
             ``/dev/i2c-*``. For ``/dev/i2c-1``, this parameter's value should be :python:`1`.
-
-            .. info:: Difference with ``mraa`` driver
-                :collapsible:
-
-                If using the ``mraa`` driver, then this number is not guaranteed to coincide with the
-                actual I2C bus number (``/dev/i2c-<x>``). See the `MRAA source code
-                <https://github.com/eclipse/mraa/tree/master/src>`_ for your platform to determine
-                what number to use for which I2C bus.
-
-                For compatibility reasons, this parameter defaults to :python:`0` when using the
-                ``mraa`` driver.
 
     .. py:method:: end()
 

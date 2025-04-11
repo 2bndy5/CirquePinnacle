@@ -55,15 +55,13 @@ class CMakeBuild(build_ext):
         # (needed e.g. to build for ARM OSx on conda-forge).
         if "CMAKE_ARGS" in os.environ:
             for item in os.environ["CMAKE_ARGS"].split(" "):
-                if item:
+                if "PINNACLE_DRIVER" not in item:
+                    print(
+                        "!!! 'linux_kernel' is the only supported value for PINNACLE_DRIVER"
+                    )
+                    continue
+                elif item:
                     cmake_args.append(item)
-        # lastly, specify the PINNACLE_DRIVER to configure the build with
-        for arg in cmake_args:
-            if arg.split("=")[0].endswith("PINNACLE_DRIVER"):
-                break
-        else:
-            driver = os.environ.get("PINNACLE_DRIVER", "linux_kernel")
-            cmake_args.append(f"-DPINNACLE_DRIVER={driver}")
 
         build_temp = Path(self.build_temp, ext.name)
         if not build_temp.exists():

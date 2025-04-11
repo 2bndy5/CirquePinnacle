@@ -8,7 +8,7 @@ package (type hints) for the python bindings.
 Installing via ``pip``
 **********************
 
-A distributable package is deployed to pypi.org, so users can simply install the python bindings
+A distributable package is deployed to PyPI, so users can simply install the python bindings
 with the following:
 
 .. code-block:: shell
@@ -73,15 +73,6 @@ Installing from Github
            The SPI speed can be set with ``-DPINNACLE_SPI_SPEED=xxx`` to lower the default speed/baudrate used on
            the SPI bus. Default value is the officially recommended 6 MHz; maximum supported is 13 MHz.
 
-       ``-DPINNACLE_DRIVER=<utility-folder-name>``
-           Use this to change the underlying implementation used for the I2C and SPI busses (and GPIO pins).
-           Supported options include:
-
-           - ``linux_kernel`` (default) is recommended for best user experience and cross-platform/architecture compatibility.
-           - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).
-           - ``mraa`` requires the MRAA library installed.
-           - ``pigpio`` requires the PiGPIO library installed (requires ``sudo`` permission to execute).
-
        ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
            To reduce the compile size of the CirquePinnacle library, you can use ``-DPINNACLE_ANYMEAS_SUPPORT=OFF``
            when the application won't use the Pinnacle's anymeas mode.
@@ -99,8 +90,7 @@ Installing from Github
    .. important::
        :title: ``sudo`` in a Virtual Environment
 
-       Remember that the drivers ``pigpio`` and ``bcm2xxx`` will require ``sudo`` permission.
-       This *will* cause problems if using ``sudo`` from a python virtual environment because
+       Using ``sudo`` from a python virtual environment *will* cause problems because
        ``sudo`` will invoke the system install of the python interpreter (not the virtual
        environment's install of the python interpreter).
 

@@ -75,11 +75,10 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/detectCPU.cmake) # sets the variable SOC accordingly
 
 # auto-detect what driver to use
-# auto-detect can be overriden using `cmake .. -D PINNACLE_DRIVER=<supported driver>`
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/auto_config_driver.cmake)
 
 #[[ adding the utility sub-directory will
-    1. set variables CIRQUE_PINNACLE_LINKED_DRIVER and PINNACLE_DRIVER_SOURCES
+    1. set the variable PINNACLE_DRIVER_SOURCES
     2. set additional install rules according to the PINNACLE_DRIVER specified
 ]]
 add_subdirectory(utility)
@@ -119,19 +118,10 @@ if(NOT PINNACLE_PY_BINDING)
         target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_DEV_HW_DEBUG=1)
     endif()
 
-    if(NOT "${CIRQUE_PINNACLE_LINKED_DRIVER}" STREQUAL "") # linking to a pre-compiled utility driver
-        message(STATUS "Using utility library: ${CIRQUE_PINNACLE_LINKED_DRIVER}")
-        target_link_libraries(${LibTargetName} INTERFACE
-            ${LibTargetName}_project_options
-            ${LibTargetName}_project_warnings
-            STATIC ${CIRQUE_PINNACLE_LINKED_DRIVER}
-        )
-    else() # utility driver is compiled with the library - not linking to a pre-compiled utility driver
-        target_link_libraries(${LibTargetName} INTERFACE
-            ${LibTargetName}_project_options
-            ${LibTargetName}_project_warnings
-        )
-    endif()
+    target_link_libraries(${LibTargetName} INTERFACE
+        ${LibTargetName}_project_options
+        ${LibTargetName}_project_warnings
+    )
 
     #####################################
     ### Install rules for root source dir
@@ -173,10 +163,6 @@ else() # if(${PINNACLE_PY_BINDING})
         utility/includes.h
         ${PINNACLE_DRIVER_SOURCES}
     )
-    # expose the selected driver in the python binding
-    target_compile_definitions(cirque_pinnacle PUBLIC
-        PINNACLE_DRIVER="${PINNACLE_DRIVER}"
-    )
 
     if(DEFINED PINNACLE_SPI_SPEED)
         message(STATUS "PINNACLE_SPI_SPEED set to ${PINNACLE_SPI_SPEED}")
@@ -191,8 +177,4 @@ else() # if(${PINNACLE_PY_BINDING})
     endif()
 
     target_include_directories(cirque_pinnacle PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-
-    if(NOT "${CIRQUE_PINNACLE_LINKED_DRIVER}" STREQUAL "") # linking to a pre-compiled utility driver
-        target_link_libraries(cirque_pinnacle PUBLIC ${CIRQUE_PINNACLE_LINKED_DRIVER})
-    endif()
 endif()

@@ -193,7 +193,7 @@ This can be remedied using either the :ref:`pico-sdk-src-opt` or the :ref:`pico-
 
 .. warning::
     There is no support for software-driven (AKA bit-banged) SPI on RP2040 based boards at this time.
-    If someone is so inclined to implement this using the Pico SDK's PIO (Programable Input
+    If someone is so inclined to implement this using the Pico SDK's PIO (Programmable Input
     Output) feature, please submit an issue or pull request to the
     `CirquePinnacle repository <http://github.com/2bndy5/CirquePinnacle>`_.
 

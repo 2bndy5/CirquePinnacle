@@ -11,15 +11,11 @@ from cirque_pinnacle import (
     PinnacleTouchSPI,
     PinnacleTouchI2C,  # noqa: imported but unused
     PINNACLE_ANYMEAS,
-    PINNACLE_DRIVER,
 )
 
 print("CirquePinnacle/examples/cpython/anymeas_mode\n")
 
-if PINNACLE_DRIVER == "mraa":
-    dr_pin = 22  # GPIO25
-else:
-    dr_pin = 25  # GPIO25
+dr_pin = 25  # GPIO25
 
 trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
 if not input("Is the trackpad configured for I2C? [y/N] ").lower().startswith("y"):
