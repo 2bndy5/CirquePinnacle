@@ -163,12 +163,6 @@ sphinx_immaterial_custom_admonitions = [
         "icon": "material/school",
         "override": True,
     },
-    {
-        "name": "anymeas-limits",
-        "title": "Limits of anymeas mode",
-        "color": (164, 25, 25),
-        "icon": "fontawesome/solid/bug",
-    },
 ]
 
 # enable custom checkboxes

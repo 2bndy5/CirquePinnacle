@@ -59,6 +59,7 @@ words:
   - repr
   - sdist
   - seealso
+  - setuptools
   - shogo
   - sourcedir
   - SOVERSION
