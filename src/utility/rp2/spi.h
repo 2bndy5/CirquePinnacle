@@ -35,7 +35,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     #endif
 
     #ifdef PICO_DEFAULT_SPI_INSTANCE
-        #define PINNACLE_DEFAULT_SPI_BUS PICO_DEFAULT_SPI_INSTANCE
+        #define PINNACLE_DEFAULT_SPI_BUS PICO_DEFAULT_SPI_INSTANCE()
     #else
         #define PINNACLE_DEFAULT_SPI_BUS spi0
     #endif

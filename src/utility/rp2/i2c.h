@@ -31,7 +31,7 @@ extern "C" {
 namespace cirque_pinnacle_arduino_wrappers {
 
     #ifdef PICO_DEFAULT_I2C_INSTANCE
-        #define PINNACLE_DEFAULT_I2C_BUS PICO_DEFAULT_I2C_INSTANCE
+        #define PINNACLE_DEFAULT_I2C_BUS PICO_DEFAULT_I2C_INSTANCE()
     #else
         #define PINNACLE_DEFAULT_I2C_BUS i2c0
     #endif
