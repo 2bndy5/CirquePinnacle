@@ -60,7 +60,6 @@ jobs:
           - compiler: "default" # github runner is hosted on a "amd64"
             usr_dir: "local" # using this toolchain to test python wrapper
         i2c-bus: [-DUSE_I2C=ON, -DUSE_I2C=OFF]
-        dr-pin: [-DUSE_SW_DR=ON, -DUSE_SW_DR=OFF]
     env:
       # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
       BUILD_TYPE: Release
@@ -101,21 +100,21 @@ jobs:
         run: sudo cmake --install .
 
       - name: package lib
-        if: endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF')
+        if: endsWith(matrix.i2c-bus, 'OFF')
         working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}/build
         run: sudo cpack
 
       - name: Save artifact
-        if: endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF') && startsWith(matrix.toolchain.compiler, 'arm')
+        if: endsWith(matrix.i2c-bus, 'OFF') && startsWith(matrix.toolchain.compiler, 'arm')
         uses: actions/upload-artifact@v4
         with:
-          name: pkg_${{ github.event.repository.name }}_${{ matrix.driver }}_${{ matrix.toolchain.compiler }}
+          name: pkg_${{ github.event.repository.name }}_linux_kernel_${{ matrix.toolchain.compiler }}
           path: |
             ${{ github.workspace }}/${{ github.event.repository.name }}/build/pkgs/*.deb
             ${{ github.workspace }}/${{ github.event.repository.name }}/build/pkgs/*.rpm
 
       - name: Upload Release assets
-        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') && (matrix.driver =='bcm2xxx' || matrix.driver =='linux_kernel') && (endsWith(matrix.i2c-bus, 'OFF') && endsWith(matrix.dr-pin, 'OFF'))
+        if: github.event_name == 'release' && (matrix.toolchain.compiler == 'armhf' || matrix.toolchain.compiler == 'arm64') && endsWith(matrix.i2c-bus, 'OFF')
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
@@ -130,7 +129,7 @@ jobs:
         run: |
           cmake ../examples/linux \
           -D CMAKE_TOOLCHAIN_FILE=../src/cmake/toolchains/${{ matrix.toolchain.compiler }}.cmake \
-          ${{ matrix.i2c-bus }} ${{ matrix.dr-pin }}
+          ${{ matrix.i2c-bus }}
 
       - name: build examples
         working-directory: ${{ github.workspace }}/${{ github.event.repository.name }}/build

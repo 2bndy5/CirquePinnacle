@@ -11,16 +11,12 @@ from cirque_pinnacle import (
     RelativeReport,
     PinnacleTouchSPI,
     PinnacleTouchI2C,
-    PINNACLE_SW_DR,
 )
 
 print("CirquePinnacle/examples/cpython/relative_mode\n")
 
-# a HW ``dr_pin`` is more efficient, but not required for Absolute or Relative modes
-dr_pin = PINNACLE_SW_DR  # uses internal DR flag
-if not input("Use SW Data Ready? [y/N] ").lower().startswith("y"):
-    print("-- Using HW Data Ready pin.")
-    dr_pin = 25  # GPIO25
+# The digital input pin connected to the trackpad's DR (DataReady) pin
+dr_pin = 25  # GPIO25
 
 trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]
 if not input("Is the trackpad configured for I2C? [y/N] ").lower().startswith("y"):

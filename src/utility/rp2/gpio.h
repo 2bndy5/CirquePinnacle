@@ -27,7 +27,6 @@ extern "C" {
     #endif
 
 typedef uint8_t pinnacle_gpio_t;
-const pinnacle_gpio_t PINNACLE_SW_DR = 0xFF;
 
 namespace cirque_pinnacle_arduino_wrappers {
 

@@ -163,12 +163,6 @@ sphinx_immaterial_custom_admonitions = [
         "icon": "material/school",
         "override": True,
     },
-    {
-        "name": "anymeas-limits",
-        "title": "Limits of anymeas mode",
-        "color": (164, 25, 25),
-        "icon": "fontawesome/solid/bug",
-    },
 ]
 
 # enable custom checkboxes
@@ -205,6 +199,11 @@ rst_prolog = """
 .. role:: cpp(code)
    :language: cpp
    :class: highlight
+.. |dr_pin_parameter| replace:: The input pin connected to the Pinnacle ASIC's "Data
+    Ready" pin.
+.. |dr_pin_required| replace::
+    Previously, this parameter conditionally accepted a sentinel value to use the
+    "SW Data Ready" flag in the STATUS_1 register.
 """
 
 cpp_apigen_rst_prolog = """

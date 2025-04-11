@@ -16,8 +16,6 @@
 # SOFTWARE.
 from typing import List, overload
 
-PINNACLE_SW_DR: int = ...
-
 class PinnacleDataMode:
     @property
     def value(self) -> int: ...

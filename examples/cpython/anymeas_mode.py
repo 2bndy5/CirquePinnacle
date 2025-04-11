@@ -15,6 +15,7 @@ from cirque_pinnacle import (
 
 print("CirquePinnacle/examples/cpython/anymeas_mode\n")
 
+# The digital input pin connected to the trackpad's DR (DataReady) pin
 dr_pin = 25  # GPIO25
 
 trackpad: Union[PinnacleTouchSPI, PinnacleTouchI2C]

@@ -57,13 +57,6 @@ enum PinnacleDataMode : uint8_t
 #if PINNACLE_ANYMEAS_SUPPORT
     /**
      * Alias symbol for specifying "AnyMeas" mode (raw ADC measurement).
-     *
-     * .. anymeas-limits::
-     *
-     *     Anymeas mode requires the use of a Hardware Data Ready pin.
-     *     Do not use `PINNACLE_SW_DR` as the value for the ``dataReadyPin`` parameter to
-     *     `~PinnacleTouchSPI::PinnacleTouchSPI()` or `~PinnacleTouchI2C::PinnacleTouchI2C()`
-     *     constructors.
      */
     PINNACLE_ANYMEAS = 0x01,
 #endif
@@ -292,10 +285,11 @@ public:
      * Create an instance to use as an interface with the Pinnacle ASIC
      * touch controller.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
-     *     BEWARE, the Hardware Data Ready pin is required for anymeas mode. In general, it
-     *     recommended to use the Hardware Data Ready pin for speed and efficient bus activity.
+     * @param dataReadyPin |dr_pin_parameter|
+     *
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
+     *
+     *         |dr_pin_required|
      */
     PinnacleTouch(pinnacle_gpio_t dataReadyPin);
     /**
@@ -372,12 +366,6 @@ public:
      * ready" pin (labeled "DR" in the `pinout <index.html#pinout>`_ section)
      * is active. Data, new or antiquated, can be retrieved using
      * `read()` depending on what `setDataMode()` is given.
-     *
-     * .. note::
-     *     If `~PinnacleTouch::PinnacleTouch()` is given `PINNACLE_SW_DR` as the
-     *     ``dataReadyPin`` parameter, then this function will attempt to read data from
-     *     the Pinnacle's Status register. However, this tactic is only allowed for
-     *     `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE` modes.
      *
      * @returns ``true`` if there is new data to report; ``false`` if there is no
      *     new data to report.
@@ -834,14 +822,11 @@ public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an SPI bus.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
-     *     In general, it recommended to use the Hardware Data Ready pin for speed and efficient
-     *     bus activity.
+     * @param dataReadyPin |dr_pin_parameter|
      *
-     *     .. anymeas-limits::
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
      *
-     *         A Hardware Data Ready pin is required for anymeas mode.
+     *         |dr_pin_required|
      * @param slaveSelectPin The "slave select" pin output to the Pinnacle ASIC.
      * @param spiSpeed The speed (or baudrate) to use on the SPI bus.
      *     Defaults to the Pinnacle ASIC's maximum 13 MHz (``13000000``).
@@ -888,14 +873,11 @@ public:
     /**
      * Create an instance to interface with the Pinnacle ASIC over an I2C bus.
      *
-     * @param dataReadyPin The input pin connected to the Pinnacle ASIC's "Data Ready" pin.
-     *     To use the Pinnacle's Software Data Ready flag instead, set this to `PINNACLE_SW_DR`.
-     *     In general, it recommended to use the Hardware Data Ready pin for speed and efficient
-     *     bus activity.
+     * @param dataReadyPin |dr_pin_parameter|
      *
-     *     .. anymeas-limits::
+     *     .. versionchanged:: 2.0.0 ``dr_pin`` is a required parameter.
      *
-     *         A Hardware Data Ready pin is required for anymeas mode.
+     *         |dr_pin_required|
      * @param slaveAddress The slave I2C address of the Pinnacle ASIC. Defaults to ``0x2A``.
      */
     PinnacleTouchI2C(pinnacle_gpio_t dataReadyPin, uint8_t slaveAddress = 0x2A);
