@@ -9,6 +9,7 @@ words:
   - armv
   - baudrate
   - bdist
+  - binfmt
   - bndy
   - cibuildwheels
   - CIBW
@@ -36,7 +37,9 @@ words:
   - linenos
   - literalinclude
   - Makefiles
+  - manylinux
   - MOSI
+  - musllinux
   - Muxing
   - Ofast
   - pico
@@ -62,6 +65,7 @@ words:
   - STREQUAL
   - tinyusb
   - toctree
+  - tonistiigi
   - trackpad
   - trackpads
   - venv
