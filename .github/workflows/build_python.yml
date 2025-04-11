@@ -89,13 +89,31 @@ jobs:
       - name: Try install from source distributable
         run: pip install dist/*.tar.gz -v
 
+  bin-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      version-matrix: ${{ steps.matrix-out.outputs.versions }}
+    steps:
+      - name: create matrix
+        id: matrix-out
+        shell: python
+        run: |
+          from os import environ
+          import json
+          versions = ["cp313"]
+          if "${{github.event_name != 'pull_request'}}" == "true":
+              versions.extend(["cp37", "cp38", "cp39", "cp310", "cp311", "cp312"])
+          with open(environ["GITHUB_OUTPUT"], mode="a", encoding="utf-8") as gh_out:
+              gh_out.write(f'versions={json.dumps(versions)}\n')
+
   linux-wheels:
     runs-on: ubuntu-latest
+    needs: [bin-matrix]
     strategy:
       fail-fast: false
       matrix:
         platform: [native, aarch64, armv7l]
-        python: [cp37, cp38, cp39, cp310, cp311, cp312, cp313]
+        python: ${{ fromJSON(needs.bin-matrix.outputs.version-matrix) }}
         tag: [manylinux, musllinux]
     steps:
       - name: Set up Python
