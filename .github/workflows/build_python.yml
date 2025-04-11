@@ -69,7 +69,7 @@ jobs:
           path: ${{ github.workspace }}/dist
 
       - name: Try install from source distributable
-        run: pip install sdist/*.tar.gz -v
+        run: pip install dist/*.tar.gz -v
 
   build_linux:
     runs-on: ubuntu-latest
