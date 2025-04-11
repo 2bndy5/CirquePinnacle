@@ -52,8 +52,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        driver:
-          - "linux_kernel"
         toolchain:
           - compiler: "armhf"
             usr_dir: "arm-linux-gnueabihf"
