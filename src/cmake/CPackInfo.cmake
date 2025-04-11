@@ -39,12 +39,6 @@ set(CPACK_RPM_PACKAGE_ARCHITECTURE ${TARGET_ARCH})
 set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 set(CPACK_RPM_PACKAGE_VENDOR "Humanity")
 
-# set dependencies based on utility drivers
-if("${PINNACLE_DRIVER}" STREQUAL "mraa")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS mraa)
-    set(CPACK_RPM_PACKAGE_REQUIRES "mraa")
-endif()
-
 # create a post-install & post-removal scripts to update linker
 set(POST_SCRIPTS
     ${CMAKE_BINARY_DIR}/DEBIAN/postrm

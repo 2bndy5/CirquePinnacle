@@ -48,18 +48,7 @@ Installing from Source
 
    .. code-block:: shell
 
-       cmake ../src -DPINNACLE_DRIVER=linux_kernel
-
-   The ``-DPINNACLE_DRIVER`` will force the build to use 1 of the supported hardware drivers.
-   This can also be specified using an environment variable named ``PINNACLE_DRIVER``.
-   With out this specified, CMake will look for required dependencies and use the first driver found.
-   Supported options include (in order of precedence):
-
-   - ``bcm2xxx`` is a bit slower and only works on RPi boards (requires ``sudo`` permission to execute).
-   - ``pigpio`` requires the PiGPIO library installed (requires ``sudo`` permission to execute).
-   - ``mraa`` requires the MRAA library installed.
-   - ``linux_kernel`` (default fallback) is recommended for best user experience and
-     cross-platform/architecture compatibility.
+       cmake ../src
 
    .. tip::
        :title: Optional arguments
@@ -99,10 +88,7 @@ repository's root folder (as created in step 3 above).
 
    .. code-block:: shell
 
-       cmake ../examples/linux -DPINNACLE_DRIVER=linux_kernel
-
-   Again, specify the driver used to build the library (see step 4 above) is recommended because
-   some drivers require the built applications to be linked to pre-installed libraries.
+       cmake ../examples/linux
 
    .. tip::
        :title: Optional arguments
@@ -129,8 +115,6 @@ repository's root folder (as created in step 3 above).
 
        ./relative_mode
 
-   Remember that both ``PINNACLE_DRIVER``\ s ``bcm2xxx`` and ``pigpio`` will require ``sudo`` permission.
-
 .. _slaveSelectPin:
 
 SlaveSelect pin
@@ -151,11 +135,6 @@ follow the form ``ab`` where ``a`` is the SPI bus number and ``b`` is the specif
     ``1``,``0``,:expr:`10`,``/dev/spidev1.0``
     ``1``,``1``,:expr:`11`,``/dev/spidev1.1``
     ``1``,``2``,:expr:`12`,``/dev/spidev1.2``
-
-.. note::
-    Support for the auxiliary (AKA secondary) SPI bus (``/dev/spidev1.x``) is only well supported in
-    the ``linux_kernel`` driver. Other drivers have their own set of limitations when it comes to
-    using ``/dev/spidev1.x``.
 
 Using a non-default I2C bus
 ***************************

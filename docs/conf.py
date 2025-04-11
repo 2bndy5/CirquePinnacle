@@ -38,7 +38,6 @@ extensions = [
     "sphinx_immaterial.apidoc.cpp.cppreference",
     "sphinx_immaterial.apidoc.cpp.apigen",
     "sphinx.ext.intersphinx",
-    # "rst2pdf.pdfbuilder",  # for local pdf builder support
 ]
 
 intersphinx_mapping = {
@@ -61,7 +60,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     ".env",
-    "CODE_OF_CONDUCT.md" "requirements.txt",
+    "CODE_OF_CONDUCT.mdrequirements.txt",
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
@@ -91,6 +90,13 @@ html_theme_options = {
     ],
     # Set the color and the accent color
     "palette": [
+        {
+            "media": "(prefers-color-scheme)",
+            "toggle": {
+                "icon": "material/brightness-auto",
+                "name": "Switch to light mode",
+            },
+        },
         {
             "media": "(prefers-color-scheme: light)",
             "scheme": "default",
