@@ -35,20 +35,22 @@ std::map<pinnacle_gpio_t, gpio_fd> cachedPins;
 struct gpio_v2_line_request request;
 struct gpio_v2_line_values data;
 
+// initialize static member.
+int GPIOChipCache::fd = -1;
+
 void GPIOChipCache::openDevice()
 {
     if (fd < 0) {
-        fd = open(chip, O_RDONLY);
+        fd = open(PINNACLE_LINUX_GPIO_CHIP, O_RDONLY);
         if (fd < 0) {
             std::string msg = "Can't open device ";
-            msg += chip;
+            msg += PINNACLE_LINUX_GPIO_CHIP;
             msg += "; ";
             msg += strerror(errno);
             throw GPIOException(msg);
             return;
         }
     }
-    chipInitialized = true;
 }
 
 void GPIOChipCache::closeDevice()
@@ -89,17 +91,7 @@ GPIOClass::~GPIOClass()
 
 void GPIOClass::open(pinnacle_gpio_t port, bool direction)
 {
-    try {
-        gpioCache.openDevice();
-    }
-    catch (GPIOException& exc) {
-        if (gpioCache.chipInitialized) {
-            throw exc;
-            return;
-        }
-        gpioCache.chip = "/dev/gpiochip0";
-        gpioCache.openDevice();
-    }
+    gpioCache.openDevice();
 
     // get chip info
     gpiochip_info info;
@@ -107,13 +99,13 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
     int ret = ioctl(gpioCache.fd, GPIO_GET_CHIPINFO_IOCTL, &info);
     if (ret < 0) {
         std::string msg = "Could not gather info about ";
-        msg += gpioCache.chip;
+        msg += PINNACLE_LINUX_GPIO_CHIP;
         throw GPIOException(msg);
         return;
     }
 
     if (port > info.lines) {
-        std::string msg = "pin number " + std::to_string(port) + " not available for " + gpioCache.chip;
+        std::string msg = "pin number " + std::to_string(port) + " not available for " + PINNACLE_LINUX_GPIO_CHIP;
         throw GPIOException(msg);
         return;
     }
