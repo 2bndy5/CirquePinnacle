@@ -22,7 +22,7 @@
     #include <cstring> // memcpy(), memset()
 #endif
 
-PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin), _rev2025(false)
+PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataMode(PINNACLE_ERROR), _rev2025(false), _dataReady(dataReadyPin)
 {
     PINNACLE_USE_ARDUINO_API
     pinMode(_dataReady, INPUT);
@@ -40,17 +40,8 @@ bool PinnacleTouch::begin()
         buffer[0] = 0; // config power (defaults) and disable anymeas flags
         buffer[1] = 0; // config absolute mode defaults and disable feed
         rapWriteBytes(PINNACLE_SYS_CONFIG, buffer, 3);
-        if (!_rev2025) {
-            detectFingerStylus(); // detects both finger & stylus; sets sample rate to 100
-        }
-        else {
-            setSampleRate(100);
-        }
+        setSampleRate(100);
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
-        if (!_rev2025) {
-            setAdcGain(0);         // most sensitive attenuation
-            tuneEdgeSensitivity(); // because "why not?" (may only be beneficial if using an overlay)
-        }
         while (available()) {
             clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
         }
@@ -454,13 +445,30 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
+    if (_rev2025) {
+        clearStatusFlags();
+    }
+#endif
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
     uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
     rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 2); // indicate writing only 1 byte
-    do {
-        rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
-    } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    if (!_rev2025) {
+#endif
+        do {
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+        } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    }
+    else {
+        while (!digitalRead(_dataReady))
+        {
+        }
+    }
+#endif
     clearStatusFlags(); // clear Command Complete flag in Status register
     if (prevFeedState) {
         feedEnabled(prevFeedState); // resume previous feed state
@@ -474,14 +482,31 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
+    if (_rev2025) {
+        clearStatusFlags();
+    }
+#endif
     rapWrite(PINNACLE_ERA_VALUE, registerValue);
     uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
     rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 0x0A); // indicate writing sequential bytes
     for (uint8_t i = 0; i < repeat; i++) {
-        do {
-            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
-        } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+        if (!_rev2025) {
+#endif
+            do {
+                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+            } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+        }
+        else {
+            while (!digitalRead(_dataReady))
+            {
+            }
+        }
+#endif
         clearStatusFlags(); // clear Command Complete flag in Status register
     }
     if (prevFeedState) {
@@ -495,12 +520,29 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
+    if (_rev2025) {
+        clearStatusFlags();
+    }
+#endif
     uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
     rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     rapWrite(PINNACLE_ERA_CONTROL, 1); // indicate reading only 1 byte
-    do {
-        rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
-    } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    if (!_rev2025) {
+#endif
+        do {
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+        } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    }
+    else {
+        while (!digitalRead(_dataReady))
+        {
+        }
+    }
+#endif
     rapRead(PINNACLE_ERA_VALUE, data); // get data
     clearStatusFlags();                // clear Command Complete flag in Status register
     if (prevFeedState) {
@@ -514,13 +556,30 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
+    if (_rev2025) {
+        clearStatusFlags();
+    }
+#endif
     uint8_t buffer[2] = {(uint8_t)(registerAddress >> 8), (uint8_t)(registerAddress & 0xFF)};
     rapWriteBytes(PINNACLE_ERA_ADDR, buffer, 2);
     for (uint8_t i = 0; i < registerCount; ++i) {
         rapWrite(PINNACLE_ERA_CONTROL, 5); // indicate reading sequential bytes
-        do {
-            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
-        } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+        if (!_rev2025) {
+#endif
+            do {
+                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+            } while (buffer[0]);
+#ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+        }
+        else {
+            while (!digitalRead(_dataReady))
+            {
+            }
+        }
+#endif
         rapRead(PINNACLE_ERA_VALUE, data + i); // get value
         clearStatusFlags();                    // clear Command Complete flag in Status register
     }
@@ -528,13 +587,6 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_
         feedEnabled(prevFeedState); // resume previous feed state
     }
 }
-
-#if PINNACLE_DEV_HW_DEBUG
-void PinnacleTouch::readRegisters(uint8_t reg, uint8_t* data, uint8_t len)
-{
-    rapReadBytes(reg, data, len);
-}
-#endif
 
 PinnacleTouchSPI::PinnacleTouchSPI(pinnacle_gpio_t dataReadyPin, pinnacle_gpio_t slaveSelectPin, uint32_t spiSpeed)
     : PinnacleTouch(dataReadyPin), _slaveSelect(slaveSelectPin), _spiSpeed(spiSpeed)

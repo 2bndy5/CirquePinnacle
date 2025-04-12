@@ -14,7 +14,13 @@ project(cirque_pinnacle C CXX)
 # optionally enable building the python binding
 option(PINNACLE_PY_BINDING "Only build python binding" OFF) # enabled via setup.py
 option(PINNACLE_ANYMEAS_SUPPORT "Enable anymeas mode support" ON)
-option(PINNACLE_DEV_HW_DEBUG "Expose register read function" OFF)
+option(PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    "Allow experimental ERA functionality on trackpads with newer firmware.
+    To use this feature, C++ inheritance shall be used
+    because the ERA functions are private.
+    Does not apply to the Python binding."
+    OFF
+)
 
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/StandardProjectSettings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/PreventInSourceBuilds.cmake)
@@ -113,9 +119,9 @@ if(NOT PINNACLE_PY_BINDING)
         target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_ANYMEAS_SUPPORT=0)
     endif()
 
-    if(PINNACLE_DEV_HW_DEBUG)
-        message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
-        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_DEV_HW_DEBUG=1)
+    if (PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE)
+        message(STATUS "Allowing experimental ERA functionality on newer trackpads")
+        target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE=1)
     endif()
 
     target_link_libraries(${LibTargetName} INTERFACE
