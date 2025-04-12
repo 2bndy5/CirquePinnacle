@@ -8,7 +8,13 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 option(PINNACLE_ANYMEAS_SUPPORT "Enable anymeas mode support" ON)
-option(PINNACLE_DEV_HW_DEBUG "Expose register read function" OFF)
+option(PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    "Allow experimental ERA functionality on trackpads with newer firmware.
+    To use this feature, C++ inheritance shall be used
+    because the ERA functions are private.
+    Does not apply to the Python binding."
+    OFF
+)
 
 # Define the CirquePinnacle core library
 add_library(CirquePinnacle INTERFACE)
@@ -18,9 +24,9 @@ if(NOT PINNACLE_ANYMEAS_SUPPORT)
     target_compile_definitions(CirquePinnacle INTERFACE PINNACLE_ANYMEAS_SUPPORT=0)
 endif()
 
-if(PINNACLE_DEV_HW_DEBUG)
-    message(STATUS "Exposing debug function: readRegisters(regOffset, buf, count)")
-    target_compile_definitions(CirquePinnacle INTERFACE PINNACLE_DEV_HW_DEBUG=1)
+if (PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE)
+    message(STATUS "Allowing experimental ERA functionality on newer trackpads")
+    target_compile_definitions(${LibTargetName} PUBLIC PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE=1)
 endif()
 
 # generate the lib-specific includes.h for the Pico SDK

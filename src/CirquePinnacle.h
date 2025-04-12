@@ -545,7 +545,7 @@ public:
      *     or stylus with a 5.25mm diameter tip.
      *
      *     .. warning:: This method is |rev2025| Specifying the values ``200`` or ``300``
-     *         |rev2025-no-effect| and will be clamped to ``100``.
+     *         and will automatically be clamped to ``100``.
      */
     void setSampleRate(uint16_t value);
     /**
@@ -815,11 +815,6 @@ public:
      */
     int16_t getMeasureAdc();
 #endif // PINNACLE_ANYMEAS_SUPPORT == true
-
-#if PINNACLE_DEV_HW_DEBUG
-    // A handy function to get a register dump from the sensor.
-    void readRegisters(uint8_t reg, uint8_t* data, uint8_t len);
-#endif
 
 private:
     void eraWrite(uint16_t, uint8_t);

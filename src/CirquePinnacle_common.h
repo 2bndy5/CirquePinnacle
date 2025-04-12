@@ -34,11 +34,6 @@
     #define PINNACLE_ANYMEAS_SUPPORT true
 #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
-#ifndef PINNACLE_DEV_HW_DEBUG
-    // a switch to expose a convenient function for HW debugging.
-    #define PINNACLE_DEV_HW_DEBUG false
-#endif
-
 #if defined(ARDUINO)
     #include <Arduino.h>
     #include <SPI.h>
