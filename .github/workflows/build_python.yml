@@ -146,7 +146,7 @@ jobs:
           image: docker.io/tonistiigi/binfmt:qemu-v8.1.5
 
       - name: Build binary wheels with cibuildwheels
-        uses: pypa/cibuildwheel@v2.22.0
+        uses: pypa/cibuildwheel@v2.23.2
         env:
           CIBW_ARCHS_LINUX: ${{ matrix.platform }}
           CIBW_SKIP: pp* *ppc64le *s390x
