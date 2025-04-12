@@ -139,8 +139,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
 
     // ******************** expose PinnacleAnyMeasCtrl
     py::enum_<PinnacleAnyMeasCtrl> anyMeasCtrl(m, "PinnacleAnyMeasCtrl");
-    anyMeasCtrl.value("PINNACLE_CRTL_PWR_IDLE", PINNACLE_CRTL_PWR_IDLE);
-    anyMeasCtrl.value("PINNACLE_CRTL_REPEAT", PINNACLE_CRTL_REPEAT);
+    anyMeasCtrl.value("PINNACLE_CTRL_PWR_IDLE", PINNACLE_CTRL_PWR_IDLE);
+    anyMeasCtrl.value("PINNACLE_CTRL_REPEAT", PINNACLE_CTRL_REPEAT);
     anyMeasCtrl.export_values();
 
     #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
