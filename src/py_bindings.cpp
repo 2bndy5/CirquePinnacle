@@ -212,6 +212,8 @@ PYBIND11_MODULE(cirque_pinnacle, m)
     pinnacleTouch.def("feedEnabled", &PinnacleTouch::feedEnabled);
     pinnacleTouch.def_property_readonly("is_hard_configured", &PinnacleTouch::isHardConfigured);
     pinnacleTouch.def("isHardConfigured", &PinnacleTouch::isHardConfigured);
+    pinnacleTouch.def_property_readonly("rev2025", &PinnacleTouch::isRev2025);
+    pinnacleTouch.def("isRev2025", &PinnacleTouch::isRev2025);
     pinnacleTouch.def("available", &PinnacleTouch::available);
     pinnacleTouch.def("absolute_mode_config", &PinnacleTouch::absoluteModeConfig,
                       py::arg("z_idle_count") = 30, py::arg("invert_x") = false, py::arg("invert_x") = false);

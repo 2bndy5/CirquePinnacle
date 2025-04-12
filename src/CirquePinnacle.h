@@ -343,6 +343,28 @@ public:
      */
     PinnacleDataMode getDataMode();
     /**
+     * Is the trackpad using a newer firmware revision?
+     *
+     * .. note::
+     *     The value returned is only valid after calling `begin()`.
+     *
+     * This function describes if the Pinnacle ASIC uses a firmware revision
+     * that was deployed on or around 2025. Consequently, some advanced configuration
+     * is not possible with this undocumented firmware revision.
+     * Thus, the following functionality is affected on the trackpads when this
+     * function returns ``True``:
+     *
+     * - `setSampleRate()` accepted value shall exceed ``100``
+     * - `detectFingerStylus()` is non-operational
+     * - `tuneEdgeSensitivity()` is non-operational
+     * - `setAdcGain()` is non-operational
+     * - `setCalibrationMatrix()` is non-operational
+     * - `getCalibrationMatrix()` is non-operational
+     *
+     * .. versionadded:: 2.0.0
+     */
+    bool isRev2025();
+    /**
      * This function can be used to inform applications about the factory
      * customized hardware configuration.
      *
@@ -791,6 +813,7 @@ private:
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
     PinnacleDataMode _dataMode;
     bool _intellimouse;
+    bool _rev2025;
     const pinnacle_gpio_t _dataReady;
     virtual void rapWriteCmd(uint8_t*, uint8_t) = 0;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
