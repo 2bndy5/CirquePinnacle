@@ -48,7 +48,7 @@ bool PinnacleTouch::begin()
         }
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
         if (!_rev2025) {
-            setAdcGain(0); // most sensitive attenuation
+            setAdcGain(0);         // most sensitive attenuation
             tuneEdgeSensitivity(); // because "why not?" (may only be beneficial if using an overlay)
         }
         while (available()) {
