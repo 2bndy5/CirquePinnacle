@@ -8,12 +8,14 @@ words:
   - armhf
   - armv
   - ASIC
+  - atmegang
   - baudrate
   - bdist
   - binfmt
   - bndy
   - cibuildwheels
   - CIBW
+  - circuitplayground
   - cirquepinnacle
   - cpack
   - CPHA
@@ -29,6 +31,7 @@ words:
   - DPYTHON
   - eabi
   - endforeach
+  - fqbn
   - ftime
   - gnueabihf
   - gpiochip
@@ -43,6 +46,10 @@ words:
   - LSBFIRST
   - Makefiles
   - manylinux
+  - mbed
+  - megaavr
+  - mkrwifi
+  - mkrzero
   - MOSI
   - MSBFIRST
   - musllinux
@@ -62,6 +69,7 @@ words:
   - qtpy
   - raspberrypi
   - repr
+  - samd
   - sdist
   - seealso
   - setuptools
@@ -80,5 +88,6 @@ words:
   - tonistiigi
   - trackpad
   - trackpads
+  - unowifi
   - venv
   - viewcode

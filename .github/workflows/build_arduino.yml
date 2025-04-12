@@ -44,7 +44,6 @@ jobs:
           - "arduino:samd:mkrwifi1010"
           - "arduino:samd:nano_33_iot"
           - "arduino:samd:adafruit_circuitplayground_m0"
-          # - "arduino:samd:tian"
         # By default, don't generate size deltas data.
         enable-deltas-report:
           - false
