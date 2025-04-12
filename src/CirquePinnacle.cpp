@@ -124,10 +124,7 @@ PinnacleDataMode PinnacleTouch::getDataMode()
 
 bool PinnacleTouch::isRev2025()
 {
-    if (_dataMode != PINNACLE_ERROR) {
-        return _rev2025;
-    }
-    return false;
+    return _rev2025;
 }
 
 bool PinnacleTouch::isHardConfigured()
