@@ -28,7 +28,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     #ifndef PINNACLE_DEFAULT_I2C_BUS
         /**
          * Convenient alias to control which I2C bus (on Linux) is used by default.
-         * Use Cmake option: `-D PINNACLE_DEFAULT_I2C_BUS=0` (for oldest RPi1)
+         * Use Cmake option: ``-D PINNACLE_DEFAULT_I2C_BUS=0`` (for oldest RPi1)
          *
          * @ingroup arduino-i2c
          */
@@ -73,21 +73,12 @@ public:
     /** Instantiate the object for use with the I2C bus. */
     TwoWire();
 
-    /** Initialize the I2C bus' pins.
+    /**
+     * Initialize the I2C bus' pins.
      *
      * @param busNumber The I2C bus number as identified by the directory listing in
      *     :literal:`/dev/i2c-*`. For :literal:`/dev/i2c-1`, this parameter’s value should be
      *     ``1``. Defaults to ``1``, but the first Raspberry Pi board uses :literal:`/dev/i2c-0`.
-     *
-     *     .. info:: Difference with ``mraa`` driver
-     *
-     *         If using the ``mraa`` driver, then this number is not guaranteed to coincide with the
-     *         actual I2C bus number (:literal:`/dev/i2c-<x>`). See the `MRAA source code
-     *         <https://github.com/eclipse/mraa/tree/master/src>`_ for your platform to determine
-     *         what number to use for which I2C bus.
-     *
-     *         For compatibility reasons, this parameter defaults to ``0`` when using the
-     *         ``mraa`` driver.
      */
     void begin(uint8_t busNumber = PINNACLE_DEFAULT_I2C_BUS);
 

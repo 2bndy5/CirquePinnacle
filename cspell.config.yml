@@ -16,9 +16,11 @@ words:
   - CIBW
   - cirquepinnacle
   - cpack
+  - CPHA
   - cppreference
   - cpython
   - CROSSCOMPILING
+  - cxxabiv
   - datasheet
   - DCMAKE
   - Doherty
@@ -38,9 +40,11 @@ words:
   - libnewlib
   - linenos
   - literalinclude
+  - LSBFIRST
   - Makefiles
   - manylinux
   - MOSI
+  - MSBFIRST
   - musllinux
   - Muxing
   - Ofast
@@ -67,6 +71,7 @@ words:
   - SPARFUN
   - Sparkfun
   - spidev
+  - stddef
   - stdlib
   - STREQUAL
   - THINGPLUS

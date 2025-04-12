@@ -40,10 +40,17 @@ bool PinnacleTouch::begin()
         buffer[0] = 0; // config power (defaults) and disable anymeas flags
         buffer[1] = 0; // config absolute mode defaults and disable feed
         rapWriteBytes(PINNACLE_SYS_CONFIG, buffer, 3);
-        detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
+        if (!_rev2025) {
+            detectFingerStylus(); // detects both finger & stylus; sets sample rate to 100
+        }
+        else {
+            setSampleRate(100);
+        }
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
-        setAdcGain(0);                 // most sensitive attenuation
-        tuneEdgeSensitivity();         // because "why not?" (may only be beneficial if using an overlay)
+        if (!_rev2025) {
+            setAdcGain(0); // most sensitive attenuation
+            tuneEdgeSensitivity(); // because "why not?" (may only be beneficial if using an overlay)
+        }
         while (available()) {
             clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
         }
