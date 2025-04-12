@@ -441,12 +441,12 @@ int16_t PinnacleTouch::getMeasureAdc()
 
 void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
 {
-    PINNACLE_USE_ARDUINO_API
     bool prevFeedState = isFeedEnabled();
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
     if (_rev2025) {
         clearStatusFlags();
     }
@@ -478,12 +478,12 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
 void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValue, uint8_t repeat)
 {
     // NOTE this is rarely used as it only writes 1 value to multiple registers
-    PINNACLE_USE_ARDUINO_API
     bool prevFeedState = isFeedEnabled();
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
     if (_rev2025) {
         clearStatusFlags();
     }
@@ -516,12 +516,12 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
 
 void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
 {
-    PINNACLE_USE_ARDUINO_API
     bool prevFeedState = isFeedEnabled();
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
     if (_rev2025) {
         clearStatusFlags();
     }
@@ -552,12 +552,12 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
 
 void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_t registerCount)
 {
-    PINNACLE_USE_ARDUINO_API
     bool prevFeedState = isFeedEnabled();
     if (prevFeedState) {
         feedEnabled(false); // accessing raw memory, so do this
     }
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
+    PINNACLE_USE_ARDUINO_API
     if (_rev2025) {
         clearStatusFlags();
     }
