@@ -39,7 +39,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         #define PINNACLE_DEFAULT_SPI_BUS 0
     #endif
 
-    /// Uses digitalWrite() when not using SPI bus' native CS pin
+    /// Uses ``digitalWrite()`` when not using SPI bus' native CS pin
     #define PINNACLE_SS_CTRL(pin, value)
 
 /**

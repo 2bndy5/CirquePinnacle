@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include "CirquePinnacle_common.h"
 
-/** Defined constants for Pinnacle registers */
+/* Defined constants for Pinnacle registers */
 #define PINNACLE_FIRMWARE_ID    0x00
 #define PINNACLE_STATUS         0x02
 #define PINNACLE_SYS_CONFIG     0x03
@@ -167,9 +167,9 @@ enum PinnacleAnyMeasMuxing : uint8_t
 enum PinnacleAnyMeasCtrl : uint8_t
 {
     /** only required for more than 1 measurement */
-    PINNACLE_CRTL_REPEAT = 0x80,
+    PINNACLE_CTRL_REPEAT = 0x80,
     /** triggers low power mode (sleep) after completing measurements */
-    PINNACLE_CRTL_PWR_IDLE = 0x40,
+    PINNACLE_CTRL_PWR_IDLE = 0x40,
 };
 
 #endif // PINNACLE_ANYMEAS_SUPPORT == false
@@ -294,8 +294,8 @@ public:
     PinnacleTouch(pinnacle_gpio_t dataReadyPin);
     /**
      * This function controls if the touch/button event data is reported or
-     * not. It only applies to `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE`
-     * mode, otherwise if `setDataMode()` is given `PINNACLE_ANYMEAS`, then this
+     * not. It only applies to `~PinnacleDataMode::PINNACLE_RELATIVE` or `~PinnacleDataMode::PINNACLE_ABSOLUTE`
+     * mode, otherwise if `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS`, then this
      * function will do nothing.
      *
      * @param isEnabled Enables (``true``) or disables (``false``) data reporting.
@@ -307,7 +307,7 @@ public:
      *
      * @return
      *     The setting configured by `feedEnabled()` or ``false`` if `setDataMode()`
-     *     is given `PINNACLE_ANYMEAS`.
+     *     is given `~PinnacleDataMode::PINNACLE_ANYMEAS`.
      */
     bool isFeedEnabled();
     /**
@@ -318,9 +318,9 @@ public:
      *     .. csv-table::
      *         :header: "``mode`` (enum value)", description
      *
-     *         ":expr:`PINNACLE_RELATIVE` (``0``)", "for relative/mouse mode"
-     *         ":expr:`PINNACLE_ANYMEAS` (``1``)", "for reading raw ADC values"
-     *         ":expr:`PINNACLE_ABSOLUTE` (``2``)", "for absolute positioning mode"
+     *         "`~PinnacleDataMode::PINNACLE_RELATIVE` (``0``)", "for relative/mouse mode"
+     *         "`~PinnacleDataMode::PINNACLE_ANYMEAS` (``1``)", "for reading raw ADC values"
+     *         "`~PinnacleDataMode::PINNACLE_ABSOLUTE` (``2``)", "for absolute positioning mode"
      *
      *     Invalid input values have no affect.
      */
@@ -329,19 +329,41 @@ public:
      * This function describes which mode for which kind of data to report.
      *
      * .. important::
-     *     When switching from `PINNACLE_ANYMEAS` to `PINNACLE_RELATIVE`
-     *     or `PINNACLE_ABSOLUTE` all configurations are reset, and must be
+     *     When switching from `~PinnacleDataMode::PINNACLE_ANYMEAS` to `~PinnacleDataMode::PINNACLE_RELATIVE`
+     *     or `~PinnacleDataMode::PINNACLE_ABSOLUTE` all configurations are reset, and must be
      *     re-configured by using  `absoluteModeConfig()` or `relativeModeConfig()`.
      *
      * @return
-     *     - :expr:`PINNACLE_RELATIVE` (``0``) for relative mode (AKA mouse mode)
-     *     - :expr:`PINNACLE_ANYMEAS` (``1``) for anymeas mode (raw ADC measurements)
-     *     - :expr:`PINNACLE_ABSOLUTE` (``2``) for absolute mode (X & Y axis
+     *     - `~PinnacleDataMode::PINNACLE_RELATIVE` (``0``) for relative mode (AKA mouse mode)
+     *     - `~PinnacleDataMode::PINNACLE_ANYMEAS` (``1``) for anymeas mode (raw ADC measurements)
+     *     - `~PinnacleDataMode::PINNACLE_ABSOLUTE` (``2``) for absolute mode (X & Y axis
      *       positions)
-     *     - :expr:`PINNACLE_ERROR` (``0xFF``) if `begin()` returns ``false`` (failed to
+     *     - `~PinnacleDataMode::PINNACLE_ERROR` (``0xFF``) if `begin()` returns ``false`` (failed to
      *       initialize the trackpad)
      */
     PinnacleDataMode getDataMode();
+    /**
+     * Is the trackpad using a newer firmware revision?
+     *
+     * .. note::
+     *     The value returned is only valid after calling `begin()`.
+     *
+     * This function describes if the Pinnacle ASIC uses a firmware revision
+     * that was deployed on or around 2025. Consequently, some advanced configuration
+     * is not possible with this undocumented firmware revision.
+     * Thus, the following functionality is affected on the trackpads when this
+     * function returns ``True``:
+     *
+     * - `setSampleRate()` accepted value shall exceed ``100``
+     * - `detectFingerStylus()` is non-operational
+     * - `tuneEdgeSensitivity()` is non-operational
+     * - `setAdcGain()` is non-operational
+     * - `setCalibrationMatrix()` is non-operational
+     * - `getCalibrationMatrix()` is non-operational
+     *
+     * .. versionadded:: 2.0.0
+     */
+    bool isRev2025();
     /**
      * This function can be used to inform applications about the factory
      * customized hardware configuration.
@@ -373,8 +395,8 @@ public:
     bool available();
     /**
      * Configure settings specific to Absolute mode (reports axis positions). This function only
-     * applies to `PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
-     * `PINNACLE_ANYMEAS` or `PINNACLE_RELATIVE`, then this function does nothing.
+     * applies to `~PinnacleDataMode::PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS` or `~PinnacleDataMode::PINNACLE_RELATIVE`, then this function does nothing.
      *
      * @param zIdleCount Specifies the number of empty packets (x-axis, y-axis, and z-axis
      *     are ``0``) reported (every 10 milliseconds) when there is no touch detected. Defaults
@@ -389,8 +411,8 @@ public:
                             bool invertY = false);
     /**
      * Configure settings specific to Relative mode (AKA Mouse mode) data reporting. This function
-     * only applies to `PINNACLE_RELATIVE` mode, otherwise if `setDataMode()` is given
-     * `PINNACLE_ANYMEAS` or `PINNACLE_ABSOLUTE`, then this function does nothing.
+     * only applies to `~PinnacleDataMode::PINNACLE_RELATIVE` mode, otherwise if `setDataMode()` is given
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS` or `~PinnacleDataMode::PINNACLE_ABSOLUTE`, then this function does nothing.
      *
      * @param taps Specifies if all taps should be reported (``true``) or not
      *     (``false``). Default is ``true``. This affects `secondaryTap` option as well.
@@ -412,9 +434,9 @@ public:
                             bool glideExtend = false);
     /**
      * This function will fetch touch (and button) event data from the
-     * Pinnacle ASIC. This function only applies to `PINNACLE_RELATIVE` mode,
-     * otherwise if `setDataMode()` is given `PINNACLE_ANYMEAS` or
-     * `PINNACLE_ABSOLUTE`, then this function does nothing.
+     * Pinnacle ASIC. This function only applies to `~PinnacleDataMode::PINNACLE_RELATIVE` mode,
+     * otherwise if `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS` or
+     * `~PinnacleDataMode::PINNACLE_ABSOLUTE`, then this function does nothing.
      *
      * @param[out] report A reference pointer (declared variable of datatype
      *     `RelativeReport`) for storing the data that describes the touch (and
@@ -436,8 +458,8 @@ public:
     /**
      * This function will fetch touch (and button) event data from the
      * Pinnacle ASIC (including empty packets on ending of a touch/button
-     * event). This function only applies to `PINNACLE_ABSOLUTE` mode, otherwise
-     * if `setDataMode()` is given `PINNACLE_ANYMEAS` or `PINNACLE_RELATIVE`,
+     * event). This function only applies to `~PinnacleDataMode::PINNACLE_ABSOLUTE` mode, otherwise
+     * if `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS` or `~PinnacleDataMode::PINNACLE_RELATIVE`,
      * then this function does nothing.
      *
      * @param[out] report A reference pointer (declared variable of datatype
@@ -507,18 +529,23 @@ public:
     bool isShutdown();
     /**
      * This function controls how many samples (of data) per second are
-     * taken. This function only applies to `PINNACLE_RELATIVE` or
-     * `PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
-     * `PINNACLE_ANYMEAS`, then this function will do nothing.
+     * taken. This function only applies to `~PinnacleDataMode::PINNACLE_RELATIVE` or
+     * `~PinnacleDataMode::PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS`, then this function will do nothing.
      *
      * @param value Valid input values are ``100``, ``80``, ``60``, ``40``, ``20``,
      *     ``10``. Any other input values automatically set the sample rate to 100
-     *     sps (samples per second). Optionally, ``200`` and ``300`` sps can be
+     *     sps (samples per second).
+     *
+     *     Optionally, on older trackpads, ``200`` and ``300`` sps can be
      *     specified, but using these optional values automatically disables palm
      *     (referred to as "NERD" in the specification sheet) and noise
      *     compensations. These higher values are meant for using a stylus with a
      *     2mm diameter tip, while the values less than 200 are meant for a finger
      *     or stylus with a 5.25mm diameter tip.
+     *
+     *     .. warning:: This method is |rev2025| Specifying the values ``200`` or ``300``
+     *         |rev2025-no-effect| and will be clamped to ``100``.
      */
     void setSampleRate(uint16_t value);
     /**
@@ -527,7 +554,7 @@ public:
      *
      * :Return:
      *     The setting configured by `setSampleRate()` or ``0`` if `setDataMode()` is
-     *     given `PINNACLE_ANYMEAS`.
+     *     given `~PinnacleDataMode::PINNACLE_ANYMEAS`.
      */
     uint16_t getSampleRate();
     /**
@@ -536,6 +563,8 @@ public:
      *
      * .. tip:: Consider adjusting the ADC matrix's gain to enhance
      *     performance/results using `setAdcGain()`.
+     *
+     * .. warning:: This method is |rev2025| Calling this method |rev2025-no-effect|.
      *
      * @param enableFinger ``true`` enables the Pinnacle ASIC's measurements to
      *     detect if the touch event was caused by a finger or 5.25mm stylus.
@@ -551,9 +580,9 @@ public:
                             uint16_t sampleRate = 100);
     /**
      * Set calibration parameters when the Pinnacle ASIC calibrates itself.
-     * This function only applies to `PINNACLE_RELATIVE` or
-     * `PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
-     * `PINNACLE_ANYMEAS`, then this function will do nothing.
+     * This function only applies to `~PinnacleDataMode::PINNACLE_RELATIVE` or
+     * `~PinnacleDataMode::PINNACLE_ABSOLUTE` mode, otherwise if `setDataMode()` is given
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS`, then this function will do nothing.
      *
      * .. note:: According to the datasheet, calibration of the sensor takes about
      *     100 milliseconds. This function will block until calibration is complete
@@ -572,10 +601,10 @@ public:
      *     ``true``.
      * @returns
      *     ``false``
-     *         - If `setDataMode()` is not set to `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE`.
+     *         - If `setDataMode()` is not set to `~PinnacleDataMode::PINNACLE_RELATIVE` or `~PinnacleDataMode::PINNACLE_ABSOLUTE`.
      *         - If the calibration `run` timed out after 100 milliseconds.
      *     ``true``
-     *         - If `setDataMode()` is not given `PINNACLE_RELATIVE` or `PINNACLE_ABSOLUTE` and the
+     *         - If `setDataMode()` is not given `~PinnacleDataMode::PINNACLE_RELATIVE` or `~PinnacleDataMode::PINNACLE_ABSOLUTE` and the
      *           calibration is not `run`.
      *         - If the calibration `run` successfully finishes.
      */
@@ -587,7 +616,9 @@ public:
     /**
      * Manually sets the compensation matrix (array) of the 46 16-bit unsigned
      * integer values stored in the Pinnacle ASIC's memory that is used for
-     * taking measurements. This matrix is not applicable to `PINNACLE_ANYMEAS` mode.
+     * taking measurements. This matrix is not applicable to `~PinnacleDataMode::PINNACLE_ANYMEAS` mode.
+     *
+     * .. warning:: This method is |rev2025| Calling this method |rev2025-no-effect|.
      *
      * @param matrix The array of 16-bit unsigned integers that will be used
      *     for compensation calculations when measuring of input events.
@@ -603,6 +634,8 @@ public:
      * matrix that was either loaded manually via `setCalibrationMatrix()` or
      * created internally by calling `calibrate()` with the ``run`` parameter as
      * ``true``.
+     *
+     * .. warning:: This method is |rev2025| Calling this method |rev2025-no-effect|.
      *
      * .. hint:: A note from Cirque's Application Note on Comparing matrices:
      *
@@ -630,9 +663,11 @@ public:
      * Sets the ADC (Analog to Digital Converter) attenuation (gain ratio) to
      * enhance performance based on the overlay type. This does not apply to
      * AnyMeas mode. However, the input value specified can be written while
-     * `setDataMode()` is given `PINNACLE_ANYMEAS`, but there is no guarantee that
+     * `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS`, but there is no guarantee that
      * it will "stick" as it may be overridden by the Pinnacle ASIC
      * (specification sheet does not imply either way).
+     *
+     * .. warning:: This method is |rev2025| Calling this method |rev2025-no-effect|.
      *
      * @param sensitivity This byte specifies how sensitive the ADC component
      *     is. It must be in range [0, 3]. Where ``0`` means most sensitive, and ``3``
@@ -651,13 +686,15 @@ public:
      * documented memory map for the Pinnacle ASIC as this function directly
      * alters values in the Pinnacle ASIC's memory. ALTER THESE PARAMETERS AT
      * YOUR OWN RISK!
+     *
+     * .. warning:: This method is |rev2025| Calling this method |rev2025-no-effect|.
      */
     void tuneEdgeSensitivity(uint8_t xAxisWideZMin = 4, uint8_t yAxisWideZMin = 3);
 #if PINNACLE_ANYMEAS_SUPPORT
     /**
      * This function configures the Pinnacle ASIC for taking raw ADC
      * measurements. Be sure that `setDataMode()` is given
-     * `PINNACLE_ANYMEAS` before calling this function otherwise it will do
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS` before calling this function otherwise it will do
      * nothing.
      *
      * .. note:: The `apertureWidth` parameter has an inverse relationship/affect
@@ -683,8 +720,8 @@ public:
      * @param controlPowerCount Configure the Pinnacle to perform a number of
      *     measurements for each call to `measureAdc()`. Defaults to 1. Constants
      *     defined in `PinnacleAnyMeasCtrl` can be added (with ``+``) to specify if
-     *     sleep is allowed (`PINNACLE_CRTL_PWR_IDLE` -- this is not default) or
-     *     if repetitive measurements is allowed (`PINNACLE_CRTL_REPEAT`) when
+     *     sleep is allowed (`PINNACLE_CTRL_PWR_IDLE` -- this is not default) or
+     *     if repetitive measurements is allowed (`PINNACLE_CTRL_REPEAT`) when
      *     number of measurements is more than 1.
      *
      *     .. warning:: There is no bounds checking on the number of measurements
@@ -707,12 +744,12 @@ public:
      *
      * Internally, this function uses the non-blocking helper functions
      * `startMeasureAdc()` and `getMeasureAdc()`, but blocks until ADC measurements are
-     * completed. Be sure that `setDataMode()` is given `PINNACLE_ANYMEAS` before
+     * completed. Be sure that `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS` before
      * calling this function otherwise it will do nothing and return ``0``.
      *
      * :Return:
      *     A signed short integer. If `setDataMode()` is not given
-     *     `PINNACLE_ANYMEAS`, then this function returns ``0`` and does nothing.
+     *     `~PinnacleDataMode::PINNACLE_ANYMEAS`, then this function returns ``0`` and does nothing.
      * :4-byte Integer Format (for use as each parameter):
      *     Bits 29 and 28 represent the optional implementation of reference
      *     capacitors built into the Pinnacle ASIC. To use these capacitors, the
@@ -761,7 +798,7 @@ public:
     int16_t measureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
     /**
      * A non-blocking function to instigate ADC measurements when the `setDataMode()` is given
-     * `PINNACLE_ANYMEAS` mode. See parameters and table in `measureAdc()` as
+     * `~PinnacleDataMode::PINNACLE_ANYMEAS` mode. See parameters and table in `measureAdc()` as
      * this helper function's parameters are used exactly the same.
      */
     void startMeasureAdc(unsigned int bitsToToggle, unsigned int togglePolarity);
@@ -773,8 +810,8 @@ public:
      *
      * :Returns:
      *
-     *     - A 16-bit integer if `setDataMode()` is given `PINNACLE_ANYMEAS`.
-     *     - ``0`` if `setDataMode()` is not given `PINNACLE_ANYMEAS`.
+     *     - A 16-bit integer if `setDataMode()` is given `~PinnacleDataMode::PINNACLE_ANYMEAS`.
+     *     - ``0`` if `setDataMode()` is not given `~PinnacleDataMode::PINNACLE_ANYMEAS`.
      */
     int16_t getMeasureAdc();
 #endif // PINNACLE_ANYMEAS_SUPPORT == true
@@ -791,6 +828,7 @@ private:
     void eraReadBytes(uint16_t, uint8_t*, uint8_t);
     PinnacleDataMode _dataMode;
     bool _intellimouse;
+    bool _rev2025;
     const pinnacle_gpio_t _dataReady;
     virtual void rapWriteCmd(uint8_t*, uint8_t) = 0;
     virtual void rapWrite(uint8_t, uint8_t) = 0;
@@ -806,7 +844,7 @@ protected:
      *     - ``true`` if the Pinnacle ASIC was setup and configured properly (with data
      *       feed enabled using Relative mode).
      *     - ``false`` if the Pinnacle ASIC was unresponsive for some reason; all further
-     *       operations will be nullified by `setDataMode()` to `PINNACLE_ERROR` (``0xFF``).
+     *       operations will be nullified by `setDataMode()` to `~PinnacleDataMode::PINNACLE_ERROR`.
      */
     bool begin();
 };

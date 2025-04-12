@@ -22,7 +22,7 @@
     #include <cstring> // memcpy(), memset()
 #endif
 
-PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin)
+PinnacleTouch::PinnacleTouch(pinnacle_gpio_t dataReadyPin) : _dataReady(dataReadyPin), _rev2025(false)
 {
     PINNACLE_USE_ARDUINO_API
     pinMode(_dataReady, INPUT);
@@ -34,15 +34,23 @@ bool PinnacleTouch::begin()
     delay(100);
     uint8_t buffer[3] = {0}; // index 2 is relative mode defaults
     rapReadBytes(PINNACLE_FIRMWARE_ID, buffer, 2);
-    if (buffer[0] == 7 || buffer[1] == 0x3A) {
+    _rev2025 = buffer[0] == 0x0E && buffer[1] == 0x75;
+    if (_rev2025 || (buffer[0] == 7 && buffer[1] == 0x3A)) {
         _dataMode = PINNACLE_RELATIVE;
         buffer[0] = 0; // config power (defaults) and disable anymeas flags
         buffer[1] = 0; // config absolute mode defaults and disable feed
         rapWriteBytes(PINNACLE_SYS_CONFIG, buffer, 3);
-        detectFingerStylus();          // detects both finger & stylus; sets sample rate to 100
+        if (!_rev2025) {
+            detectFingerStylus(); // detects both finger & stylus; sets sample rate to 100
+        }
+        else {
+            setSampleRate(100);
+        }
         rapWrite(PINNACLE_Z_IDLE, 30); // 30 z-idle packets
-        setAdcGain(0);                 // most sensitive attenuation
-        tuneEdgeSensitivity();         // because "why not?" (may only be beneficial if using an overlay)
+        if (!_rev2025) {
+            setAdcGain(0);         // most sensitive attenuation
+            tuneEdgeSensitivity(); // because "why not?" (may only be beneficial if using an overlay)
+        }
         while (available()) {
             clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
         }
@@ -121,6 +129,11 @@ void PinnacleTouch::setDataMode(PinnacleDataMode mode)
 PinnacleDataMode PinnacleTouch::getDataMode()
 {
     return _dataMode;
+}
+
+bool PinnacleTouch::isRev2025()
+{
+    return _rev2025;
 }
 
 bool PinnacleTouch::isHardConfigured()
@@ -254,7 +267,7 @@ bool PinnacleTouch::isShutdown()
 void PinnacleTouch::setSampleRate(uint16_t value)
 {
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
-        if (value == 200 || value == 300) {
+        if (!_rev2025 && (value == 200 || value == 300)) {
             // disable palm & noise compensations
             rapWrite(PINNACLE_FEED_CONFIG_3, 10);
             uint8_t reloadTimer = value == 300 ? 6 : 9;
@@ -264,7 +277,9 @@ void PinnacleTouch::setSampleRate(uint16_t value)
         else {
             // enable palm & noise compensations
             rapWrite(PINNACLE_FEED_CONFIG_3, 0);
-            eraWriteBytes(0x019E, 0x13, 2);
+            if (!_rev2025) {
+                eraWriteBytes(0x019E, 0x13, 2);
+            }
         }
         // bad input values interpreted as 100 by Pinnacle
         rapWrite(PINNACLE_SAMPLE_RATE, (uint8_t)value);
@@ -276,7 +291,7 @@ uint16_t PinnacleTouch::getSampleRate()
     if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
         uint8_t temp = 0;
         rapRead(PINNACLE_SAMPLE_RATE, &temp);
-        if (temp == 0) {
+        if (!_rev2025 && temp == 0) {
             eraRead(0x019E, &temp);
             return temp == 6 ? 300 : 200;
         }
@@ -290,7 +305,7 @@ uint16_t PinnacleTouch::getSampleRate()
 
 void PinnacleTouch::detectFingerStylus(bool enableFinger, bool enableStylus, uint16_t sampleRate)
 {
-    if (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE) {
+    if (!_rev2025 && (_dataMode == PINNACLE_ABSOLUTE || _dataMode == PINNACLE_RELATIVE)) {
         setSampleRate(sampleRate);
         uint8_t fingerStylus = 0;
         eraRead(0x00EB, &fingerStylus);
@@ -322,7 +337,7 @@ bool PinnacleTouch::calibrate(bool run, bool tap, bool trackError, bool nerd, bo
 
 void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
 {
-    if (_dataMode <= PINNACLE_ABSOLUTE) {
+    if (!_rev2025 && _dataMode <= PINNACLE_ABSOLUTE) {
         bool prevFeedState = isFeedEnabled();
         if (prevFeedState)
             feedEnabled(false); // this will save time on subsequent eraWrite calls
@@ -343,7 +358,7 @@ void PinnacleTouch::setCalibrationMatrix(int16_t* matrix, uint8_t len)
 
 void PinnacleTouch::getCalibrationMatrix(int16_t* matrix)
 {
-    if (_dataMode <= PINNACLE_ABSOLUTE) {
+    if (!_rev2025 && _dataMode <= PINNACLE_ABSOLUTE) {
         // must use sequential read of 92 bytes; individual reads return inaccurate data
         eraReadBytes(0x01DF, reinterpret_cast<uint8_t*>(matrix), 92);
         for (uint8_t i = 0; i < 46; ++i) {
@@ -355,7 +370,7 @@ void PinnacleTouch::getCalibrationMatrix(int16_t* matrix)
 
 void PinnacleTouch::setAdcGain(uint8_t sensitivity)
 {
-    if (_dataMode <= PINNACLE_ABSOLUTE) {
+    if (!_rev2025 && _dataMode <= PINNACLE_ABSOLUTE) {
         if (sensitivity >= 4)
             sensitivity = 0; // faulty input defaults to highest sensitivity
         uint8_t temp = 0;
@@ -366,7 +381,7 @@ void PinnacleTouch::setAdcGain(uint8_t sensitivity)
 
 void PinnacleTouch::tuneEdgeSensitivity(uint8_t xAxisWideZMin, uint8_t yAxisWideZMin)
 {
-    if (_dataMode <= PINNACLE_ABSOLUTE) {
+    if (!_rev2025 && _dataMode <= PINNACLE_ABSOLUTE) {
         eraWrite(0x0149, xAxisWideZMin);
         eraWrite(0x0168, yAxisWideZMin);
     }

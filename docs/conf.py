@@ -60,7 +60,8 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     ".env",
-    "CODE_OF_CONDUCT.mdrequirements.txt",
+    "API/cpp-generated/__gnu_cxx.__alloc_traits.rst",
+    "API/cpp-generated/__cxxabiv1.__forced_unwind.rst",
 ]
 
 # The reST default role (used for this markup: `text`) to use for all
@@ -182,10 +183,18 @@ cpp_apigen_configs = [
             include_directory_map={
                 f"{cpp_src_dir}/": "",
             },
-            allow_paths=["utility/template/", "utility/includes.h", ""],
-            disallow_paths=["utility/[^template]/"],
+            allow_paths=["utility/template/", "utility/includes.h", "", "__.*"],
+            disallow_paths=[
+                "utility/[^template]/",
+                ".*/bits/char_traits.h",
+                ".*_init_exception.h",
+                ".*/numeric_traits.h",
+                ".*/type_traits",
+            ],
+            ignore_diagnostics=["'stddef.h' file not found"],
             disallow_namespaces=["^std$"],
             allow_macros=["^PINNACLE_"],
+            disallow_macros=["PINNACLE_ANYMEAS_SUPPORT", "PINNACLE_SS_CTRL"],
             allow_symbols=["^PINNACLE_"],
             verbose=True,
         ),
@@ -204,6 +213,9 @@ rst_prolog = """
 .. |dr_pin_required| replace::
     Previously, this parameter conditionally accepted a sentinel value to use the
     "SW Data Ready" flag in the STATUS_1 register.
+.. |rev2025| replace:: not supported on trackpads manufactured on or after 2025.
+    Defer to `~PinnacleTouch::isRev2025`.
+.. |rev2025-no-effect| replace:: on newer trackpads will have no effect
 """
 
 cpp_apigen_rst_prolog = """
