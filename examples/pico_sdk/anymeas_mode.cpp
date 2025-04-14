@@ -15,6 +15,22 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
+// the index number used to iterate through our vectorDeterminants array used in loop()
+unsigned int vectorIndex = 0;
+
+// interrupt related handling
+volatile bool isDataReady = false; // track the interrupts with our own IRQ flag
+bool waitingForInterrupt = false;  // a flag to control iteration of our loop()
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler(uint gpio, uint32_t events)
+{
+    if (gpio != DR_PIN && !(events & GPIO_IRQ_EDGE_RISE)) {
+        // the gpio pin and event does not match the configuration we specified
+        return;
+    }
+    isDataReady = true; // forward event handling back to main loop()
+}
+
 typedef struct _MeasureVector
 {
     unsigned long toggle;
@@ -70,6 +86,12 @@ bool setup()
 #endif
     printf("\n*** Enter 'B' to reset to bootloader.\n");
     compensate();
+
+    // setup interrupt handler.
+    // We do this AFTER calling `compensate()` because
+    // `compensate()` will unnecessarily trigger `interruptHandler()`
+    gpio_set_irq_enabled_with_callback(DR_PIN, GPIO_IRQ_EDGE_RISE, true, &interruptHandler);
+
     for (uint8_t i = 5; i; --i) {
         printf("starting in %d second%c\r", i, i > 1 ? 's' : ' ');
         sleep_ms(1000);
@@ -79,14 +101,28 @@ bool setup()
 
 void loop()
 {
-    for (uint8_t i = 0; i < variousVectors_size; i++) {
-        int16_t measurement = trackpad.measureAdc(
-            vectorDeterminants[i].toggle,
-            vectorDeterminants[i].polarity);
-        measurement -= compensations[i];
-        printf("meas%d: %d\t", i, measurement);
+    if (!isDataReady && !waitingForInterrupt) {
+        trackpad.startMeasureAdc(
+            vectorDeterminants[vectorIndex].toggle,
+            vectorDeterminants[vectorIndex].polarity);
+        waitingForInterrupt = true;
     }
-    printf("\n");
+    else if (isDataReady) {
+        isDataReady = false;         // reset our IRQ flag
+        waitingForInterrupt = false; // allow iteration to continue
+
+        int16_t measurement = trackpad.getMeasureAdc();
+        measurement -= compensations[vectorIndex];
+        printf("meas%d: %d\t", vectorIndex, measurement);
+        // increment our loop iterator
+        if (vectorIndex < (variousVectors_size - 1)) {
+            vectorIndex++;
+        }
+        else {
+            vectorIndex = 0;
+            printf("\n");
+        }
+    }
 
     char input = getchar_timeout_us(0); // get char from buffer for user input
     if (input != PICO_ERROR_TIMEOUT && (input == 'b' || input == 'B')) {

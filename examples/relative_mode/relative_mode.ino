@@ -15,9 +15,9 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
-// track the interrupts with our own IRQ flag
-volatile bool isDataReady = false;
-
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
 void interruptHandler() {
   isDataReady = true;
 }

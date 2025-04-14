@@ -43,6 +43,18 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
+// interrupt related handling
+volatile bool isDataReady = false; // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler(uint gpio, uint32_t events)
+{
+    if (gpio != DR_PIN && !(events & GPIO_IRQ_EDGE_RISE)) {
+        // the gpio pin and event does not match the configuration we specified
+        return;
+    }
+    isDataReady = true; // forward event handling back to main loop()
+}
+
 // an object to hold data reported by the Cirque trackpad
 RelativeReport trackpadData;
 
@@ -81,6 +93,9 @@ int main(void)
     // tell the Pinnacle ASIC to rotate the orientation of the axis data by +90 degrees
     trackpad.relativeModeConfig(true, true); // (enable taps, rotate90)
     trackpad.allowSleep(true);               // let power consumption drop if inactive for 5 seconds
+
+    // setup interrupt handler
+    gpio_set_irq_enabled_with_callback(DR_PIN, GPIO_IRQ_EDGE_RISE, true, &interruptHandler);
 
     while (1)
     {
@@ -130,12 +145,15 @@ void tud_resume_cb(void)
 
 static void send_hid_report(uint8_t report_id, bool freshData) // MODIFIED for using the CirquePinnacle library
 {
+
     // skip if hid is not ready yet
     if (!tud_hid_ready())
         return;
 
     // MODIFIED for using the CirquePinnacle library
     if (freshData) {
+        // reset because interrupt event is now handled
+        isDataReady = false;
         // get fresh data now, so it may also be used for gamepad (or other) devices
         trackpad.read(&trackpadData);
     }
@@ -274,7 +292,7 @@ void tud_hid_report_complete_cb(uint8_t instance, uint8_t const* report, uint16_
 
     if (report[0] < REPORT_ID_COUNT)
     {
-        send_hid_report(report[0], trackpad.available()); // MODIFIED for using the CirquePinnacle library
+        send_hid_report(report[0], isDataReady); // MODIFIED for using the CirquePinnacle library
     }
 }
 

@@ -48,14 +48,13 @@ void compensate() {
   }
 }
 
-// track the interrupts with our own IRQ flag
-volatile bool isDataReady = false;
-
-// a flag to control iteration of our loop()
-bool waitingForInterrupt = false;
 // the index number used to iterate through our vectorDeterminants array used in loop()
 unsigned int vectorIndex = 0;
 
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+bool waitingForInterrupt = false;   // a flag to control iteration of our loop()
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
 void interruptHandler() {
   isDataReady = true;
 }
@@ -76,7 +75,10 @@ void setup() {
   trackpad.anymeasModeConfig();
   compensate();
 
-  // pinMode() is already called by trackpad.begin()
+  // setup interrupt handler.
+  // `pinMode()` is already called by `trackpad.begin()`.
+  // We do this AFTER calling `compensate()` because
+  // `compensate()` will unnecessarily trigger `interruptHandler()`
   attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
 
   Serial.println(F("starting in 5 seconds..."));

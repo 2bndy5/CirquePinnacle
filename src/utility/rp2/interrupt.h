@@ -16,27 +16,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CIRQUEPINNACLE_UTILITY_RP2_TIME_KEEPING_H_
-#define CIRQUEPINNACLE_UTILITY_RP2_TIME_KEEPING_H_
-#ifndef ARDUINO
+#ifndef CIRQUEPINNACLE_UTILITY_RP2_INTERRUPT_H_
+#define CIRQUEPINNACLE_UTILITY_RP2_INTERRUPT_H_
 
-    #include "pico/stdlib.h"
+// This module is only defined for CirquePinnacle library portability. (see src/utility/includes.h.in)
+// Use Pico SDK API for interrupt functionality (and see examples/pico_sdk/*.cpp).
 
-    #ifdef __cplusplus
-extern "C" {
-    #endif
-
-namespace cirque_pinnacle_arduino_wrappers {
-
-    #define delay(millisec)         sleep_ms(millisec)
-    #define delayMicroseconds(usec) sleep_us(usec)
-    #define millis()                to_ms_since_boot(get_absolute_time())
-
-} // namespace cirque_pinnacle_arduino_wrappers
-
-    #ifdef __cplusplus
-}
-    #endif
-
-#endif // !defined(ARDUINO)
-#endif // CIRQUEPINNACLE_UTILITY_RP2_TIME_KEEPING_H_
+#endif
