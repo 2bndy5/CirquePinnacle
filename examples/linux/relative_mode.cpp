@@ -38,7 +38,7 @@ bool setup()
     // pull in arduino-like namespace
     namespace arduino = cirque_pinnacle_arduino_wrappers;
     // setup the interrupt handler
-    arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::FALLING);
+    arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::RISING);
 
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
