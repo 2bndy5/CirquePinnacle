@@ -39,7 +39,7 @@ void setup() {
   trackpad.absoluteModeConfig(1);  // set count of z-idle packets to 1
 
   // pinMode() is already called by trackpad.begin()
-  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, FALLING);
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
 
   Serial.println(F("\n*** Enter 'M' to measure and print raw data."));
   Serial.println(F("*** Enter 'T' to measure and print trigonometric calculations.\n"));

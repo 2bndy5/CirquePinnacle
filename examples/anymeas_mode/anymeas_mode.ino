@@ -77,7 +77,7 @@ void setup() {
   compensate();
 
   // pinMode() is already called by trackpad.begin()
-  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, FALLING);
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
 
   Serial.println(F("starting in 5 seconds..."));
   delay(5000);

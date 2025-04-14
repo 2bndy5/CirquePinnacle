@@ -40,7 +40,7 @@ void setup() {
   trackpad.relativeModeConfig(true, true);  // (enable taps, rotate90)
 
   // pinMode() is already called by trackpad.begin()
-  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, FALLING);
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
 
   digitalWrite(LED, LOW);
   lastLedChange = millis();
