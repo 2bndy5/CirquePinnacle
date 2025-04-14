@@ -52,14 +52,13 @@ void compensate()
     }
 }
 
-// track the interrupts with our own IRQ flag
-volatile bool isDataReady = false;
-
-// a flag to control iteration of our loop()
-bool waitingForInterrupt = false;
 // the index number used to iterate through our vectorDeterminants array used in loop()
 unsigned int vectorIndex = 0;
 
+// interrupt related handling
+volatile bool isDataReady = false; // track the interrupts with our own IRQ flag
+bool waitingForInterrupt = false;  // a flag to control iteration of our loop()
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
 void interruptHandler()
 {
     isDataReady = true;
@@ -83,11 +82,13 @@ bool setup()
 
     // pull in arduino-like namespace
     namespace arduino = cirque_pinnacle_arduino_wrappers;
-    // setup the interrupt handler
+    // setup interrupt handler.
+    // We do this AFTER calling `compensate()` because
+    // `compensate()` will unnecessarily trigger `interruptHandler()`
     arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::RISING);
 
     for (uint8_t i = 5; i; --i) {
-        std::cout << "starting in " << (unsigned int)i << "second" << (i < 1 ? 's' : ' ') << '\r';
+        std::cout << "starting in " << (unsigned int)i << " second" << (i < 1 ? 's' : ' ') << '\r' << std::flush;
         sleep(1);
     }
     std::cout << std::endl;
