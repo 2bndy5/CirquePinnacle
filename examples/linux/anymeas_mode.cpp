@@ -84,7 +84,7 @@ bool setup()
     // pull in arduino-like namespace
     namespace arduino = cirque_pinnacle_arduino_wrappers;
     // setup the interrupt handler
-    arduino::attachInterrupt(DR_PIN, arduino::FALLING, &interruptHandler);
+    arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::FALLING);
 
     for (uint8_t i = 5; i; --i) {
         std::cout << "starting in " << (unsigned int)i << "second" << (i < 1 ? 's' : ' ') << '\r';

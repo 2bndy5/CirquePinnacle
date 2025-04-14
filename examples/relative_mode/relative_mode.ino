@@ -45,12 +45,9 @@ void setup() {
 
 void loop() {
 
-#if DR_PIN == PINNACLE_SW_DR  // not using DR_PIN
-  if (trackpad.available()) {
-#else   // using interruptHandler()
+  // using `interruptHandler()` to update `isDataReady`
   if (isDataReady) {
     isDataReady = false;  // reset our IRQ flag
-#endif  // using DR_PIN
     trackpad.read(&data);
     Serial.print(F("Left:"));
     Serial.print(data.buttons & 1);

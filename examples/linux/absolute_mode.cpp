@@ -50,7 +50,7 @@ bool setup()
     // pull in arduino-like namespace
     namespace arduino = cirque_pinnacle_arduino_wrappers;
     // setup the interrupt handler
-    arduino::attachInterrupt(DR_PIN, arduino::FALLING, &interruptHandler);
+    arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::FALLING);
 
 #ifndef USE_I2C
     std::cout << "-- Using SPI interface." << std::endl;
@@ -72,12 +72,10 @@ bool setup()
 
 void loop()
 {
-#ifdef USE_SW_DR
-    if (trackpad.available()) {
-#else // using interruptHandler()
+    // using `interruptHandler()` to update `isDataReady`
     if (isDataReady) {
+        std::cout << isDataReady << " == " << trackpad.available() << std::endl;
         isDataReady = false; // reset our IRQ flag
-#endif
         trackpad.read(&data);
 
         // datasheet recommends clamping the axes value to reliable range

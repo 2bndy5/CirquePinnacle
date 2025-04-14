@@ -45,7 +45,7 @@ namespace cirque_pinnacle_arduino_wrappers {
             for (std::map<pinnacle_gpio_t, IrqPinCache>::iterator i = irqCache.begin(); i != irqCache.end(); ++i) {
                 pthread_cancel(i->second.id);     // send cancel request
                 pthread_join(i->second.id, NULL); // wait till thread terminates
-                close(i->second.fd);
+                // close(i->second.fd);
             }
             irqCache.clear();
         }
@@ -77,7 +77,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         return NULL;
     }
 
-    int attachInterrupt(pinnacle_gpio_t pin, unsigned long long mode, void (*function)(void))
+    int attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode)
     {
         // ensure pin is not already being used in a separate thread
         detachInterrupt(pin);
@@ -87,12 +87,9 @@ namespace cirque_pinnacle_arduino_wrappers {
             irqChipCache.openDevice();
         }
         catch (GPIOException& exc) {
-            if (irqChipCache.chipInitialized) {
-                throw exc;
-                return 0;
+            if (irqChipCache.fd < 0) {
+                irqChipCache.openDevice();
             }
-            irqChipCache.chip = "/dev/gpiochip0";
-            irqChipCache.openDevice();
         }
 
         // get chip info
@@ -101,13 +98,13 @@ namespace cirque_pinnacle_arduino_wrappers {
         int ret = ioctl(irqChipCache.fd, GPIO_GET_CHIPINFO_IOCTL, &info);
         if (ret < 0) {
             std::string msg = "[attachInterrupt] Could not gather info about ";
-            msg += irqChipCache.chip;
+            msg += PINNACLE_LINUX_GPIO_CHIP;
             throw IRQException(msg);
             return 0;
         }
 
         if (pin > info.lines) {
-            std::string msg = "[attachInterrupt] pin " + std::to_string(pin) + " is not available on " + irqChipCache.chip;
+            std::string msg = "[attachInterrupt] pin " + std::to_string(pin) + " is not available on " + PINNACLE_LINUX_GPIO_CHIP;
             throw IRQException(msg);
             return 0;
         }
@@ -161,11 +158,18 @@ namespace cirque_pinnacle_arduino_wrappers {
         IrqPinCache irqPinCache;
         irqPinCache.fd = request.fd;
         irqPinCache.function = function;
-        std::pair<std::map<pinnacle_gpio_t, IrqPinCache>::iterator, bool> indexPair = irqCache.insert(std::pair<pinnacle_gpio_t, IrqPinCache>(pin, irqPinCache));
 
+        std::pair<std::map<pinnacle_gpio_t, IrqPinCache>::iterator, bool> indexPair = irqCache.insert(std::pair<pinnacle_gpio_t, IrqPinCache>(pin, irqPinCache));
         if (!indexPair.second) {
             // this should not be reached, but indexPair.first needs to be the inserted map element
             throw IRQException("[attachInterrupt] Could not cache the IRQ pin with function pointer");
+            return 0;
+        }
+
+        std::pair<std::map<pinnacle_gpio_t, gpio_fd>::iterator, bool> gpioPair = IrqChipCache::cachedPins.insert(std::pair<pinnacle_gpio_t, gpio_fd>(pin, request.fd));
+        if (!gpioPair.second) {
+            // this should not be reached, but indexPair.first needs to be the inserted map element
+            throw IRQException("[attachInterrupt] Could not cache the GPIO pin's file descriptor");
             return 0;
         }
 
