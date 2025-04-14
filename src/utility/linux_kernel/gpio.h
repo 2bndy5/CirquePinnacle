@@ -32,10 +32,9 @@ typedef unsigned int pinnacle_gpio_t;
 
     #ifndef PINNACLE_LINUX_GPIO_CHIP
         /**
-         * The default GPIO chip to use.  Defaults to `/dev/gpiochip4` (for RPi5).
-         * Falls back to `/dev/gpiochip0` if this value is somehow incorrect.
+         * The default GPIO chip to use.  Defaults to `/dev/gpiochip0`.
          */
-        #define PINNACLE_LINUX_GPIO_CHIP "/dev/gpiochip4"
+        #define PINNACLE_LINUX_GPIO_CHIP "/dev/gpiochip0"
     #endif
 namespace cirque_pinnacle_arduino_wrappers {
 
@@ -53,9 +52,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     /// This struct's destructor should close any cached GPIO pin requests' file descriptors.
     struct GPIOChipCache
     {
-        const char* chip = PINNACLE_LINUX_GPIO_CHIP;
-        int fd = -1;
-        bool chipInitialized = false;
+        static int fd;
 
         /// Open the File Descriptor for the GPIO chip
         void openDevice();

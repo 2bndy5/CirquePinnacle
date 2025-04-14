@@ -44,9 +44,9 @@ bool setup()
     std::cout << "-- Using I2C interface." << std::endl;
 #endif
     std::cout << "\nShow trigonometric calculations? [y/N] ('N' means show raw data) ";
-    char input;
-    std::cin >> input;
-    onlyShowTrigVals = input == 'y' || input == 'Y';
+    char input[4] = {0};
+    std::cin.getline(input, 3);
+    onlyShowTrigVals = input[0] == 'y' || input[0] == 'Y';
     std::cout << "showing ";
     if (onlyShowTrigVals)
         std::cout << "trigonometric calculations." << std::endl;

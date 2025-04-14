@@ -45,6 +45,9 @@ bool PinnacleTouch::begin()
         while (available()) {
             clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
         }
+        if (!_rev2025) {
+            setAdcGain(0); // most sensitive attenuation
+        }
         if (calibrate()) { // enables all compensations, runs calibration, & clearStatusFlags()
             feedEnabled(true);
             return true;
@@ -459,7 +462,7 @@ void PinnacleTouch::eraWrite(uint16_t registerAddress, uint8_t registerValue)
     if (!_rev2025) {
 #endif
         do {
-            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until register value == 0
         } while (buffer[0]);
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
     }
@@ -497,7 +500,7 @@ void PinnacleTouch::eraWriteBytes(uint16_t registerAddress, uint8_t registerValu
         if (!_rev2025) {
 #endif
             do {
-                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until register value == 0
             } while (buffer[0]);
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
         }
@@ -533,7 +536,7 @@ void PinnacleTouch::eraRead(uint16_t registerAddress, uint8_t* data)
     if (!_rev2025) {
 #endif
         do {
-            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+            rapRead(PINNACLE_ERA_CONTROL, buffer); // read until register value == 0
         } while (buffer[0]);
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
     }
@@ -570,7 +573,7 @@ void PinnacleTouch::eraReadBytes(uint16_t registerAddress, uint8_t* data, uint8_
         if (!_rev2025) {
 #endif
             do {
-                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until registerAddress == 0
+                rapRead(PINNACLE_ERA_CONTROL, buffer); // read until register value == 0
             } while (buffer[0]);
 #ifdef PINNACLE_EXPERIMENTAL_ERA_2025_FIRMWARE
         }
