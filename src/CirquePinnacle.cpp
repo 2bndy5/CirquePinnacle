@@ -45,6 +45,9 @@ bool PinnacleTouch::begin()
         while (available()) {
             clearStatusFlags(); // ignore/discard all pending measurements waiting to be read()
         }
+        if (!_rev2025) {
+            setAdcGain(0); // most sensitive attenuation
+        }
         if (calibrate()) { // enables all compensations, runs calibration, & clearStatusFlags()
             feedEnabled(true);
             return true;
