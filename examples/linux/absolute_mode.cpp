@@ -74,7 +74,7 @@ void loop()
 {
     // using `interruptHandler()` to update `isDataReady`
     if (isDataReady) {
-        std::cout << isDataReady << " == " << trackpad.available() << std::endl;
+        // assert(isDataReady == trackpad.available());
         isDataReady = false; // reset our IRQ flag
         trackpad.read(&data);
 
