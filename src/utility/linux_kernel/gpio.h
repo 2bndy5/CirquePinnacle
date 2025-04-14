@@ -20,8 +20,9 @@
 #define CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_GPIO_H_
 #ifndef ARDUINO
 
-    #include <cstdint>      // uintXX_t
-    #include <stdexcept>    // std::exception, std::string
+    #include <cstdint>   // uintXX_t
+    #include <stdexcept> // std::exception, std::string
+    #include <map>
     #include "linux/gpio.h" // gpiochip_info
 
     #ifdef __cplusplus
@@ -48,11 +49,14 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
     };
 
+    typedef int gpio_fd; // for readability
+
     /// A struct to manage the GPIO chip file descriptor.
     /// This struct's destructor should close any cached GPIO pin requests' file descriptors.
     struct GPIOChipCache
     {
         static int fd;
+        static std::map<pinnacle_gpio_t, gpio_fd> cachedPins;
 
         /// Open the File Descriptor for the GPIO chip
         void openDevice();

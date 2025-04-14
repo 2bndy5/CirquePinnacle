@@ -47,13 +47,9 @@ void setup() {
 }
 
 void loop() {
-
-#if DR_PIN == PINNACLE_SW_DR  // not using DR_PIN
-  if (trackpad.available()) {
-#else   // using interruptHandler()
+  // using `interruptHandler()` to update `isDataReady`
   if (isDataReady) {
     isDataReady = false;  // reset our IRQ flag
-#endif  // using DR_PIN
 
     // save buttons' previous state before getting updates
     uint8_t prevButtonStates = data.buttons;  // for edge detection
