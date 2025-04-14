@@ -45,7 +45,7 @@ namespace cirque_pinnacle_arduino_wrappers {
             for (std::map<pinnacle_gpio_t, IrqPinCache>::iterator i = irqCache.begin(); i != irqCache.end(); ++i) {
                 pthread_cancel(i->second.id);     // send cancel request
                 pthread_join(i->second.id, NULL); // wait till thread terminates
-                // close(i->second.fd);
+                // cached fd (i->second.fd) is closed by GPIOChipCache or GPIOClass::close()
             }
             irqCache.clear();
         }
