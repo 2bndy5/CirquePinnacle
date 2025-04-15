@@ -64,12 +64,12 @@ namespace cirque_pinnacle_arduino_wrappers {
      * Take the details and create an interrupt handler that will
      * callback to the user-supplied function.
      */
-    int attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode);
+    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode);
 
     /**
      * Will cancel the interrupt thread, close the filehandle and release the pin.
      */
-    int detachInterrupt(pinnacle_gpio_t pin);
+    bool detachInterrupt(pinnacle_gpio_t pin);
 
 } // namespace cirque_pinnacle_arduino_wrappers
 

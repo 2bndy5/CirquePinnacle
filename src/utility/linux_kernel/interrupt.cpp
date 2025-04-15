@@ -77,7 +77,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         return NULL;
     }
 
-    int attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode)
+    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode)
     {
         // ensure pin is not already being used in a separate thread
         detachInterrupt(pin);
@@ -181,7 +181,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         return 1;
     }
 
-    int detachInterrupt(pinnacle_gpio_t pin)
+    bool detachInterrupt(pinnacle_gpio_t pin)
     {
         std::map<pinnacle_gpio_t, IrqPinCache>::iterator cachedPin = irqCache.find(pin);
         if (cachedPin == irqCache.end()) {
@@ -191,6 +191,7 @@ namespace cirque_pinnacle_arduino_wrappers {
         pthread_join(cachedPin->second.id, NULL); // wait till thread terminates
         close(cachedPin->second.fd);
         irqCache.erase(cachedPin);
+        GPIOClass::close(pin);
         return 1;
     }
 

@@ -14,7 +14,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from typing import List, overload
+from typing import List, overload, Callable
 
 class PinnacleDataMode:
     @property
@@ -60,8 +60,8 @@ class PinnacleAnyMeasCtrl:
     @property
     def value(self) -> int: ...
 
-PINNACLE_CRTL_PWR_IDLE: PinnacleAnyMeasCtrl
-PINNACLE_CRTL_REPEAT: PinnacleAnyMeasCtrl
+PINNACLE_CTRL_PWR_IDLE: PinnacleAnyMeasCtrl
+PINNACLE_CTRL_REPEAT: PinnacleAnyMeasCtrl
 
 class RelativeReport:
     def __init__(self):
@@ -221,3 +221,16 @@ class PinnacleTouchI2C(PinnacleTouch):
     def begin(self) -> bool: ...
     @overload
     def begin(self, i2C_bus: TwoWire) -> bool: ...
+
+class Edge:
+    @property
+    def value(self) -> int: ...
+
+FALLING: Edge = ...
+RISING: Edge = ...
+CHANGE: Edge = ...
+
+def attach_interrupt(pin: int, callback: Callable[[], None], mode: Edge) -> bool: ...
+def attachInterrupt(pin: int, callback: Callable[[], None], mode: Edge) -> bool: ...
+def detach_interrupt(pin: int) -> bool: ...
+def detachInterrupt(pin: int) -> bool: ...
