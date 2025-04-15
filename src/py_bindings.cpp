@@ -145,40 +145,6 @@ PYBIND11_MODULE(cirque_pinnacle, m)
 
     #endif // !defined(PINNACLE_ANYMEAS_SUPPORT)
 
-    py::enum_<cirque_pinnacle_arduino_wrappers::Edge> edgeMode(m, "Edge");
-    edgeMode.value("FALLING", cirque_pinnacle_arduino_wrappers::Edge::FALLING);
-    edgeMode.value("RISING", cirque_pinnacle_arduino_wrappers::Edge::RISING);
-    edgeMode.value("CHANGE", cirque_pinnacle_arduino_wrappers::Edge::CHANGE);
-    edgeMode.export_values();
-
-    m.def("attach_interrupt", cirque_pinnacle_arduino_wrappers::attachInterrupt, R"docstr(
-        attach_interrupt(pin: int, callback: Callable[[], None], mode: Edge) -> bool
-
-        Attach a callback function to a GPIO pin interrupt event
-        )docstr",
-          py::arg("pin"), py::arg("callback"), py::arg("mode"));
-
-    m.def("attachInterrupt", cirque_pinnacle_arduino_wrappers::attachInterrupt, R"docstr(
-        attachInterrupt(pin: int, callback: Callable[[], None], mode: Edge) -> bool
-
-        Attach a callback function to a GPIO pin interrupt event
-        )docstr",
-          py::arg("pin"), py::arg("callback"), py::arg("mode"));
-
-    m.def("detach_interrupt", cirque_pinnacle_arduino_wrappers::detachInterrupt, R"docstr(
-        detach_interrupt(pin: int) -> bool
-
-        Detach any callback function associated with a GPIO pin interrupt event
-        )docstr",
-          py::arg("pin"));
-
-    m.def("detachInterrupt", cirque_pinnacle_arduino_wrappers::detachInterrupt, R"docstr(
-        detachInterrupt(pin: int) -> bool
-
-        Detach any callback function associated with a GPIO pin interrupt event
-        )docstr",
-          py::arg("pin"));
-
     // ******************** bindings for RelativeReport
     py::class_<RelativeReport> relativeReports(m, "RelativeReport");
     relativeReports.def(py::init<>());
