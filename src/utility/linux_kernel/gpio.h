@@ -55,7 +55,19 @@ namespace cirque_pinnacle_arduino_wrappers {
     /// This struct's destructor should close any cached GPIO pin requests' file descriptors.
     struct GPIOChipCache
     {
+        /// @brief The file descriptor used to access the GPIO chip.
+        ///
+        /// This is used to open/close pins exposed by the GPIO chip specified via
+        /// `PINNACLE_LINUX_GPIO_CHIP`.
+        ///
+        /// Because this member is static, all instances (& derivative instances) of this
+        /// struct use the same file descriptor.
         static int fd;
+
+        /// @brief The map of pin numbers to their corresponding file descriptors.
+        ///
+        /// Because this member is static, all instances (& derivative instances) of this
+        /// struct use the same mapping.
         static std::map<pinnacle_gpio_t, gpio_fd> cachedPins;
 
         /// Open the File Descriptor for the GPIO chip

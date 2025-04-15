@@ -64,7 +64,7 @@ namespace cirque_pinnacle_arduino_wrappers {
      * Take the details and create an interrupt handler that will
      * callback to the user-supplied function.
      */
-    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode);
+    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), Edge mode);
 
     /**
      * Will cancel the interrupt thread, reconfigure the pin for basic `digitalRead()` use.
