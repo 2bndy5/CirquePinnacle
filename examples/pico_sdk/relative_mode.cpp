@@ -15,6 +15,18 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 PinnacleTouchI2C trackpad(DR_PIN);
 #endif
 
+// interrupt related handling
+volatile bool isDataReady = false; // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler(uint gpio, uint32_t events)
+{
+    if (gpio != DR_PIN && !(events & GPIO_IRQ_EDGE_RISE)) {
+        // the gpio pin and event does not match the configuration we specified
+        return;
+    }
+    isDataReady = true; // forward event handling back to main loop()
+}
+
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
@@ -36,6 +48,10 @@ bool setup()
 #else
     printf("-- Using I2C interface\n");
 #endif
+
+    // setup interrupt handler
+    gpio_set_irq_enabled_with_callback(DR_PIN, GPIO_IRQ_EDGE_RISE, true, &interruptHandler);
+
     printf("\n*** Enter 'B' to reset to bootloader.\n");
     printf("\nTouch the trackpad to see the data\n");
     return true;
@@ -43,7 +59,8 @@ bool setup()
 
 void loop()
 {
-    if (trackpad.available()) {
+    if (isDataReady) {
+        // assert(isDataReady == trackpad.available());
         trackpad.read(&data);
         printf("Left:%d ", data.buttons & 1);
         printf("Right:%d ", data.buttons & 2);

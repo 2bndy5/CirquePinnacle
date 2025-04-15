@@ -41,13 +41,27 @@ void compensate()
         accumulatedValue = 0;
         while (sweep < 5) // take 5 measurements and average them for a bit lower noise compensation value
         {
-            int16_t value = trackpad.measureAdc(vectorDeterminants[i].toggle, vectorDeterminants[i].polarity);
+            int16_t value = trackpad.measureAdc(
+                vectorDeterminants[i].toggle,
+                vectorDeterminants[i].polarity);
             sweep++;
             accumulatedValue += value;
         }
         compensations[i] = accumulatedValue / 5;
         std::cout << "compensation " << (unsigned int)i << ": " << compensations[i] << std::endl;
     }
+}
+
+// the index number used to iterate through our vectorDeterminants array used in loop()
+unsigned int vectorIndex = 0;
+
+// interrupt related handling
+volatile bool isDataReady = false; // track the interrupts with our own IRQ flag
+bool waitingForInterrupt = false;  // a flag to control iteration of our loop()
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler()
+{
+    isDataReady = true;
 }
 
 bool setup()
@@ -66,8 +80,15 @@ bool setup()
 #endif
     compensate();
 
+    // pull in arduino-like namespace
+    namespace arduino = cirque_pinnacle_arduino_wrappers;
+    // setup interrupt handler.
+    // We do this AFTER calling `compensate()` because
+    // `compensate()` will unnecessarily trigger `interruptHandler()`
+    arduino::attachInterrupt(DR_PIN, &interruptHandler, arduino::RISING);
+
     for (uint8_t i = 5; i; --i) {
-        std::cout << "starting in " << (unsigned int)i << "second" << (i < 1 ? 's' : ' ') << '\r';
+        std::cout << "starting in " << (unsigned int)i << " second" << (i < 1 ? 's' : ' ') << '\r' << std::flush;
         sleep(1);
     }
     std::cout << std::endl;
@@ -76,14 +97,29 @@ bool setup()
 
 void loop()
 {
-    for (unsigned int i = 0; i < variousVectors_size; i++) {
-        int16_t measurement = trackpad.measureAdc(
-            vectorDeterminants[i].toggle,
-            vectorDeterminants[i].polarity);
-        measurement -= compensations[i];
-        std::cout << "meas" << i << ": " << measurement << "\t";
+    if (!isDataReady && !waitingForInterrupt) {
+        trackpad.startMeasureAdc(
+            vectorDeterminants[vectorIndex].toggle,
+            vectorDeterminants[vectorIndex].polarity);
+        waitingForInterrupt = true;
     }
-    std::cout << std::endl;
+    else if (isDataReady) {
+        isDataReady = false;         // reset our IRQ flag
+        waitingForInterrupt = false; // allow iteration to continue
+
+        int16_t measurement = trackpad.getMeasureAdc();
+        measurement -= compensations[vectorIndex];
+        std::cout << "meas" << vectorIndex << ": " << measurement << "\t";
+
+        // increment our loop iterator
+        if (vectorIndex < (variousVectors_size - 1)) {
+            vectorIndex++;
+        }
+        else {
+            vectorIndex = 0;
+            std::cout << std::endl;
+        }
+    }
 }
 
 int main()

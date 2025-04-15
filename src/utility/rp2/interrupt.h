@@ -16,35 +16,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
-#define CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
-#ifndef ARDUINO
+#ifndef CIRQUEPINNACLE_UTILITY_RP2_INTERRUPT_H_
+#define CIRQUEPINNACLE_UTILITY_RP2_INTERRUPT_H_
 
-    #include <cstdint>
+// This module is only defined for CirquePinnacle library portability. (see src/utility/includes.h.in)
+// Use Pico SDK API for interrupt functionality (and see examples/pico_sdk/*.cpp).
 
-    // exclude C linkage for CPP docs generation
-    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
-extern "C" {
-    #endif
-
-namespace cirque_pinnacle_arduino_wrappers {
-
-    void __msleep(int milliseconds);
-
-    void __usleep(int microseconds);
-
-    uint32_t __millis();
-
-    #define delay(ms)             __msleep(ms)
-    #define delayMicroseconds(us) __usleep(us)
-    #define millis()              __millis()
-
-} // namespace cirque_pinnacle_arduino_wrappers
-
-    // exclude C linkage for CPP docs generation
-    #if defined(__cplusplus) && !defined(CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_)
-}
-    #endif
-
-#endif // !defined(ARDUINO)
-#endif // CIRQUEPINNACLE_UTILITY_TEMPLATE_TIME_KEEPING_H_
+#endif

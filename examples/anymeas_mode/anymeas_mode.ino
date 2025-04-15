@@ -48,6 +48,17 @@ void compensate() {
   }
 }
 
+// the index number used to iterate through our vectorDeterminants array used in loop()
+unsigned int vectorIndex = 0;
+
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+bool waitingForInterrupt = false;   // a flag to control iteration of our loop()
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler() {
+  isDataReady = true;
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial) {
@@ -63,20 +74,41 @@ void setup() {
   trackpad.setDataMode(PINNACLE_ANYMEAS);
   trackpad.anymeasModeConfig();
   compensate();
+
+  // setup interrupt handler.
+  // `pinMode()` is already called by `trackpad.begin()`.
+  // We do this AFTER calling `compensate()` because
+  // `compensate()` will unnecessarily trigger `interruptHandler()`
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
+
   Serial.println(F("starting in 5 seconds..."));
   delay(5000);
 }
 
 void loop() {
-  for (uint8_t i = 0; i < variousVectors_size; i++) {
-    int16_t measurement = trackpad.measureAdc(vectorDeterminants[i].toggle,
-                                              vectorDeterminants[i].polarity);
-    measurement -= compensations[i];
+  if (!isDataReady && !waitingForInterrupt) {
+    trackpad.startMeasureAdc(
+      vectorDeterminants[vectorIndex].toggle,
+      vectorDeterminants[vectorIndex].polarity);
+    waitingForInterrupt = true;
+  } else if (isDataReady) {
+    isDataReady = false;          // reset our IRQ flag
+    waitingForInterrupt = false;  // allow iteration to continue
+
+    int16_t measurement = trackpad.getMeasureAdc();
+    measurement -= compensations[vectorIndex];
     Serial.print(F("meas"));
-    Serial.print(i);
+    Serial.print(vectorIndex);
     Serial.print(F(":"));
     Serial.print(measurement);
     Serial.print(F("  \t"));
+
+    // increment our loop iterator
+    if (vectorIndex < (variousVectors_size - 1)) {
+      vectorIndex++;
+    } else {
+      vectorIndex = 0;
+      Serial.println();
+    }
   }
-  Serial.println();
 }
