@@ -64,19 +64,19 @@ namespace cirque_pinnacle_arduino_wrappers {
      * callback to the user-supplied function.
      *
      * @param pin The number of the GPIO input pin to monitor for changes about edge detection.
-     * @param mode The type of edge detection that invokes the specified callback ``function``.
      * @param function The user-defined function pointer that gets called when a specified event occurs.
+     * @param mode The type of edge detection that invokes the specified callback ``function``.
      *
      * @ingroup arduino-irq
      */
-    int attachInterrupt(pinnacle_gpio_t pin, int mode, void (*function)(void));
+    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), Edge mode);
 
     /**
      * Will cancel the interrupt thread, close the filehandle and release the pin.
      *
      * @ingroup arduino-irq
      */
-    int detachInterrupt(pinnacle_gpio_t pin);
+    bool detachInterrupt(pinnacle_gpio_t pin);
 
 } // namespace cirque_pinnacle_arduino_wrappers
 

@@ -77,20 +77,13 @@ namespace cirque_pinnacle_arduino_wrappers {
         return NULL;
     }
 
-    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode)
+    bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), Edge mode)
     {
         // ensure pin is not already being used in a separate thread
         detachInterrupt(pin);
         GPIOClass::close(pin);
 
-        try {
-            irqChipCache.openDevice();
-        }
-        catch (GPIOException& exc) {
-            if (irqChipCache.fd < 0) {
-                irqChipCache.openDevice();
-            }
-        }
+        irqChipCache.openDevice();
 
         // get chip info
         gpiochip_info info;
@@ -166,7 +159,7 @@ namespace cirque_pinnacle_arduino_wrappers {
             return 0;
         }
 
-        std::pair<std::map<pinnacle_gpio_t, gpio_fd>::iterator, bool> gpioPair = IrqChipCache::cachedPins.insert(std::pair<pinnacle_gpio_t, gpio_fd>(pin, request.fd));
+        std::pair<std::map<pinnacle_gpio_t, gpio_fd>::iterator, bool> gpioPair = irqChipCache.cachedPins.insert(std::pair<pinnacle_gpio_t, gpio_fd>(pin, request.fd));
         if (!gpioPair.second) {
             // this should not be reached, but indexPair.first needs to be the inserted map element
             throw IRQException("[attachInterrupt] Could not cache the GPIO pin's file descriptor");
@@ -191,7 +184,6 @@ namespace cirque_pinnacle_arduino_wrappers {
         pthread_join(cachedPin->second.id, NULL); // wait till thread terminates
         irqCache.erase(cachedPin);
         // reconfigure pin for basic INPUT
-        GPIOClass::close(pin);
         GPIOClass::open(pin, INPUT);
         return 1;
     }
