@@ -189,9 +189,10 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
         pthread_cancel(cachedPin->second.id);     // send cancel request
         pthread_join(cachedPin->second.id, NULL); // wait till thread terminates
-        close(cachedPin->second.fd);
         irqCache.erase(cachedPin);
+        // reconfigure pin for basic INPUT
         GPIOClass::close(pin);
+        GPIOClass::open(pin, INPUT);
         return 1;
     }
 
