@@ -67,7 +67,7 @@ namespace cirque_pinnacle_arduino_wrappers {
     bool attachInterrupt(pinnacle_gpio_t pin, void (*function)(void), unsigned long long mode);
 
     /**
-     * Will cancel the interrupt thread, close the filehandle and release the pin.
+     * Will cancel the interrupt thread, reconfigure the pin for basic `digitalRead()` use.
      */
     bool detachInterrupt(pinnacle_gpio_t pin);
 
