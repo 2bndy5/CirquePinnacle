@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Compile examples
         uses: arduino/compile-sketches@main
@@ -86,7 +86,7 @@ jobs:
     needs: [build]
     steps:
       - name: Download sketches reports artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: arduino-deltas-*
           path: ${{ env.SKETCH_REPORTS_PATH }}
