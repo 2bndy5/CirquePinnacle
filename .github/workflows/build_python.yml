@@ -188,11 +188,11 @@ jobs:
 
       - name: Publish package (to TestPyPI)
         if: github.event_name == 'workflow_dispatch'
-        uses: pypa/gh-action-pypi-publish@v1.12.4
+        uses: pypa/gh-action-pypi-publish@v1.13.0
         with:
           repository-url: https://test.pypi.org/legacy/
 
       - name: Publish to PyPi
         # only upload distributions to PyPi when triggered by a published release
         if: github.event_name == 'release'
-        uses: pypa/gh-action-pypi-publish@v1.12.4
+        uses: pypa/gh-action-pypi-publish@v1.13.0
