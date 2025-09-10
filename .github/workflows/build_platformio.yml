@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: get lib info
         id: lib-info
@@ -30,7 +30,7 @@ jobs:
           echo "release=$(awk -F "=" '/version/ {print $2}' library.properties)" >> $GITHUB_OUTPUT
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
@@ -105,11 +105,11 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.board }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install PlatformIO
         run: |

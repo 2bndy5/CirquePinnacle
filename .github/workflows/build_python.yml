@@ -33,12 +33,12 @@ jobs:
     steps:
       - name: Set up Python
         id: python-setup
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0
@@ -60,12 +60,12 @@ jobs:
     steps:
       - name: Set up Python
         id: python-setup
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0
@@ -117,7 +117,7 @@ jobs:
         tag: [manylinux, musllinux]
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
@@ -128,7 +128,7 @@ jobs:
           python3 -m pip install twine
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
           fetch-depth: 0
@@ -146,7 +146,7 @@ jobs:
           image: docker.io/tonistiigi/binfmt:qemu-v8.1.5
 
       - name: Build binary wheels with cibuildwheels
-        uses: pypa/cibuildwheel@v2.23.2
+        uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_ARCHS_LINUX: ${{ matrix.platform }}
           CIBW_SKIP: pp* *ppc64le *s390x
@@ -175,12 +175,12 @@ jobs:
       id-token: write
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.x
 
       - name: Fetch built distribution artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: "cirque_pinnacle-dist*"
           path: ${{ github.workspace }}/dist
