@@ -43,7 +43,7 @@ jobs:
         run: pio package pack -o PlatformIO-${{ steps.lib-info.outputs.name }}-${{ steps.lib-info.outputs.release }}.tar.gz
 
       - name: Save artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: PIO_pkg_${{ steps.lib-info.outputs.name }}
           path: PlatformIO*.tar.gz
