@@ -106,7 +106,7 @@ jobs:
 
       - name: Save artifact
         if: endsWith(matrix.i2c-bus, 'OFF') && startsWith(matrix.toolchain.compiler, 'arm')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pkg_${{ github.event.repository.name }}_linux_kernel_${{ matrix.toolchain.compiler }}
           path: |

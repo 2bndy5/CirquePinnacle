@@ -81,7 +81,7 @@ jobs:
         run: twine check dist/*
 
       - name: Save distributable source as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: "cirque_pinnacle-dist_source"
           path: ${{ github.workspace }}/dist
@@ -162,7 +162,7 @@ jobs:
         run: python3 -m twine check dist/*
 
       - name: Save distributable wheels as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: "cirque_pinnacle-dist_${{ matrix.platform }}_${{ matrix.python }}_${{ matrix.tag }}"
           path: ${{ github.workspace }}/dist
@@ -180,7 +180,7 @@ jobs:
           python-version: 3.x
 
       - name: Fetch built distribution artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: "cirque_pinnacle-dist*"
           path: ${{ github.workspace }}/dist
