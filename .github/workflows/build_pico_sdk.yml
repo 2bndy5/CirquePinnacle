@@ -49,16 +49,18 @@ jobs:
         id: lib-info
         run: echo "name=$(echo ${{ github.repository }} | sed 's;.\+/;;')" >> $GITHUB_OUTPUT
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           path: ${{ steps.lib-info.outputs.name }}
 
       - name: Install toolchain
         run: sudo apt update && sudo apt install gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential
 
       - name: Clone pico-sdk
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
+          persist-credentials: false
           repository: raspberrypi/pico-sdk
           # master branch is latest stable release
           path: pico-sdk

@@ -21,7 +21,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: get lib info
         id: lib-info
@@ -109,7 +111,9 @@ jobs:
         with:
           python-version: 3.x
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Install PlatformIO
         run: |

@@ -38,8 +38,9 @@ jobs:
           python-version: 3.x
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
+          persist-credentials: false
           submodules: true
           fetch-depth: 0
 
@@ -65,8 +66,9 @@ jobs:
           python-version: 3.x
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
+          persist-credentials: false
           submodules: true
           fetch-depth: 0
 
@@ -128,8 +130,9 @@ jobs:
           python3 -m pip install twine
 
       - name: Checkout Current Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
+          persist-credentials: false
           submodules: true
           fetch-depth: 0
 
