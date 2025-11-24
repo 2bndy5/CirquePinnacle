@@ -51,6 +51,7 @@ jobs:
 
       - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           path: ${{ steps.lib-info.outputs.name }}
 
       - name: Install toolchain
@@ -59,6 +60,7 @@ jobs:
       - name: Clone pico-sdk
         uses: actions/checkout@v6
         with:
+          persist-credentials: false
           repository: raspberrypi/pico-sdk
           # master branch is latest stable release
           path: pico-sdk

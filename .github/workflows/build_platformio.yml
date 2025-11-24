@@ -22,6 +22,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: get lib info
         id: lib-info
@@ -110,6 +112,8 @@ jobs:
           python-version: 3.x
 
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Install PlatformIO
         run: |

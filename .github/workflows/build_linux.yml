@@ -79,6 +79,7 @@ jobs:
 
       - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           path: ${{ github.event.repository.name }}
 
       - name: create CMake build environment
