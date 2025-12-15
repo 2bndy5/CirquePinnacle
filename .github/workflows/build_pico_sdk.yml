@@ -87,7 +87,7 @@ jobs:
         run: cmake --build . --config $BUILD_TYPE
 
       - name: Save artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: examples_pico_${{ matrix.board }}_${{ matrix.i2c-bus }}
           path: |
