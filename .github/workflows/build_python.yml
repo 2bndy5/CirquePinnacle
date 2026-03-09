@@ -48,7 +48,7 @@ jobs:
         run: pip install pre-commit .
 
       - name: Cache pre-commit venv
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
           path: '~/.cache/pre-commit'
@@ -83,7 +83,7 @@ jobs:
         run: twine check dist/*
 
       - name: Save distributable source as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: "cirque_pinnacle-dist_source"
           path: ${{ github.workspace }}/dist
@@ -137,7 +137,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         if: matrix.platform == 'aarch64' || matrix.platform == 'armv7l'
         with:
           # cached image is enabled by default.
@@ -165,7 +165,7 @@ jobs:
         run: python3 -m twine check dist/*
 
       - name: Save distributable wheels as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: "cirque_pinnacle-dist_${{ matrix.platform }}_${{ matrix.python }}_${{ matrix.tag }}"
           path: ${{ github.workspace }}/dist
@@ -183,7 +183,7 @@ jobs:
           python-version: 3.x
 
       - name: Fetch built distribution artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           pattern: "cirque_pinnacle-dist*"
           path: ${{ github.workspace }}/dist
