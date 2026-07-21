@@ -32,7 +32,7 @@ jobs:
           echo "release=$(awk -F "=" '/version/ {print $2}' library.properties)" >> $GITHUB_OUTPUT
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.x
 
@@ -107,7 +107,7 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.board }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.x
 
