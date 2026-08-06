@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Brendan Doherty (2bndy5)
+ * Copyright (c) 2025 Brendan Doherty (2bndy5)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,9 @@
 #define CIRQUEPINNACLE_UTILITY_LINUX_KERNEL_GPIO_H_
 #ifndef ARDUINO
 
-    #include <cstdint>      // uintXX_t
-    #include <stdexcept>    // std::exception, std::string
+    #include <cstdint>   // uintXX_t
+    #include <stdexcept> // std::exception, std::string
+    #include <map>
     #include "linux/gpio.h" // gpiochip_info
 
     #ifdef __cplusplus
@@ -48,11 +49,26 @@ namespace cirque_pinnacle_arduino_wrappers {
         }
     };
 
+    typedef int gpio_fd; // for readability
+
     /// A struct to manage the GPIO chip file descriptor.
     /// This struct's destructor should close any cached GPIO pin requests' file descriptors.
     struct GPIOChipCache
     {
+        /// @brief The file descriptor used to access the GPIO chip.
+        ///
+        /// This is used to open/close pins exposed by the GPIO chip specified via
+        /// `PINNACLE_LINUX_GPIO_CHIP`.
+        ///
+        /// Because this member is static, all instances (& derivative instances) of this
+        /// struct use the same file descriptor.
         static int fd;
+
+        /// @brief The map of pin numbers to their corresponding file descriptors.
+        ///
+        /// Because this member is static, all instances (& derivative instances) of this
+        /// struct use the same mapping.
+        static std::map<pinnacle_gpio_t, gpio_fd> cachedPins;
 
         /// Open the File Descriptor for the GPIO chip
         void openDevice();

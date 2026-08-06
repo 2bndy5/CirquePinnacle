@@ -12,6 +12,13 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler() {
+  isDataReady = true;
+}
+
 const uint32_t interval = 750;  // milliseconds used to blink LED
 uint32_t lastLedChange = 0;     // millis() since last digitalWrite()
 bool ledState = false;          // last state sent to digitalWrite()
@@ -32,14 +39,17 @@ void setup() {
   // tell the Pinnacle ASIC to rotate the orientation of the axis data by +90 degrees
   trackpad.relativeModeConfig(true, true);  // (enable taps, rotate90)
 
+  // pinMode() is already called by trackpad.begin()
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
 
   digitalWrite(LED, LOW);
   lastLedChange = millis();
 }
 
 void loop() {
-
-  if (trackpad.available()) {  // is there new data?
+  // using `interruptHandler()` to update `isDataReady`
+  if (isDataReady) {
+    isDataReady = false;  // reset our IRQ flag
 
     // save buttons' previous state before getting updates
     uint8_t prevButtonStates = data.buttons;  // for edge detection

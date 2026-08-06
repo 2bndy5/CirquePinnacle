@@ -15,6 +15,13 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // an object to hold data reported by the Cirque trackpad
 RelativeReport data;
 
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler() {
+  isDataReady = true;
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial) {
@@ -29,11 +36,18 @@ void setup() {
   Serial.println(F("CirquePinnacle/examples/relative_mode"));
   trackpad.setDataMode(PINNACLE_RELATIVE);
   trackpad.relativeModeConfig();  // uses default config
+
+  // pinMode() is already called by trackpad.begin()
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, FALLING);
+
   Serial.println(F("Touch the trackpad to see the data."));
 }
 
 void loop() {
-  if (trackpad.available()) {
+
+  // using `interruptHandler()` to update `isDataReady`
+  if (isDataReady) {
+    isDataReady = false;  // reset our IRQ flag
     trackpad.read(&data);
     Serial.print(F("Left:"));
     Serial.print(data.buttons & 1);

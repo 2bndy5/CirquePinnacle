@@ -16,6 +16,13 @@ PinnacleTouchSPI trackpad(DR_PIN, SS_PIN);
 // an object to hold data reported by the Cirque trackpad
 AbsoluteReport data;
 
+// interrupt related handling
+volatile bool isDataReady = false;  // track the interrupts with our own IRQ flag
+/// A callback function that allows `loop()` to know when the trackpad's DR pin is active
+void interruptHandler() {
+  isDataReady = true;
+}
+
 void setup() {
   Serial.begin(115200);
   while (!Serial) {
@@ -30,6 +37,10 @@ void setup() {
   Serial.println(F("CirquePinnacle/examples/absolute_mode"));
   trackpad.setDataMode(PINNACLE_ABSOLUTE);
   trackpad.absoluteModeConfig(1);  // set count of z-idle packets to 1
+
+  // pinMode() is already called by trackpad.begin()
+  attachInterrupt(digitalPinToInterrupt(DR_PIN), interruptHandler, RISING);
+
   Serial.println(F("\n*** Enter 'M' to measure and print raw data."));
   Serial.println(F("*** Enter 'T' to measure and print trigonometric calculations.\n"));
   Serial.println(F("Touch the trackpad to see the data."));
@@ -43,14 +54,17 @@ raw data (false) or trigonometry data (true)
 */
 bool onlyShowTrigVals = false;
 
-#ifndef M_PI
+#if defined(M_PI) && !defined(PI)
 #define PI M_PI
-#else
+#endif
+#ifndef PI
 #define PI 3.14159
 #endif
 
 void loop() {
-  if (trackpad.available()) {
+  // using `interruptHandler()` to update `isDataReady`
+  if (isDataReady) {
+    isDataReady = false;  // reset our IRQ flag
     trackpad.read(&data);
 
     // datasheet recommends clamping the axes value to reliable range

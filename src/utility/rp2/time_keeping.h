@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Brendan Doherty (2bndy5)
+ * Copyright (c) 2025 Brendan Doherty (2bndy5)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ extern "C" {
 
 namespace cirque_pinnacle_arduino_wrappers {
 
-    #define delay(milisec)          sleep_ms(milisec)
+    #define delay(millisec)         sleep_ms(millisec)
     #define delayMicroseconds(usec) sleep_us(usec)
     #define millis()                to_ms_since_boot(get_absolute_time())
 

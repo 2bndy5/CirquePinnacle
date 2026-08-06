@@ -1,22 +1,24 @@
 
-.. image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
+.. |docs-badge| image:: https://readthedocs.org/projects/cirquepinnacle/badge/?version=latest
     :target: https://cirquepinnacle.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml/badge.svg
+.. |arduino-badge| image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml/badge.svg
     :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_arduino.yml
     :alt: Arduino build
-.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml/badge.svg
+.. |pio-badge| image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml/badge.svg
     :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_platformio.yml
     :alt: PlatformIO build
-.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml/badge.svg
+.. |pico-sdk-badge| image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml/badge.svg
     :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_pico_sdk.yml
     :alt: Pico SDK build
-.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml/badge.svg
+.. |linux-badge| image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml/badge.svg
     :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_linux.yml
     :alt: Linux build
-.. image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml/badge.svg
+.. |py-badge| image:: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml/badge.svg
     :target: https://github.com/2bndy5/CirquePinnacle/actions/workflows/build_python.yml
     :alt: Python build
+
+|docs-badge| |arduino-badge| |pio-badge| |pico-sdk-badge| |linux-badge| |py-badge|
 
 Introduction
 ============

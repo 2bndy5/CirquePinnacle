@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Brendan Doherty (2bndy5)
+ * Copyright (c) 2025 Brendan Doherty (2bndy5)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,6 @@
     #include <sys/ioctl.h> // ioctl()
     #include <errno.h>     // errno
     #include <string.h>    // strerror(), memset(), strcpy()
-    #include <map>
     #include "linux/gpio.h"
     #include "gpio.h"
 
@@ -30,13 +29,12 @@ namespace cirque_pinnacle_arduino_wrappers {
 
 // instantiate some global structs to setup cache
 // doing this globally ensures the data struct is zero-ed out
-typedef int gpio_fd; // for readability
-std::map<pinnacle_gpio_t, gpio_fd> cachedPins;
 struct gpio_v2_line_request request;
 struct gpio_v2_line_values data;
 
-// initialize static member.
+// initialize static members.
 int GPIOChipCache::fd = -1;
+std::map<pinnacle_gpio_t, gpio_fd> GPIOChipCache::cachedPins = std::map<pinnacle_gpio_t, gpio_fd>();
 
 void GPIOChipCache::openDevice()
 {
@@ -111,8 +109,8 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
     }
 
     // check if pin is already in use
-    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = cachedPins.find(port);
-    if (pin == cachedPins.end()) { // pin not in use; add it to cached request
+    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = gpioCache.cachedPins.find(port);
+    if (pin == gpioCache.cachedPins.end()) { // pin not in use; add it to cached request
         request.offsets[0] = port;
         request.fd = 0;
     }
@@ -131,7 +129,7 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
     }
     gpioCache.closeDevice(); // in case other apps want to access it
 
-    // set the pin and direction
+    // set the pin direction
     request.config.flags = direction ? GPIO_V2_LINE_FLAG_OUTPUT : GPIO_V2_LINE_FLAG_INPUT;
 
     ret = ioctl(request.fd, GPIO_V2_LINE_SET_CONFIG_IOCTL, &request.config);
@@ -141,25 +139,25 @@ void GPIOClass::open(pinnacle_gpio_t port, bool direction)
         throw GPIOException(msg);
         return;
     }
-    cachedPins.insert(std::pair<pinnacle_gpio_t, gpio_fd>(port, request.fd));
+    gpioCache.cachedPins.insert(std::pair<pinnacle_gpio_t, gpio_fd>(port, request.fd));
 }
 
 void GPIOClass::close(pinnacle_gpio_t port)
 {
-    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = cachedPins.find(port);
-    if (pin == cachedPins.end()) {
+    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = gpioCache.cachedPins.find(port);
+    if (pin == gpioCache.cachedPins.end()) {
         return;
     }
     if (pin->second > 0) {
         ::close(pin->second);
     }
-    cachedPins.erase(pin);
+    gpioCache.cachedPins.erase(pin);
 }
 
 bool GPIOClass::read(pinnacle_gpio_t port)
 {
-    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = cachedPins.find(port);
-    if (pin == cachedPins.end() || pin->second <= 0) {
+    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = gpioCache.cachedPins.find(port);
+    if (pin == gpioCache.cachedPins.end() || pin->second <= 0) {
         throw GPIOException("[GPIO::read] pin not initialized! Use GPIO::open() first");
         return -1;
     }
@@ -178,8 +176,8 @@ bool GPIOClass::read(pinnacle_gpio_t port)
 
 void GPIOClass::write(pinnacle_gpio_t port, bool value)
 {
-    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = cachedPins.find(port);
-    if (pin == cachedPins.end() || pin->second <= 0) {
+    std::map<pinnacle_gpio_t, gpio_fd>::iterator pin = gpioCache.cachedPins.find(port);
+    if (pin == gpioCache.cachedPins.end() || pin->second <= 0) {
         throw GPIOException("[GPIO::write] pin not initialized! Use GPIO::open() first");
         return;
     }
