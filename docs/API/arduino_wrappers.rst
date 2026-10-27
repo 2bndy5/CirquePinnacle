@@ -44,3 +44,11 @@ Arduino GPIOClass
 This is library-specific API wrapping the Arduino GPIO interface.
 
 .. cpp-apigen-group:: arduino-gpio
+
+
+Arduino Interrupts
+------------------
+
+This is library-specific API wrapping the Arduino interrupt functionality.
+
+.. cpp-apigen-group:: arduino-irq

@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Brendan Doherty (2bndy5)
+# Copyright (c) 2025 Brendan Doherty (2bndy5)
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -60,8 +60,8 @@ class PinnacleAnyMeasCtrl:
     @property
     def value(self) -> int: ...
 
-PINNACLE_CRTL_PWR_IDLE: PinnacleAnyMeasCtrl
-PINNACLE_CRTL_REPEAT: PinnacleAnyMeasCtrl
+PINNACLE_CTRL_PWR_IDLE: PinnacleAnyMeasCtrl
+PINNACLE_CTRL_REPEAT: PinnacleAnyMeasCtrl
 
 class RelativeReport:
     def __init__(self):

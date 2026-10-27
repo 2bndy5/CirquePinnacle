@@ -39,6 +39,7 @@ target_sources(CirquePinnacle INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/spi.cpp
     ${CMAKE_CURRENT_LIST_DIR}/i2c.cpp
     ${CMAKE_CURRENT_LIST_DIR}/time_keeping.h
+    ${CMAKE_CURRENT_LIST_DIR}/interrupt.h
 )
 
 target_include_directories(CirquePinnacle INTERFACE
